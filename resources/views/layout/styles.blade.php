@@ -10,6 +10,11 @@
     .kt-form__help{
         color: red;
     }
+
+    .help-text{
+        font-size: 10px;
+        color: red;
+    }
 </style>
 
 @yield('styles')

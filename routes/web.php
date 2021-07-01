@@ -70,6 +70,8 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
             Route::get('items/edit/{id?}', 'ItemsController@edit')->name('items.edit');
             Route::patch('items/update', 'ItemsController@update')->name('items.update');
             Route::post('items/change-status', 'ItemsController@change_status')->name('items.change.status');
+
+            Route::get('items/print/{id?}', 'ItemsController@print')->name('items.print');
         /** items */
     });
 

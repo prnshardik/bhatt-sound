@@ -27,6 +27,12 @@
                     <p>Items Categories</p>
                 </a>
             </li>
+            <li class="{{ (Request::is('items*') && !Request::is('items-categories*')) ? 'active' : '' }}">
+                <a href="{{ route('items') }}">
+                    <i class="fa fa-music"></i>
+                    <p>Items</p>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

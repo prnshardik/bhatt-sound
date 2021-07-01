@@ -55,4 +55,30 @@
                 return false; 
         }
     }
+
+    if(!function_exists('_generate_item_qrcode')){
+        function _generate_item_qrcode($id){
+            if($id == '')
+                return false;
+            $folder_to_uploads = public_path().'/uploads/qrcodes/items/';
+
+            if (!File::exists($folder_to_uploads))
+                File::makeDirectory($folder_to_uploads, 0777, true, true);
+
+            $exst_file = public_path().'/uploads/qrcodes/items/qrcode_'.$id.'.png';
+            if(File::exists($exst_file) && $exst_file != '')
+                @unlink($exst_file);
+            
+            $qrname = 'qrcode_'.$id.'.png';
+
+            QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($id, public_path('uploads/qrcodes/items/'.$qrname));
+
+            $update = DB::table('items')->where(['id' => $id])->update(['qrcode' => $qrname, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth()->user()->id]);
+            
+            if($update)
+                return true;
+            else
+                return false;
+        }
+    }
 ?>
