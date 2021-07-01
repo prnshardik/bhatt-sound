@@ -33,6 +33,12 @@
                     <p>Items</p>
                 </a>
             </li>
+            <li class="{{ Request::is('sub_items-categories*') ? 'active' : '' }}">
+                <a href="{{ route('sub_items.categories') }}">
+                    <i class="fa fa-bars"></i>
+                    <p>Sub Items Categories</p>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

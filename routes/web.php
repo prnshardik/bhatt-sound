@@ -52,27 +52,42 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
             Route::post('users/remove-image', 'UsersController@remove_image')->name('users.remove.image');
         /** users */
 
-        /** items-category */
-            Route::any('items-categories', 'ItemsCategoriesController@index')->name('items.categories');
-            Route::get('items-categories/create', 'ItemsCategoriesController@create')->name('items.categories.create');
-            Route::post('items-categories/insert', 'ItemsCategoriesController@insert')->name('items.categories.insert');
-            Route::get('items-categories/view/{id?}', 'ItemsCategoriesController@view')->name('items.categories.view');
-            Route::get('items-categories/edit/{id?}', 'ItemsCategoriesController@edit')->name('items.categories.edit');
-            Route::patch('items-categories/update', 'ItemsCategoriesController@update')->name('items.categories.update');
-            Route::post('items-categories/change-status', 'ItemsCategoriesController@change_status')->name('items.categories.change.status');
-        /** items-category */
+        /** items - Module */
+            /** items-category */
+                Route::any('items-categories', 'ItemsCategoriesController@index')->name('items.categories');
+                Route::get('items-categories/create', 'ItemsCategoriesController@create')->name('items.categories.create');
+                Route::post('items-categories/insert', 'ItemsCategoriesController@insert')->name('items.categories.insert');
+                Route::get('items-categories/view/{id?}', 'ItemsCategoriesController@view')->name('items.categories.view');
+                Route::get('items-categories/edit/{id?}', 'ItemsCategoriesController@edit')->name('items.categories.edit');
+                Route::patch('items-categories/update', 'ItemsCategoriesController@update')->name('items.categories.update');
+                Route::post('items-categories/change-status', 'ItemsCategoriesController@change_status')->name('items.categories.change.status');
+            /** items-category */
 
-        /** items */
-            Route::any('items', 'ItemsController@index')->name('items');
-            Route::get('items/create', 'ItemsController@create')->name('items.create');
-            Route::post('items/insert', 'ItemsController@insert')->name('items.insert');
-            Route::get('items/view/{id?}', 'ItemsController@view')->name('items.view');
-            Route::get('items/edit/{id?}', 'ItemsController@edit')->name('items.edit');
-            Route::patch('items/update', 'ItemsController@update')->name('items.update');
-            Route::post('items/change-status', 'ItemsController@change_status')->name('items.change.status');
+            /** items */
+                Route::any('items', 'ItemsController@index')->name('items');
+                Route::get('items/create', 'ItemsController@create')->name('items.create');
+                Route::post('items/insert', 'ItemsController@insert')->name('items.insert');
+                Route::get('items/view/{id?}', 'ItemsController@view')->name('items.view');
+                Route::get('items/edit/{id?}', 'ItemsController@edit')->name('items.edit');
+                Route::patch('items/update', 'ItemsController@update')->name('items.update');
+                Route::post('items/change-status', 'ItemsController@change_status')->name('items.change.status');
 
-            Route::get('items/print/{id?}', 'ItemsController@print')->name('items.print');
-        /** items */
+                Route::get('items/print/{id?}', 'ItemsController@print')->name('items.print');
+            /** items */
+        /** items - Module */
+
+
+        /** Sub items - Module */
+            /** items-category */
+                Route::any('sub_items-categories', 'SubItemCategoriesController@index')->name('sub_items.categories');
+                Route::get('sub_items-categories/create', 'SubItemCategoriesController@create')->name('sub_items.categories.create');
+                Route::post('sub_items-categories/insert', 'SubItemCategoriesController@insert')->name('sub_items.categories.insert');
+                Route::get('sub_items-categories/view/{id?}', 'SubItemCategoriesController@view')->name('sub_items.categories.view');
+                Route::get('sub_items-categories/edit/{id?}', 'SubItemCategoriesController@edit')->name('sub_items.categories.edit');
+                Route::patch('sub_items-categories/update', 'SubItemCategoriesController@update')->name('sub_items.categories.update');
+                Route::post('sub_items-categories/change-status', 'SubItemCategoriesController@change_status')->name('sub_items.categories.change.status');
+            /** items-category */
+        /** Sub items - Module */
     });
 
     Route::get("{path}", function(){ return redirect()->route('login'); })->where('path', '.+');

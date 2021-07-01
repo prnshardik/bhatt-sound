@@ -1,11 +1,9 @@
 <?php
-
     namespace App\Http\Requests;
 
     use Illuminate\Foundation\Http\FormRequest;
 
-    class ItemsCategoryRequest extends FormRequest
-    {
+    class SubItemCategoryRequest extends FormRequest{
         public function authorize(){
             return true;
         }
