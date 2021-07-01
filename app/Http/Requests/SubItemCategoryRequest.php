@@ -1,12 +1,12 @@
 <?php
 
-    namespace App\Http\Requests;
+namespace App\Http\Requests;
 
-    use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-    class ItemsCategoryRequest extends FormRequest
-    {
-        public function authorize(){
+class SubItemCategoryRequest extends FormRequest
+{
+  public function authorize(){
             return true;
         }
 
@@ -28,4 +28,4 @@
                 'title.unique' => 'Title already exists, Please use another title'
             ];
         }
-    }
+}
