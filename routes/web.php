@@ -49,6 +49,7 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
             Route::get('users/edit/{id?}', 'UsersController@edit')->name('users.edit');
             Route::patch('users/update', 'UsersController@update')->name('users.update');
             Route::post('users/change-status', 'UsersController@change_status')->name('users.change.status');
+            Route::post('users/remove-image', 'UsersController@remove_image')->name('users.remove.image');
         /** users */
     });
 

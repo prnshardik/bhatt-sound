@@ -26,6 +26,7 @@
                             <thead>
                                 <tr role="row">
                                     <th>No</th>
+                                    <th>Image</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
@@ -86,6 +87,10 @@
                         {
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex'
+                        },
+                        {
+                            data: 'image',
+                            name: 'image'
                         },
                         {
                             data: 'name',

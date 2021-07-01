@@ -8,6 +8,8 @@
 @endsection
 
 @section('styles')
+    <link href="{{ asset('assets/css/dropify.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/sweetalert2.bundle.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -34,6 +36,11 @@
                             <input type="text" name="phone" id="phone" class="form-control" placeholder="Plese enter phone number" value="{{ $data->phone ?? '' }}" disabled="disabled" />
                             <span class="kt-form__help error phone"></span>
                         </div>
+                        <div class="form-group col-sm-12">
+                            <label for="image">Image</label>
+                            <input type="file" class="dropify" id="image" name="image" data-default-file="{{ $data->image }}" data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M" data-show-remove="false"  disabled="disabled">
+                            <span class="kt-form__help error image"></span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <a href="{{ route('users') }}" class="btn btn-default">Back</a>
@@ -45,5 +52,20 @@
 @endsection
 
 @section('scripts')
+    <script src="{{ asset('assets/js/dropify.min.js') }}"></script>
+    <script src="{{ asset('assets/js/promise.min.js') }}"></script>
+    <script src="{{ asset('assets/js/sweetalert2.bundle.js') }}"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('.dropify').dropify({
+                messages: {
+                    'default': 'Drag and drop profile image here or click',
+                    'remove':  'Remove',
+                    'error':   'Ooops, something wrong happended.'
+                }
+            });
+        });
+    </script>
 @endsection
 

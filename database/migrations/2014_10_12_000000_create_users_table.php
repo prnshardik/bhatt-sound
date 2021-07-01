@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\File;
 
 class CreateUsersTable extends Migration
 {
@@ -28,6 +29,10 @@ class CreateUsersTable extends Migration
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
         });
+
+        if(file_exists(public_path('/qr_logo.png')) && !file_exists(public_path('/uploads/users/default.png')) ){
+            File::copy(public_path('/qr_logo.png'), public_path('/uploads/users/default.png'));
+        }
     }
 
     /**
