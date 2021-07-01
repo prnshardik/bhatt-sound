@@ -21,6 +21,12 @@
                     <p>Users</p>
                 </a>
             </li>
+            <li class="{{ Request::is('items-categories*') ? 'active' : '' }}">
+                <a href="{{ route('items.categories') }}">
+                    <i class="fa fa-bars"></i>
+                    <p>Items Categories</p>
+                </a>
+            </li>
         </ul>
     </div>
 </div>
