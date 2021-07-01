@@ -31,17 +31,17 @@
                             </div>
                             <div class="form-group col-sm-6">
                                 <label for="email">Email <span class="text-danger">*</span></label>
-                                <input type="text" name="email" id="email" class="form-control" placeholder="Plese enter email address" value="{{ @old('email') }}" />
+                                <input type="text" name="email" id="email" class="form-control" placeholder="Plese enter email address" value="{{ @old('email') }}" autocomplete="off" />
                                 <span class="kt-form__help error email"></span>
                             </div>
                             <div class="form-group col-sm-6">
                                 <label for="phone">Phone Number <span class="text-danger">*</span></label>
-                                <input type="text" name="phone" id="phone" class="form-control" placeholder="Plese enter phone number" value="{{ @old('phone') }}" />
+                                <input type="text" name="phone" id="phone" class="form-control" placeholder="Plese enter phone number" value="{{ @old('phone') }}" autocomplete="off" />
                                 <span class="kt-form__help error phone"></span>
                             </div>
                             <div class="form-group col-sm-6">
                                 <label for="password">Password <span class="text-danger">*</span></label>
-                                <input type="password" name="password" id="password" class="form-control" placeholder="Plese enter password" />
+                                <input type="password" name="password" id="password" class="form-control" placeholder="Plese enter password" autocomplete="off" />
                                 <span class="kt-form__help error password"></span>
                             </div>
                             <div class="form-group col-sm-12">
@@ -68,7 +68,7 @@
 
     <script>
         $(document).ready(function(){
-            $('.dropify').dropify({
+            var drEvent = $('.dropify').dropify({
                 messages: {
                     'default': 'Drag and drop profile image here or click',
                     'remove':  'Remove',
@@ -76,14 +76,13 @@
                 }
             });
 
-            var drEvent = $('.dropify').dropify();
-
             var dropifyElements = {};
             $('.dropify').each(function () {
                 dropifyElements[this.id] = false;
             });
 
             drEvent.on('dropify.beforeClear', function(event, element){
+                console.log('asd');
                 id = event.target.id;
                 if(!dropifyElements[id]){
                     var url = "{!! route('users.remove.image') !!}";
@@ -155,6 +154,9 @@
 
     <script>
         $(document).ready(function() {
+            $("#email").prop("autocomplete", "off");
+            $("#email").val('');
+
             $("#password").prop("autocomplete", "off");
             $("#password").val('');
 
