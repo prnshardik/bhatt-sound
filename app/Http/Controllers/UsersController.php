@@ -76,16 +76,16 @@
                     $folder_to_upload = public_path().'/uploads/users/';
 
                     $crud = [
-                            'name' => $request->name,
-                            'email' => $request->email,
-                            'phone' => $request->phone,
-                            'password' => bcrypt($password),
-                            'status' => 'active',
-                            'is_admin' => 'n',
-                            'created_at' => date('Y-m-d H:i:s'),
-                            'created_by' => auth()->user()->id,
-                            'updated_at' => date('Y-m-d H:i:s'),
-                            'updated_by' => auth()->user()->id
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'phone' => $request->phone,
+                        'password' => bcrypt($password),
+                        'status' => 'active',
+                        'is_admin' => 'n',
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'created_by' => auth()->user()->id,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                        'updated_by' => auth()->user()->id
                     ];
 
                     if(!empty($request->file('image'))){
@@ -109,9 +109,9 @@
                         if(!empty($request->file('image')))
                             $file->move($folder_to_upload, $filenameToStore);
 
-                        return redirect()->route('users')->with('success', 'User created successfully.');
+                        return redirect()->route('users')->with('success', 'Record added successfully');
                     }else{
-                        return redirect()->back()->with('error', 'Faild to create user!')->withInput();
+                        return redirect()->back()->with('error', 'Faild to add record')->withInput();
                     }
                 }else{
                     return redirect()->back()->with('error', 'Something went wrong')->withInput();
@@ -139,7 +139,7 @@
                 if($data)
                     return view('users.view')->with('data', $data);
                 else
-                    return redirect()->back()->with('error', 'No user found');
+                    return redirect()->back()->with('error', 'No record found');
             }
         /** view */
 
@@ -163,7 +163,7 @@
                 if($data)
                     return view('users.edit')->with('data', $data);
                 else
-                    return redirect()->back()->with('error', 'No user found');
+                    return redirect()->back()->with('error', 'No record found');
             }
         /** edit */ 
 
@@ -216,9 +216,9 @@
                             }
                         }
 
-                        return redirect()->route('users')->with('success', 'User updated successfully.');
+                        return redirect()->route('users')->with('success', 'Record updated successfully');
                     }else{
-                        return redirect()->back()->with('error', 'Faild to update user!')->withInput();
+                        return redirect()->back()->with('error', 'Faild to update record')->withInput();
                     }
                 }else{
                     return redirect()->back()->with('error', 'Something went wrong')->withInput();
