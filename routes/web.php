@@ -52,7 +52,7 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
             Route::post('users/remove-image', 'UsersController@remove_image')->name('users.remove.image');
         /** users */
 
-        /** item-category */
+        /** items-category */
             Route::any('items-categories', 'ItemsCategoriesController@index')->name('items.categories');
             Route::get('items-categories/create', 'ItemsCategoriesController@create')->name('items.categories.create');
             Route::post('items-categories/insert', 'ItemsCategoriesController@insert')->name('items.categories.insert');
@@ -60,7 +60,17 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
             Route::get('items-categories/edit/{id?}', 'ItemsCategoriesController@edit')->name('items.categories.edit');
             Route::patch('items-categories/update', 'ItemsCategoriesController@update')->name('items.categories.update');
             Route::post('items-categories/change-status', 'ItemsCategoriesController@change_status')->name('items.categories.change.status');
-        /** item-category */
+        /** items-category */
+
+        /** items */
+            Route::any('items', 'ItemsController@index')->name('items');
+            Route::get('items/create', 'ItemsController@create')->name('items.create');
+            Route::post('items/insert', 'ItemsController@insert')->name('items.insert');
+            Route::get('items/view/{id?}', 'ItemsController@view')->name('items.view');
+            Route::get('items/edit/{id?}', 'ItemsController@edit')->name('items.edit');
+            Route::patch('items/update', 'ItemsController@update')->name('items.update');
+            Route::post('items/change-status', 'ItemsController@change_status')->name('items.change.status');
+        /** items */
     });
 
     Route::get("{path}", function(){ return redirect()->route('login'); })->where('path', '.+');
