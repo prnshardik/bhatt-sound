@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder{
             UserSeeder::class,
             ItemsCategories::class,
             Items::class,
+            SubItemsCategories::class,
         ]);
     }
 }

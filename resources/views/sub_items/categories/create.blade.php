@@ -18,7 +18,7 @@
                     <h4 class="card-title">Create sub items categories</h4>
                 </div>
                 <div class="card-body ">
-                    <form name="form" action="{{ route('sub_items.categories.insert') }}" id="form" method="post" enctype="multipart/form-data">
+                    <form name="form" action="{{ route('sub.items.categories.insert') }}" id="form" method="post" enctype="multipart/form-data">
                         @csrf
                         
                         <div class="row">
@@ -35,7 +35,7 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <a href="{{ route('sub_items.categorie') }}" class="btn btn-default">Back</a>
+                            <a href="{{ route('sub.items.categories') }}" class="btn btn-default">Back</a>
                         </div>
                     </form>
                 </div>

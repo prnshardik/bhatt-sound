@@ -79,13 +79,13 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
 
         /** Sub items - Module */
             /** items-category */
-                Route::any('sub_items-categories', 'SubItemCategoriesController@index')->name('sub_items.categories');
-                Route::get('sub_items-categories/create', 'SubItemCategoriesController@create')->name('sub_items.categories.create');
-                Route::post('sub_items-categories/insert', 'SubItemCategoriesController@insert')->name('sub_items.categories.insert');
-                Route::get('sub_items-categories/view/{id?}', 'SubItemCategoriesController@view')->name('sub_items.categories.view');
-                Route::get('sub_items-categories/edit/{id?}', 'SubItemCategoriesController@edit')->name('sub_items.categories.edit');
-                Route::patch('sub_items-categories/update', 'SubItemCategoriesController@update')->name('sub_items.categories.update');
-                Route::post('sub_items-categories/change-status', 'SubItemCategoriesController@change_status')->name('sub_items.categories.change.status');
+                Route::any('sub-items-categories', 'SubItemsCategoriesController@index')->name('sub.items.categories');
+                Route::get('sub-items-categories/create', 'SubItemsCategoriesController@create')->name('sub.items.categories.create');
+                Route::post('sub-items-categories/insert', 'SubItemsCategoriesController@insert')->name('sub.items.categories.insert');
+                Route::get('sub-items-categories/view/{id?}', 'SubItemsCategoriesController@view')->name('sub.items.categories.view');
+                Route::get('sub-items-categories/edit/{id?}', 'SubItemsCategoriesController@edit')->name('sub.items.categories.edit');
+                Route::patch('sub-items-categories/update', 'SubItemsCategoriesController@update')->name('sub.items.categories.update');
+                Route::post('sub-items-categories/change-status', 'SubItemsCategoriesController@change_status')->name('sub.items.categories.change.status');
             /** items-category */
         /** Sub items - Module */
     });

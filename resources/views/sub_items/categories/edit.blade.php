@@ -18,7 +18,7 @@
                     <h4 class="card-title">Edit sub items categories</h4>
                 </div>
                 <div class="card-body ">
-                    <form name="form" action="{{ route('sub_items.categories.update') }}" id="form" method="post"  autocomplete="off" enctype="multipart/form-data">
+                    <form name="form" action="{{ route('sub.items.categories.update') }}" id="form" method="post"  autocomplete="off" enctype="multipart/form-data">
                         @csrf
                         @method('PATCH')
                         
@@ -38,7 +38,7 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <a href="{{ route('sub_items.categories') }}" class="btn btn-default">Back</a>
+                            <a href="{{ route('sub.items.categories') }}" class="btn btn-default">Back</a>
                         </div>
                     </form>
                 </div>

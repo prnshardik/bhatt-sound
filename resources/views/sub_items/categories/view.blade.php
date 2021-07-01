@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <a href="{{ route('items.categories') }}" class="btn btn-default">Back</a>
+                        <a href="{{ route('sub.items.categories') }}" class="btn btn-default">Back</a>
                     </div>
                 </div>
             </div>

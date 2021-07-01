@@ -4,23 +4,23 @@
     use Illuminate\Http\Request;
     use Illuminate\Support\Str;
     use App\Models\SubItemCategory;
-    use App\Http\Requests\SubItemsCategoryRequest;
+    use App\Http\Requests\SubItemCategoryRequest;
     use Auth, Validator, DB, Mail, DataTables, File;
 
-    class SubItemCategoriesController extends Controller{
+    class SubItemsCategoriesController extends Controller{
         /** index */
             public function index(Request $request){
                 if($request->ajax()){
-                    $data = ItemCategory::select('id', 'title', DB::Raw("SUBSTRING(".'description'.", 1, 30) as description"), 'status')->get();
+                    $data = SubItemCategory::select('id', 'title', DB::Raw("SUBSTRING(".'description'.", 1, 30) as description"), 'status')->get();
 
                     return Datatables::of($data)
                             ->addIndexColumn()
                             ->addColumn('action', function($data){
                                 return ' <div class="btn-group btn-sm">
-                                                <a href="'.route('sub_items.categories.view', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
+                                                <a href="'.route('sub.items.categories.view', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
                                                     <i class="fa fa-eye"></i>
                                                 </a> 
-                                                <a href="'.route('sub_items.categories.edit', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
+                                                <a href="'.route('sub.items.categories.edit', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
                                                     <i class="fa fa-edit"></i>
                                                 </a>  
                                                 <a href="javascript:;" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -59,7 +59,7 @@
         /** create */
 
         /** insert */
-            public function insert(SubItemsCategoryRequest $request){
+            public function insert(SubItemCategoryRequest $request){
                 if($request->ajax()){ return true; }
 
                 if(!empty($request->all())){
@@ -76,7 +76,7 @@
                     $last_id = SubItemCategory::insertGetId($crud);
                     
                     if($last_id)
-                        return redirect()->route('sub_items.categories')->with('success', 'Record added successfully');
+                        return redirect()->route('sub.items.categories')->with('success', 'Record added successfully');
                     else
                         return redirect()->back()->with('error', 'Faild to add record')->withInput();
                 }else{
@@ -118,7 +118,7 @@
         /** edit */ 
 
         /** update */
-            public function update(SubItemsCategoryRequest $request){
+            public function update(SubItemCategoryRequest $request){
                 if($request->ajax()){ return true; }
 
                 if(!empty($request->all())){
@@ -134,7 +134,7 @@
                     $update = SubItemCategory::where(['id' => $request->id])->update($crud);
 
                     if($update)
-                        return redirect()->route('sub_items.categories')->with('success', 'Record updated successfully');
+                        return redirect()->route('sub.items.categories')->with('success', 'Record updated successfully');
                     else
                         return redirect()->back()->with('error', 'Faild to update record')->withInput();
                 }else{

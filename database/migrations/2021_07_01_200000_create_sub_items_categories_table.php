@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSubItemsCategoriesTeble extends Migration
+class CreateSubItemsCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateSubItemsCategoriesTeble extends Migration
      */
     public function up()
     {
-        Schema::create('sub_items_categories_teble', function (Blueprint $table) {
+        Schema::create('sub_items_categories', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
@@ -31,6 +31,6 @@ class CreateSubItemsCategoriesTeble extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sub_items_categories_teble');
+        Schema::dropIfExists('sub_items_categories');
     }
 }

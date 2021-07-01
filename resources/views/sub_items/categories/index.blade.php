@@ -16,7 +16,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title">Sub items categories
-                        <a class="btn btn-primary btn-sm pull-right ml-2" style="margin-top: 8px;margin-bottom: 5px" href="{{ route('sub_items.categories.create') }}">Add New</a>
+                        <a class="btn btn-primary btn-sm pull-right ml-2" style="margin-top: 8px;margin-bottom: 5px" href="{{ route('sub.items.categories.create') }}">Add New</a>
                     </h5>
                 </div>
                 <div class="card-body">
@@ -69,7 +69,7 @@
                     // lengthChange: false,
 
                     "ajax":{
-                        "url": "{{ route('sub_items.categories.change.status') }}",
+                        "url": "{{ route('sub.items.categories') }}",
                         "type": "POST",
                         "dataType": "json",
                         "data":{
@@ -116,7 +116,7 @@
 
             if (confirm(msg)) {
                 $.ajax({
-                    "url": "{!! route('items.categories.change.status') !!}",
+                    "url": "{!! route('sub.items.categories.change.status') !!}",
                     "dataType": "json",
                     "type": "POST",
                     "data":{
