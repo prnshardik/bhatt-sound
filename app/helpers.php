@@ -1,0 +1,58 @@
+<?php
+    if(!function_exists('_site_title')){
+        function _site_title(){
+            return 'Bhatt Sounds';
+        }
+    }
+
+    if(!function_exists('_site_title_sf')){
+        function _site_title_sf(){
+            return 'BS';
+        }
+    }
+
+    if(!function_exists('_mail_from')){
+        function _mail_from(){
+            return 'info@musicinventory.com';
+        }
+    }
+
+    if(!function_exists('_firebase_notification')){
+        function _firebase_notification($fcm_token, $title = '', $body = ''){
+            $url = "https://fcm.googleapis.com/fcm/send";
+            
+            $token = $fcm_token;
+            
+            $serverKey = 'AAAAVb8dwyQ:APA91bFvX1cDg7ru3MP4a-zAJzm0HSvmDEiNP9QxJ74QJRuj4lc5oYAiBgm47-iVhpS_FJ_T9YZlO2WHUwCdevoCYXAgkP6jTDAjiOH46rRHKDH2Ww8Cat_hwy-Pr0kPbF-FT-ltT8YA';
+            
+            if($title == '')
+                $title = "Notification title";
+            
+            if($body == '')
+                $body = "Hello I am from Your php server";
+            
+            $notification = array('title' => $title, 'body' => $body, 'sound' => 'default', 'badge' => '1');
+            
+            $arrayToSend = array('to' => $token, 'notification' => $notification, 'priority'=>'high');
+            
+            $json = json_encode($arrayToSend);
+            
+            $headers = array();
+            $headers[] = 'Content-Type: application/json';
+            $headers[] = 'Authorization: key='. $serverKey;
+            
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            $response = curl_exec($ch);
+            curl_close($ch);
+   
+            if ($response === FALSE)
+                return false;
+            else
+                return false; 
+        }
+    }
+?>
