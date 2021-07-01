@@ -30,6 +30,10 @@ class CreateUsersTable extends Migration
             $table->integer('updated_by')->nullable();
         });
 
+        $folder_to_upload = public_path().'/uploads/users/';
+        if (!File::exists($folder_to_upload))
+            File::makeDirectory($folder_to_upload, 0777, true, true);
+
         if(file_exists(public_path('/qr_logo.png')) && !file_exists(public_path('/uploads/users/default.png')) ){
             File::copy(public_path('/qr_logo.png'), public_path('/uploads/users/default.png'));
         }
