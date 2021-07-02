@@ -326,21 +326,28 @@
                     $id = base64_decode($request->id);
                     $status = $request->status;
 
-                    $data = User::where(['id' => $id])->first();
+                    $data = ItemInventory::where(['id' => $id])->first();
 
                     if(!empty($data)){
                         if($status == 'deleted')
-                            $update = User::where('id',$id)->delete();
+                            $update = ItemInventory::where('id',$id)->delete();
                         else
-                            $update = User::where(['id' => $id])->update(['status' => $status, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth()->user()->id]);
+                            $update = ItemInventory::where(['id' => $id])->update(['status' => $status, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth()->user()->id]);
                         
                         if($update){
                             if($status == 'deleted'){
-                                $file_path = public_path().'/uploads/users/'.$data->image;
+                                $file_path = public_path().'/uploads/items_inventory/'.$data->image;
 
                                 if(File::exists($file_path) && $file_path != ''){
                                     if($data->image != 'default.png')
                                         @unlink($file_path);
+                                }
+
+                                $qr_path = public_path().'/uploads/qrcodes/items_inventory/'.$data->qrcode;
+
+                                if(File::exists($qr_path) && $qr_path != ''){
+                                    if($data->qrcode != 'default.png')
+                                        @unlink($qr_path);
                                 }
                             }
                             return response()->json(['code' => 200]);
@@ -376,41 +383,6 @@
                 }   
             }
         /** print */
-
-        /** remove-image */
-            public function remove_image(Request $request){
-                if(!$request->ajax()){ exit('No direct script access allowed'); }
-
-                if(!empty($request->all())){
-                    $id = base64_decode($request->id);
-                    $data = User::find($id);
-
-                    if($data){
-                        if($data->image != ''){
-                            $file_path = public_path().'/uploads/users/'.$data->image;
-
-                            if(File::exists($file_path) && $file_path != ''){
-                                if($data->image != 'default.png')
-                                    @unlink($file_path);
-                            }
-
-                            $update = User::where(['id' => $id])->limit(1)->update(['image' => null]);
-
-                            if($update)
-                                return response()->json(['code' => 200]);
-                            else
-                                return response()->json(['code' => 201]);
-                        }else{
-                            return response()->json(['code' => 200]);
-                        }
-                    }else{
-                        return response()->json(['code' => 201]);
-                    }
-                }else{
-                    return response()->json(['code' => 201]);
-                }
-            }
-        /** remove-image */
 
         /** items */
             public function items(Request $request){
