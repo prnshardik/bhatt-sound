@@ -27,10 +27,16 @@
                     <p>Items Categories</p>
                 </a>
             </li>
-            <li class="{{ (Request::is('items*') && !Request::is('items-categories*')) ? 'active' : '' }}">
+            <li class="{{ (Request::is('items*') && !Request::is('items-categories*') && !Request::is('items-inventories*')) ? 'active' : '' }}">
                 <a href="{{ route('items') }}">
-                    <i class="fa fa-music"></i>
+                    <i class="fa fa-cubes"></i>
                     <p>Items</p>
+                </a>
+            </li>
+            <li class="{{ Request::is('items-inventories*') ? 'active' : '' }}">
+                <a href="{{ route('items.inventories') }}">
+                    <i class="fa fa-music"></i>
+                    <p>Items Invenotories</p>
                 </a>
             </li>
             <li class="{{ Request::is('sub-items-categories*') ? 'active' : '' }}">

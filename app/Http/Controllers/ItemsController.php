@@ -62,7 +62,7 @@
                                 if($data->qrcode != null || $data->qrcode != '')
                                     $image = url('uploads/qrcodes/items').'/'.$data->qrcode;
                                 else
-                                    $image = url('uploads/qrcodes/items').'/default.png';
+                                    $image = '';
                                 
                                 return "<img src='$image' style='height: 30px; width: 30px'>";
                             })

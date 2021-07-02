@@ -74,6 +74,20 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
 
                 Route::get('items/print/{id?}', 'ItemsController@print')->name('items.print');
             /** items */
+
+            /** items-inventory */
+                Route::any('items-inventories', 'ItemsInventoriesController@index')->name('items.inventories');
+                Route::get('items-inventories/create', 'ItemsInventoriesController@create')->name('items.inventories.create');
+                Route::post('items-inventories/insert', 'ItemsInventoriesController@insert')->name('items.inventories.insert');
+                Route::get('items-inventories/view/{id?}', 'ItemsInventoriesController@view')->name('items.inventories.view');
+                Route::get('items-inventories/edit/{id?}', 'ItemsInventoriesController@edit')->name('items.inventories.edit');
+                Route::patch('items-inventories/update', 'ItemsInventoriesController@update')->name('items.inventories.update');
+                Route::post('items-inventories/change-status', 'ItemsInventoriesController@change_status')->name('items.inventories.change.status');
+
+                Route::get('items-inventories/print/{id?}', 'ItemsInventoriesController@print')->name('items.inventories.print');
+
+                Route::get('items-inventories/items', 'ItemsInventoriesController@items')->name('items.inventories.items');
+            /** items-inventory */
         /** items - Module */
 
 

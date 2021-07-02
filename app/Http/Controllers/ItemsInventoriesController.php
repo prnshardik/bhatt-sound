@@ -3,24 +3,33 @@
 
     use Illuminate\Http\Request;
     use Illuminate\Support\Str;
-    use App\Models\User;
-    use App\Http\Requests\UsersRequest;
+    use App\Models\Item;
+    use App\Models\ItemInventory;
+    use App\Models\ItemInventoryItem;
+    use App\Http\Requests\ItemInventoryRequest;
     use Auth, Validator, DB, Mail, DataTables, File;
 
-    class UsersController extends Controller{
+    class ItemsInventoriesController extends Controller{
         /** index */
             public function index(Request $request){
                 if($request->ajax()){
-                    $data = User::select('id', 'name', 'email', 'phone', 'image', 'status')->where(['is_admin' => 'n'])->get();
+                    $data = ItemInventory::select('id', 'title', 'qrcode', 'image', 'status')->get();
+
+                    if($data->isNotEmpty()){
+                        foreach($data as $row){
+                            $inventory_items = ItemInventoryItem::where(['item_inventory_id' => $row->id, 'status' => 'active'])->count();
+                            $row->items = $inventory_items;
+                        }
+                    }
 
                     return Datatables::of($data)
                             ->addIndexColumn()
                             ->addColumn('action', function($data){
                                 return ' <div class="btn-group btn-sm">
-                                                <a href="'.route('users.view', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
+                                                <a href="'.route('items.inventories.view', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
                                                     <i class="fa fa-eye"></i>
                                                 </a> 
-                                                <a href="'.route('users.edit', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
+                                                <a href="'.route('items.inventories.edit', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
                                                     <i class="fa fa-edit"></i>
                                                 </a>  
                                                 <a href="javascript:;" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -47,41 +56,52 @@
 
                             ->editColumn('image', function($data) {
                                 if($data->image != null || $data->image != '')
-                                    $image = url('uploads/users').'/'.$data->image;
+                                    $image = url('uploads/items_inventory').'/'.$data->image;
                                 else
-                                    $image = url('uploads/users').'/default.png';
+                                    $image = url('uploads/items_inventory').'/default.png';
                                 
                                 return "<img src='$image' style='height: 30px; width: 30px'>";
                             })
 
-                            ->rawColumns(['action', 'status', 'image'])
+                            ->editColumn('qrcode', function($data) {
+                                if($data->qrcode != null || $data->qrcode != '')
+                                    $image = url('uploads/qrcodes/items_inventory').'/'.$data->qrcode;
+                                else
+                                    $image = '';
+                                
+                                return "<img src='$image' style='height: 30px; width: 30px'>";
+                            })
+
+                            ->rawColumns(['action', 'status', 'image', 'qrcode'])
                             ->make(true);
                 }
-                return view('users.index');
+                return view('items.inventories.index');
             }
         /** index */
 
         /** create */
             public function create(Request $request){
-                return view('users.create');
+                return view('items.inventories.create');
             }
         /** create */
 
         /** insert */
-            public function insert(UsersRequest $request){
+            public function insert(ItemInventoryRequest $request){
                 if($request->ajax()){ return true; }
 
                 if(!empty($request->all())){
-                    $password = $request->password;
-                    $folder_to_upload = public_path().'/uploads/users/';
+                    $file_to_upload = public_path().'/uploads/items_inventory/';
+                    if (!File::exists($file_to_upload))
+                        File::makeDirectory($file_to_upload, 0777, true, true);
+
+                    $qr_to_upload = public_path().'/uploads/qrcodes/items_inventory/';
+                    if (!File::exists($qr_to_upload))
+                        File::makeDirectory($qr_to_upload, 0777, true, true);
 
                     $crud = [
-                        'name' => $request->name,
-                        'email' => $request->email,
-                        'phone' => $request->phone,
-                        'password' => bcrypt($password),
+                        'title' => ucfirst($request->title),
+                        'description' => $request->description ?? NULL,
                         'status' => 'active',
-                        'is_admin' => 'n',
                         'created_at' => date('Y-m-d H:i:s'),
                         'created_by' => auth()->user()->id,
                         'updated_at' => date('Y-m-d H:i:s'),
@@ -95,22 +115,54 @@
                         $extension = $request->file('image')->getClientOriginalExtension();
                         $filenameToStore = time()."_".$filename.'.'.$extension;
 
-                        if (!File::exists($folder_to_upload))
-                            File::makeDirectory($folder_to_upload, 0777, true, true);
-
                         $crud["image"] = $filenameToStore;
                     }else{
                         $crud["image"] = 'default.png';
                     }
 
-                    $last_id = User::insertGetId($crud);
-                    
-                    if($last_id){
-                        if(!empty($request->file('image')))
-                            $file->move($folder_to_upload, $filenameToStore);
+                    DB::beginTransaction();
+                    try {
+                        $last_id = ItemInventory::insertGetId($crud);
 
-                        return redirect()->route('users')->with('success', 'Record added successfully');
-                    }else{
+                        if($last_id){
+                            $qrname = 'qrcode_'.$last_id.'.png';
+
+                            \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($last_id, public_path('uploads/qrcodes/items_inventory/'.$qrname));
+
+                            $update = ItemInventory::where(['id' => $last_id])->update(['qrcode' => $qrname]);
+
+                            if($update){
+                                $items_id = $request->items_id;
+
+                                for($i=0; $i<count($items_id); $i++){
+                                    $ivti_crud = [
+                                        'item_inventory_id' => $last_id,
+                                        'item_id' => $items_id[$i],
+                                        'status' => 'active',
+                                        'created_at' => date('Y-m-d H:i:s'),
+                                        'created_by' => auth()->user()->id,
+                                        'updated_at' => date('Y-m-d H:i:s'),
+                                        'updated_by' => auth()->user()->id
+                                    ];
+
+                                    ItemInventoryItem::insertGetId($ivti_crud);
+                                }
+
+                                if(!empty($request->file('image')))
+                                    $file->move($file_to_upload, $filenameToStore);
+
+                                DB::commit();
+                                return redirect()->route('items.inventories')->with('success', 'Record added successfully');
+                            }else{
+                                DB::rollback();
+                                return redirect()->back()->with('error', 'Faild to add record')->withInput();
+                            }
+                        }else{
+                            DB::rollback();
+                            return redirect()->back()->with('error', 'Faild to add record')->withInput();
+                        }
+                    } catch (\Exception $e) {
+                        DB::rollback();
                         return redirect()->back()->with('error', 'Faild to add record')->withInput();
                     }
                 }else{
@@ -298,4 +350,28 @@
                 }
             }
         /** remove-image */
+
+        /** items */
+            public function items(Request $request){
+                $search = $request->search;
+                $items = json_decode($request->items);
+
+                $collection = Item::select('id', 'name', 'description')
+                                    ->where(['status' => 'active']);
+
+                if($search != '')
+                    $collection->where('name', 'like', '%'.$search.'%');
+                
+                $collection->whereNotIn('id', function($query) {
+                    $query->select('item_id')->from('items_inventories_items')->where(['status' => 'active']); 
+                });
+
+                $data = $collection->paginate(5);
+
+                $view = view('items.inventories.items', compact('data', 'items'))->render();
+                $pagination = view('items.inventories.items_pagination', compact('data'))->render();
+                
+                return response()->json(['success' => true, 'data' => $view, 'pagination' => $pagination]);
+            }
+        /** items */
     }

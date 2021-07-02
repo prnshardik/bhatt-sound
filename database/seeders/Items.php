@@ -9,9 +9,9 @@
     class Items extends Seeder{
 
         public function run(){
-            for($i=1; $i < 6; $i++){
+            for($i=1; $i < 16; $i++){
                 Item::create([
-                    'category_id' => $i,
+                    'category_id' => 1,
                     'name' => "Item $i",
                     'description' => 'Lorem ipsum de tenor',
                     'status' => 'active',
