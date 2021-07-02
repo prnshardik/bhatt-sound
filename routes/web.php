@@ -87,6 +87,9 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
                 Route::get('items-inventories/print/{id?}', 'ItemsInventoriesController@print')->name('items.inventories.print');
 
                 Route::get('items-inventories/items', 'ItemsInventoriesController@items')->name('items.inventories.items');
+                Route::get('items-inventories/items/delete', 'ItemsInventoriesController@items_delete')->name('items.inventories.items.delete');
+
+                Route::get('items-inventories/print/{id?}', 'ItemsInventoriesController@print')->name('items.inventories.print');
             /** items-inventory */
         /** items - Module */
 

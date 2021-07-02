@@ -29,7 +29,7 @@
                                     <th>QR-Code</th>
                                     <th>Image</th>
                                     <th>Title</th>
-                                    <th>Description</th>
+                                    <th>Items</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>

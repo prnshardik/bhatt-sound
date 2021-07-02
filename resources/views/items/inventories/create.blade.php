@@ -23,8 +23,6 @@
                     <form name="form" action="{{ route('items.inventories.insert') }}" id="form" method="post" enctype="multipart/form-data">
                         @csrf
                         
-                        <input type="hidden" name="items_id" id="items_id">
-
                         <div class="row">
                             <div class="form-group col-sm-6">
                                 <label for="title">Title <span class="text-danger">*</span></label>

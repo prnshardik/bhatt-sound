@@ -39,6 +39,7 @@
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="active" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Active</a></li>
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="inactive" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Inactive</a></li>
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="deleted" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Delete</a></li>
+                                                    <li><a class="dropdown-item" href="'.route('items.inventories.print', ['id' =>base64_encode($data->id)]).'">Print QR Code</a></li>
                                                 </ul>
                                             </div>';
                             })
@@ -177,21 +178,38 @@
                     return redirect()->back()->with('error', 'Something went wrong');
 
                 $id = base64_decode($id);
-                $path = URL('/uploads/users').'/';
+                $generate = _generate_qrcode($id, 'item_inventory');
 
-                $data = User::select('id', 'name', 'email', 'phone', 'status',
-                                        DB::Raw("CASE
-                                        WHEN ".'image'." != '' THEN CONCAT("."'".$path."'".", ".'image'.")
-                                        ELSE CONCAT("."'".$path."'".", 'default.png')
-                                        END as image")
-                                    )
-                            ->where(['id' => $id])
-                            ->first();
-                
-                if($data)
-                    return view('users.view')->with('data', $data);
-                else
+                if($generate){
+                    $path = URL('/uploads/items_inventory').'/';
+
+                    $data = ItemInventory::select('id', 'title', 'description',
+                                            DB::Raw("CASE
+                                            WHEN ".'image'." != '' THEN CONCAT("."'".$path."'".", ".'image'.")
+                                            ELSE CONCAT("."'".$path."'".", 'default.png')
+                                            END as image")
+                                        )
+                                ->where(['id' => $id])
+                                ->first();
+
+                    if($data){
+                        $inventory_items = ItemInventoryItem::select('items_inventories_items.id', 'items.name', DB::Raw("SUBSTRING(".'items.description'.", 1, 30) as description"))
+                                                ->leftjoin('items', 'items.id', 'items_inventories_items.item_id')
+                                                ->where(['items_inventories_items.item_inventory_id' => $data->id])
+                                                ->get();
+
+                        if($inventory_items->isNotEmpty())
+                            $data->items = $inventory_items;
+                        else
+                            $data->items = collect();
+
+                        return view('items.inventories.view')->with('data', $data);
+                    }else{
+                        return redirect()->back()->with('error', 'No record found');
+                    }
+                }else{
                     return redirect()->back()->with('error', 'No record found');
+                }
             }
         /** view */
 
@@ -201,9 +219,9 @@
                     return redirect()->back()->with('error', 'Something went wrong');
 
                 $id = base64_decode($id);
-                $path = URL('/uploads/users').'/';
+                $path = URL('/uploads/items_inventory').'/';
 
-                $data = User::select('id', 'name', 'email', 'phone', 'status',
+                $data = ItemInventory::select('id', 'title', 'description',
                                         DB::Raw("CASE
                                         WHEN ".'image'." != '' THEN CONCAT("."'".$path."'".", ".'image'.")
                                         ELSE CONCAT("."'".$path."'".", 'default.png')
@@ -212,25 +230,34 @@
                             ->where(['id' => $id])
                             ->first();
 
-                if($data)
-                    return view('users.edit')->with('data', $data);
-                else
+                if($data){
+                    $inventory_items = ItemInventoryItem::select('id', 'item_id')->where(['item_inventory_id' => $data->id])->get();
+
+                    if($inventory_items->isNotEmpty())
+                        $data->items = $inventory_items;
+                    else
+                        $data->items = collect();
+
+                    return view('items.inventories.edit')->with('data', $data);
+                }else{
                     return redirect()->back()->with('error', 'No record found');
+                }
             }
         /** edit */ 
 
         /** update */
-            public function update(UsersRequest $request){
+            public function update(ItemInventoryRequest $request){
                 if($request->ajax()){ return true; }
 
                 if(!empty($request->all())){
-                    $exst_record = User::where(['id' => $request->id])->first(); 
-                    $folder_to_upload = public_path().'/uploads/users/';
+                    $exst_record = ItemInventory::where(['id' => $request->id])->first(); 
+                    $file_to_upload = public_path().'/uploads/items_inventory/';
+                    if (!File::exists($file_to_upload))
+                        File::makeDirectory($file_to_upload, 0777, true, true);
 
                     $crud = [
-                        'name' => ucfirst($request->name),
-                        'email' => $request->email,
-                        'phone' => $request->phone ?? NULL,
+                        'title' => ucfirst($request->title),
+                        'description' => $request->description ?? NULL,
                         'updated_at' => date('Y-m-d H:i:s'),
                         'updated_by' => auth()->user()->id
                     ];
@@ -242,35 +269,48 @@
                         $extension = $request->file('image')->getClientOriginalExtension();
                         $filenameToStore = time()."_".$filename.'.'.$extension;
 
-                        if (!File::exists($folder_to_upload))
-                            File::makeDirectory($folder_to_upload, 0777, true, true);
-
                         $crud["image"] = $filenameToStore;
                     }else{
-                        $crud["image"] = $exst_record->image;
+                        $crud["image"] = 'default.png';
                     }
-                    
-                    if(isset($request->password) && !empty($request->password))
-                        $crud['password'] = bcrypt($request->password);
 
-                    $update = User::where(['id' => $request->id])->update($crud);
+                    DB::beginTransaction();
+                    try {
+                        $update = ItemInventory::where(['id' => $request->id])->update($crud);
 
-                    if($update){
-                        if(!empty($request->file('image')))
-                            $file->move($folder_to_upload, $filenameToStore);
+                        if($update){
+                            $items_id = $request->items_id;
 
-                        if($exst_record->image != null || $exst_record->image != ''){
-                            $file_path = public_path().'/uploads/users/'.$exst_record->image;
+                            for($i=0; $i<count($items_id); $i++){
+                                $exst_items = ItemInventoryItem::where(['item_inventory_id' => $request->id, 'item_id' => $items_id[$i]])->first();
 
-                            if(File::exists($file_path) && $file_path != ''){
-                                if($exst_record->image != 'default.png')
-                                    @unlink($file_path);
+                                if(empty($exst_items)){
+                                    $ivti_crud = [
+                                        'item_inventory_id' => $request->id,
+                                        'item_id' => $items_id[$i],
+                                        'status' => 'active',
+                                        'created_at' => date('Y-m-d H:i:s'),
+                                        'created_by' => auth()->user()->id,
+                                        'updated_at' => date('Y-m-d H:i:s'),
+                                        'updated_by' => auth()->user()->id
+                                    ];
+
+                                    ItemInventoryItem::insertGetId($ivti_crud);
+                                }
                             }
-                        }
 
-                        return redirect()->route('users')->with('success', 'Record updated successfully');
-                    }else{
-                        return redirect()->back()->with('error', 'Faild to update record')->withInput();
+                            if(!empty($request->file('image')))
+                                $file->move($file_to_upload, $filenameToStore);
+
+                            DB::commit();
+                            return redirect()->route('items.inventories')->with('success', 'Record updated successfully');
+                        }else{
+                            DB::rollback();
+                            return redirect()->back()->with('error', 'Faild to updated record')->withInput();
+                        }
+                    } catch (\Exception $e) {
+                        DB::rollback();
+                        return redirect()->back()->with('error', 'Faild to updated record')->withInput();
                     }
                 }else{
                     return redirect()->back()->with('error', 'Something went wrong')->withInput();
@@ -316,6 +356,27 @@
             }
         /** change-status */
 
+        /** print */
+            public function print(Request $request, $id=''){
+                if($id == '')
+                    return redirect()->back()->with('error', 'something went wrong');
+
+                $id = base64_decode($id);
+                $generate = _generate_qrcode($id, 'item_inventory');
+
+                if($generate){
+                    $data = ItemInventory::select('qrcode')->where(['id' => $id])->first();
+                
+                    if($data)
+                        return view('items.inventories.print', ['data' => $data]);
+                    else
+                        return redirect()->back()->with('error', 'Something went wrong');    
+                }else{
+                    return redirect()->back()->with('error', 'something went wrong');
+                }   
+            }
+        /** print */
+
         /** remove-image */
             public function remove_image(Request $request){
                 if(!$request->ajax()){ exit('No direct script access allowed'); }
@@ -355,6 +416,11 @@
             public function items(Request $request){
                 $search = $request->search;
                 $items = json_decode($request->items);
+                $inventory_id = $request->inventory_id;
+
+                $inventory_items = [];
+                if($inventory_id != '')
+                    $inventory_items = ItemInventoryItem::select('item_id')->where(['item_inventory_id' => $inventory_id])->get()->toArray();
 
                 $collection = Item::select('id', 'name', 'description')
                                     ->where(['status' => 'active']);
@@ -362,16 +428,42 @@
                 if($search != '')
                     $collection->where('name', 'like', '%'.$search.'%');
                 
-                $collection->whereNotIn('id', function($query) {
-                    $query->select('item_id')->from('items_inventories_items')->where(['status' => 'active']); 
-                });
+                if($inventory_id != ''){
+                    $collection->whereNotIn('id', function($query) use ($inventory_id) {
+                        $query->select('item_id')->from('items_inventories_items')->where(['status' => 'active'])->where('item_inventory_id', '!=', $inventory_id); 
+                    });
+                }else{                
+                    $collection->whereNotIn('id', function($query) {
+                        $query->select('item_id')->from('items_inventories_items')->where(['status' => 'active']); 
+                    });
+                }
 
                 $data = $collection->paginate(5);
 
-                $view = view('items.inventories.items', compact('data', 'items'))->render();
+                $view = view('items.inventories.items', compact('data', 'items', 'inventory_items'))->render();
                 $pagination = view('items.inventories.items_pagination', compact('data'))->render();
                 
                 return response()->json(['success' => true, 'data' => $view, 'pagination' => $pagination]);
             }
         /** items */
+
+        /** items-delete */
+            public function items_delete(Request $request){
+                if($request->id == '' || $request->inventory_id == '')
+                    return response()->json(['code' => 201]);
+
+                $exst = ItemInventoryItem::where(['item_id' => $request->id, 'item_inventory_id' => $request->inventory_id])->first();
+
+                if($exst){
+                    $delete = ItemInventoryItem::where(['id' => $exst->id])->delete();
+
+                    if($delete)
+                        return response()->json(['code' => 200]);
+                    else
+                        return response()->json(['code' => 201]);
+                }else{
+                    return response()->json(['code' => 200]);
+                }
+            }
+        /** items-delete */
     }

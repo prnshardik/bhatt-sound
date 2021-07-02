@@ -22,21 +22,9 @@
                 <div class="card-body ">
                     <div class="row">
                         <div class="form-group col-sm-6">
-                            <label for="category_id">Category <span class="text-danger">*</span></label>
-                            <select name="category_id" id="category_id" class="form-control" placeholder="Plese select category" disabled>
-                                <option value="" hidden>Select category</option>
-                                @if(isset($categories) && $categories->isNotEmpty())
-                                    @foreach($categories as $row)
-                                        <option value="{{ $row->id }}" @if(isset($data) && $data->category_id == $row->id|| @old('category_id') == $row->id) selected @endif >{{ $row->title }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                            <span class="kt-form__help error category_id"></span>
-                        </div>
-                        <div class="form-group col-sm-6">
-                            <label for="name">Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" id="name" class="form-control" placeholder="Plese enter name" value="{{ @old('name', $data->name) }}" disabled/>
-                            <span class="kt-form__help error name"></span>
+                            <label for="title">Title <span class="text-danger">*</span></label>
+                            <input type="text" name="title" id="title" class="form-control" placeholder="Plese enter title" value="{{ @old('title', $data->title) }}" disabled/>
+                            <span class="kt-form__help error title"></span>
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="description">Description <span class="text-danger"></span></label>
@@ -48,9 +36,35 @@
                             <input type="file" class=" dropify" id="image" name="image" data-default-file="{{ $data->image }}" data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M" data-show-remove="false" disabled="disabled">
                             <span class="kt-form__help error image"></span>
                         </div>
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%">ID</th>
+                                            <th width="38%">Title</th>
+                                            <th width="57%">Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="items_datatable">
+                                        @if(isset($data) && $data->items->isNotEmpty())
+                                            @php $i = 1; @endphp
+                                            @foreach($data->items as $row)
+                                                <tr>
+                                                    <td>{{ $i }}</td>
+                                                    <td>{{ $row->name }}</td>
+                                                    <td>{{ $row->description }}</td>
+                                                </tr>
+                                                @php $i++; @endphp
+                                            @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <a href="{{ route('items') }}" class="btn btn-default">Back</a>
+                        <a href="{{ route('items.inventories') }}" class="btn btn-default">Back</a>
                     </div>
                 </div>
             </div>

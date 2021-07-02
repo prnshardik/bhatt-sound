@@ -20,29 +20,24 @@
                     <h4 class="card-title">Edit Item</h4>
                 </div>
                 <div class="card-body ">
-                    <form name="form" action="{{ route('items.update') }}" id="form" method="post"  autocomplete="off" enctype="multipart/form-data">
+                    <form name="form" action="{{ route('items.inventories.update') }}" id="form" method="post"  autocomplete="off" enctype="multipart/form-data">
                         @csrf
                         @method('PATCH')
                         
                         <input type="hidden" name="id" value="{{ $data->id }}">
+                        @php $items_array = []; @endphp
+                        @if(isset($data) && $data->items->isNotEmpty())
+                            @foreach($data->items as $item)
+                                @php array_push($items_array, $item->item_id); @endphp
+                                <input type="hidden" class="items_id" name="items_id[]" value="{{ $item->item_id }}" />
+                            @endforeach
+                        @endif
 
                         <div class="row">
                             <div class="form-group col-sm-6">
-                                <label for="category_id">Category <span class="text-danger">*</span></label>
-                                <select name="category_id" id="category_id" class="form-control" placeholder="Plese select category">
-                                    <option value="" hidden>Select category</option>
-                                    @if(isset($categories) && $categories->isNotEmpty())
-                                        @foreach($categories as $row)
-                                            <option value="{{ $row->id }}" @if(isset($data) && $data->category_id == $row->id|| @old('category_id') == $row->id) selected @endif >{{ $row->title }}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                                <span class="kt-form__help error category_id"></span>
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <label for="name">Name <span class="text-danger">*</span></label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Plese enter name" value="{{ @old('name', $data->name) }}" />
-                                <span class="kt-form__help error name"></span>
+                                <label for="title">Title <span class="text-danger">*</span></label>
+                                <input type="text" name="title" id="title" class="form-control" placeholder="Plese enter title" value="{{ @old('title', $data->title) }}" />
+                                <span class="kt-form__help error title"></span>
                             </div>
                             <div class="form-group col-sm-6">
                                 <label for="description">Description <span class="text-danger"></span></label>
@@ -54,10 +49,31 @@
                                 <input type="file" class=" dropify" id="image" name="image" data-default-file="{{ $data->image }}" data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M" data-show-remove="false">
                                 <span class="kt-form__help error image"></span>
                             </div>
+                            <div class="col-sm-6">
+                                <span class="kt-form__help error items_id"></span>
+                            </div>
+                            <div class="col-sm-6 text-right">
+                                <input type="text" name="items_search" id="items_search" placeholder="Items search">
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th width="5%">ID</th>
+                                                <th width="38%">Title</th>
+                                                <th width="57%">Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="items_datatable"></tbody>
+                                    </table>
+                                    <div id="items_pagination"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <a href="{{ route('items') }}" class="btn btn-default">Back</a>
+                            <a href="{{ route('items.inventories') }}" class="btn btn-default">Back</a>
                         </div>
                     </form>
                 </div>
@@ -159,19 +175,6 @@
     </script>
 
     <script>
-        $(document).ready(function() {
-            $("#password").prop("autocomplete", "off");
-            $("#password").val('');
-
-            $('#phone').keyup(function(e){
-                if (/\D/g.test(this.value)){
-                    this.value = this.value.replace(/\D/g, '');
-                }
-            });
-        });
-    </script>
-
-    <script>
         $(document).ready(function () {
             var form = $('#form');
             $('.kt-form__help').html('');
@@ -201,5 +204,17 @@
             });
         });
     </script>
+
+    <script>
+        var config = {
+            routes: {
+                inventories_items: "{{ route('items.inventories.items') }}",
+                delete_inventories: "{{ route('items.inventories.items.delete') }}"
+            },
+            inventory_id: "{{ $data->id }}",
+            items: "{{ json_encode($items_array) }}"
+        };
+    </script>
+    <script src="{{ asset('assets/js/itemsInventory.js') }}"></script>
 @endsection
 

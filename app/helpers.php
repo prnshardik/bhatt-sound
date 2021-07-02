@@ -56,24 +56,32 @@
         }
     }
 
-    if(!function_exists('_generate_item_qrcode')){
-        function _generate_item_qrcode($id){
+    if(!function_exists('_generate_qrcode')){
+        function _generate_qrcode($id, $folder){
             if($id == '')
                 return false;
-            $folder_to_uploads = public_path().'/uploads/qrcodes/items/';
+            
+            if($folder == 'item'){
+                $folder_to_uploads = public_path().'/uploads/qrcodes/items/';
+                $exst_file = public_path().'/uploads/qrcodes/items/qrcode_'.$id.'.png';
+                $table = 'items';
+            }elseif($folder == 'item_inventory'){
+                $folder_to_uploads = public_path().'/uploads/qrcodes/items_inventory/';
+                $exst_file = public_path().'/uploads/qrcodes/items_inventory/qrcode_'.$id.'.png';
+                $table = 'items_inventories';
+            }
 
             if (!File::exists($folder_to_uploads))
                 File::makeDirectory($folder_to_uploads, 0777, true, true);
 
-            $exst_file = public_path().'/uploads/qrcodes/items/qrcode_'.$id.'.png';
             if(File::exists($exst_file) && $exst_file != '')
                 @unlink($exst_file);
             
             $qrname = 'qrcode_'.$id.'.png';
 
-            QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($id, public_path('uploads/qrcodes/items/'.$qrname));
+            QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($id, $folder_to_uploads.$qrname);
 
-            $update = DB::table('items')->where(['id' => $id])->update(['qrcode' => $qrname, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth()->user()->id]);
+            $update = DB::table($table)->where(['id' => $id])->update(['qrcode' => $qrname, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth()->user()->id]);
             
             if($update)
                 return true;

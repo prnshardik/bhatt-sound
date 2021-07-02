@@ -180,22 +180,27 @@
                     return redirect()->back()->with('error', 'Something went wrong');
 
                 $id = base64_decode($id);
+                $generate = _generate_qrcode($id, 'item');
 
-                $path = URL('/uploads/items').'/';
-                $categories = ItemCategory::select('id', 'title')->where(['status' => 'active'])->get();
-                $data = Item::select('id', 'category_id', 'name', 'description', 
-                                    DB::Raw("CASE
-                                    WHEN ".'image'." != '' THEN CONCAT("."'".$path."'".", ".'image'.")
-                                    ELSE CONCAT("."'".$path."'".", 'default.png')
-                                    END as image")
-                                )
-                                ->where(['id' => $id])
-                                ->first();
-                
-                if($data)
-                    return view('items.items.view', ['data' => $data, 'categories' => $categories]);
-                else
+                if($generate){
+                    $path = URL('/uploads/items').'/';
+                    $categories = ItemCategory::select('id', 'title')->where(['status' => 'active'])->get();
+                    $data = Item::select('id', 'category_id', 'name', 'description', 
+                                        DB::Raw("CASE
+                                        WHEN ".'image'." != '' THEN CONCAT("."'".$path."'".", ".'image'.")
+                                        ELSE CONCAT("."'".$path."'".", 'default.png')
+                                        END as image")
+                                    )
+                                    ->where(['id' => $id])
+                                    ->first();
+                    
+                    if($data)
+                        return view('items.items.view', ['data' => $data, 'categories' => $categories]);
+                    else
+                        return redirect()->back()->with('error', 'No record found');
+                }else{
                     return redirect()->back()->with('error', 'No record found');
+                }
             }
         /** view */
 
@@ -331,7 +336,7 @@
                     return redirect()->back()->with('error', 'something went wrong');
 
                 $id = base64_decode($id);
-                $generate = _generate_item_qrcode($id);
+                $generate = _generate_qrcode($id, 'item');
 
                 if($generate){
                     $data = Item::select('qrcode')->where(['id' => $id])->first();
