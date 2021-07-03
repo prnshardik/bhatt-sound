@@ -36,13 +36,25 @@
             <li class="{{ Request::is('items-inventories*') ? 'active' : '' }}">
                 <a href="{{ route('items.inventories') }}">
                     <i class="fa fa-music"></i>
-                    <p>Items Invenotories</p>
+                    <p>Items Inventories</p>
                 </a>
             </li>
             <li class="{{ Request::is('sub-items-categories*') ? 'active' : '' }}">
                 <a href="{{ route('sub.items.categories') }}">
                     <i class="fa fa-bars"></i>
                     <p>Sub Items Categories</p>
+                </a>
+            </li>
+            <li class="{{ Request::is('sub-items*') ? 'active' : '' }}">
+                <a href="{{ route('sub-items') }}">
+                    <i class="fa fa-cubes"></i>
+                    <p>Sub Items</p>
+                </a>
+            </li>
+            <li class="{{ Request::is('sub-items-inventories*') ? 'active' : '' }}">
+                <a href="{{ route('sub-items.inventories') }}">
+                    <i class="fa fa-music"></i>
+                    <p>Sub Items Inventories</p>
                 </a>
             </li>
         </ul>

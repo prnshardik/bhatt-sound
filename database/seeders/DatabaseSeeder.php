@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder{
             ItemsCategories::class,
             Items::class,
             SubItemsCategories::class,
+            SubItems::class,
         ]);
     }
 }
