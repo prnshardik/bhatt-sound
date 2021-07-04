@@ -5,8 +5,6 @@ $(document).ready(function(){
         items = jQuery.parseJSON(config.items);
     }
 
-    console.log(items);
-
     $(document).on('click', '#items_pagination .pagination a', function(event){
         event.preventDefault(); 
         var page = $(this).attr('href').split('page=')[1];

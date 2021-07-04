@@ -270,8 +270,6 @@
                         $filenameToStore = time()."_".$filename.'.'.$extension;
 
                         $crud["image"] = $filenameToStore;
-                    }else{
-                        $crud["image"] = 'default.png';
                     }
 
                     DB::beginTransaction();

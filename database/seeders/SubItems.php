@@ -1,8 +1,7 @@
 <?php
 
     namespace Database\Seeders;
-    use App\Models\ItemCategory;
-    use App\Models\Item;
+    use App\Models\SubItem;
 
     use Illuminate\Database\Seeder;
 
@@ -10,7 +9,7 @@
 
         public function run(){
             for($i=1; $i < 16; $i++){
-                Item::create([
+                SubItem::create([
                     'category_id' => 1,
                     'name' => "Item $i",
                     'description' => 'Lorem ipsum de tenor',

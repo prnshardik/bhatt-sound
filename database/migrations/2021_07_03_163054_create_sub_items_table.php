@@ -16,7 +16,7 @@ class CreateSubItemsTable extends Migration
     {
         Schema::create('sub_items', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('sub_item_category_id')->nullable()->unsigned();
+            $table->bigInteger('category_id')->nullable()->unsigned();
             $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->text('image')->nullable();

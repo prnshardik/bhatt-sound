@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\File;
 
-class CreateItemsInventoriesTable extends Migration
+class CreateSubItemsInventoriesTable extends Migration
 {
     /**
      * Run the migrations.

@@ -198,7 +198,8 @@
         var config = {
             routes: {
                 inventories_items: "{{ route('items.inventories.items') }}",
-            }
+            },
+            items: ""
         };
     </script>
     <script src="{{ asset('assets/js/subitemsInventory.js') }}"></script>
