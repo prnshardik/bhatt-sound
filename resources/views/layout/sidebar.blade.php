@@ -28,19 +28,19 @@
                 </a>
                 <div class="collapse {{ (Request::is('items*') || Request::is('items-categories*') || Request::is('items-inventories*')) ? 'show' : '' }}" id="items">
                     <ul class="nav">
-                        <li class="{{ Request::is('items-categories*') ? 'active' : '' }}">
+                        <li class="sidebar_ul {{ Request::is('items-categories*') ? 'active' : '' }}">
                             <a href="{{ route('items.categories') }}">
                                 <span class="sidebar-mini-icon"><i class="fa fa-bars"></i></span>
                                 <span class="sidebar-normal"> Items Categories </span>
                             </a>
                         </li>
-                        <li class="{{ (Request::is('items*') && !Request::is('items-categories*') && !Request::is('items-inventories*')) ? 'active' : '' }}">
+                        <li class="sidebar_ul {{ (Request::is('items*') && !Request::is('items-categories*') && !Request::is('items-inventories*')) ? 'active' : '' }}">
                             <a href="{{ route('items') }}">
                                 <span class="sidebar-mini-icon"><i class="fa fa-cubes"></i></span>
                                 <span class="sidebar-normal"> Items </span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('items-inventories*') ? 'active' : '' }}">
+                        <li class="sidebar_ul {{ Request::is('items-inventories*') ? 'active' : '' }}">
                             <a href="{{ route('items.inventories') }}">
                                 <span class="sidebar-mini-icon"><i class="fa fa-music"></i></span>
                                 <span class="sidebar-normal"> Items Inventories </span>
@@ -56,19 +56,19 @@
                 </a>
                 <div class="collapse {{ (Request::is('sub-items*') || Request::is('sub-items-categories*') || Request::is('sub-items-inventories*')) ? 'show' : '' }}" id="subitems">
                     <ul class="nav">
-                        <li class="{{ Request::is('sub-items-categories*') ? 'active' : '' }}">
+                        <li class="sidebar_ul {{ Request::is('sub-items-categories*') ? 'active' : '' }}">
                             <a href="{{ route('sub.items.categories') }}">
                                 <span class="sidebar-mini-icon"><i class="fa fa-bars"></i></span>
                                 <span class="sidebar-normal"> Sub Items Categories </span>
                             </a>
                         </li>
-                        <li class="{{ (Request::is('sub-items*') && !Request::is('sub-items-categories*') && !Request::is('sub-items-inventories*')) ? 'active' : '' }}">
+                        <li class="sidebar_ul {{ (Request::is('sub-items*') && !Request::is('sub-items-categories*') && !Request::is('sub-items-inventories*')) ? 'active' : '' }}">
                             <a href="{{ route('sub.items') }}">
                                 <span class="sidebar-mini-icon"><i class="fa fa-cubes"></i></span>
                                 <span class="sidebar-normal"> Sub Items </span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('sub-items-inventories*') ? 'active' : '' }}">
+                        <li class="sidebar_ul {{ Request::is('sub-items-inventories*') ? 'active' : '' }}">
                             <a href="{{ route('sub.items.inventories') }}">
                                 <span class="sidebar-mini-icon"><i class="fa fa-music"></i></span>
                                 <span class="sidebar-normal"> Sub Items Inventories </span>

@@ -140,6 +140,23 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
                 Route::get('sub-items-inventories/sub-items/delete', 'SubItemsInventoriesController@items_delete')->name('sub.items.inventories.items.delete');
             /** sub-items-inventories */
         /** sub-items - module */
+
+        /** cart */
+            Route::any('cart', 'CartController@index')->name('cart');
+            Route::get('cart/create', 'CartController@create')->name('cart.create');
+            Route::post('cart/insert', 'CartController@insert')->name('cart.insert');
+            Route::get('cart/view/{id?}', 'CartController@view')->name('cart.view');
+            Route::get('cart/edit/{id?}', 'CartController@edit')->name('cart.edit');
+            Route::post('cart/update', 'CartController@update')->name('cart.update');
+            Route::post('cart/change-status', 'CartController@change_status')->name('cart.change.status');
+
+            Route::get('cart/users', 'CartController@users')->name('cart.users');
+            Route::get('cart/sub_users', 'CartController@sub_users')->name('cart.sub.users');
+            Route::get('cart/inventories', 'CartController@inventories')->name('cart.inventories');
+            Route::get('cart/delete_inventories', 'CartController@delete_inventories')->name('cart.delete.inventories');
+            Route::get('cart/sub_inventories', 'CartController@sub_inventories')->name('cart.sub_inventories');
+            Route::get('cart/delete_sub_inventories', 'CartController@delete_sub_inventories')->name('cart.delete.sub_inventories');
+        /** cart */
     });
 
     Route::get("{path}", function(){ return redirect()->route('login'); })->where('path', '.+');

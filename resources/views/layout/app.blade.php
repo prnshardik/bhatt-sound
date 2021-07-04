@@ -6,6 +6,8 @@
     <title>{{ _site_title() }} | @yield('title')</title>
     
     @include('layout.styles')
+
+    <link rel="icon" href="{{ asset('qr_logo.png') }}" type="image/gif" sizes="16x16">
 </head>
 
 <body class="">

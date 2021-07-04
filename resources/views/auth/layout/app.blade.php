@@ -20,6 +20,8 @@
             padding-top: 4vh;
         }
     </style>
+
+    <link rel="icon" href="{{ asset('qr_logo.png') }}" type="image/gif" sizes="16x16">
 </head>
 <body class="login-page">
     <div class="wrapper wrapper-full-page ">

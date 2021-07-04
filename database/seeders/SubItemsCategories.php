@@ -8,7 +8,7 @@
     class SubItemsCategories extends Seeder{
 
         public function run(){
-            for($i=1; $i < 16; $i++){
+            for($i=1; $i < 6; $i++){
                 SubItemCategory::create([
                     'title' => "Sub Category $i",
                     'description' => 'Lorem ipsum de tenor',

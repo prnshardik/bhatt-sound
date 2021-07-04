@@ -15,6 +15,10 @@
         font-size: 10px;
         color: red;
     }
+
+    .sidebar_ul{
+        margin-left: 15px;
+    }
 </style>
 
 @yield('styles')
