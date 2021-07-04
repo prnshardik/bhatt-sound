@@ -20,10 +20,10 @@
                             ->addIndexColumn()
                             ->addColumn('action', function($data){
                                 return ' <div class="btn-group btn-sm">
-                                                <a href="'.route('sub-items.view', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
+                                                <a href="'.route('sub.items.view', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
                                                     <i class="fa fa-eye"></i>
                                                 </a> 
-                                                <a href="'.route('sub-items.edit', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
+                                                <a href="'.route('sub.items.edit', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
                                                     <i class="fa fa-edit"></i>
                                                 </a>  
                                                 <a href="javascript:;" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -33,7 +33,7 @@
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="active" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Active</a></li>
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="inactive" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Inactive</a></li>
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="deleted" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Delete</a></li>
-                                                    <li><a class="dropdown-item" href="'.route('sub-items.print', ['id' =>base64_encode($data->id)]).'">Print QR Code</a></li>
+                                                    <li><a class="dropdown-item" href="'.route('sub.items.print', ['id' =>base64_encode($data->id)]).'">Print QR Code</a></li>
                                                 </ul>
                                             </div>';
                             })
@@ -147,7 +147,7 @@
 
                         if($i == $quantity){
                             DB::commit();
-                            return redirect()->route('sub-items')->with('success', 'Record added successfully');
+                            return redirect()->route('sub.items')->with('success', 'Record added successfully');
                         }else{
                             if(!empty($names)){
                                 foreach($names as $name){
@@ -195,7 +195,7 @@
                                     ->first();
                     
                     if($data)
-                        return view('sub-items.items.view', ['data' => $data, 'categories' => $categories]);
+                        return view('sub.items.items.view', ['data' => $data, 'categories' => $categories]);
                     else
                         return redirect()->back()->with('error', 'No record found');
                 }else{
@@ -223,7 +223,7 @@
                                 ->first();
 
                 if($data)
-                    return view('sub-items.items.edit', ['data' => $data, 'categories' => $categories]);
+                    return view('sub.items.items.edit', ['data' => $data, 'categories' => $categories]);
                 else
                     return redirect()->back()->with('error', 'No record found');
             }
@@ -275,7 +275,7 @@
                             }
                         }
 
-                        return redirect()->route('sub-items')->with('success', 'Record updated successfully');
+                        return redirect()->route('sub.items')->with('success', 'Record updated successfully');
                     }else{
                         return redirect()->back()->with('error', 'Faild to update record')->withInput();
                     }

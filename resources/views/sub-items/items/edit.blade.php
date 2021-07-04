@@ -20,7 +20,7 @@
                     <h4 class="card-title">Edit Sub Item</h4>
                 </div>
                 <div class="card-body ">
-                    <form name="form" action="{{ route('sub-items.update') }}" id="form" method="post"  autocomplete="off" enctype="multipart/form-data">
+                    <form name="form" action="{{ route('sub.items.update') }}" id="form" method="post"  autocomplete="off" enctype="multipart/form-data">
                         @csrf
                         @method('PATCH')
                         
@@ -57,7 +57,7 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <a href="{{ route('sub-items') }}" class="btn btn-default">Back</a>
+                            <a href="{{ route('sub.items') }}" class="btn btn-default">Back</a>
                         </div>
                     </form>
                 </div>
@@ -91,7 +91,7 @@
             drEvent.on('dropify.beforeClear', function(event, element){
                 id = event.target.id;
                 if(!dropifyElements[id]){
-                    var url = "{!! route('users.remove.image') !!}";
+                    var url = "{!! route('sub.items.remove.image') !!}";
                     <?php if(isset($data) && isset($data->id)){ ?>
                         var id_encoded = "{{ base64_encode($data->id) }}";
 

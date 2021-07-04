@@ -20,7 +20,7 @@
                     <h4 class="card-title">Create Sub Item inventory</h4>
                 </div>
                 <div class="card-body ">
-                    <form name="form" action="{{ route('sub-items.inventories.insert') }}" id="form" method="post" enctype="multipart/form-data">
+                    <form name="form" action="{{ route('sub.items.inventories.insert') }}" id="form" method="post" enctype="multipart/form-data">
                         @csrf
                         
                         <div class="row">
@@ -63,7 +63,7 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <a href="{{ route('sub-items.inventories') }}" class="btn btn-default">Back</a>
+                            <a href="{{ route('sub.items.inventories') }}" class="btn btn-default">Back</a>
                         </div>
                     </form>
                 </div>
@@ -96,7 +96,7 @@
                 console.log('asd');
                 id = event.target.id;
                 if(!dropifyElements[id]){
-                    var url = "{!! route('users.remove.image') !!}";
+                    var url = "{!! route('sub.items.inventories.remove.image') !!}";
                     <?php if(isset($data) && isset($data->id)){ ?>
                         var id_encoded = "{{ base64_encode($data->id) }}";
 
@@ -197,11 +197,11 @@
     <script>
         var config = {
             routes: {
-                inventories_items: "{{ route('items.inventories.items') }}",
+                inventories_items: "{{ route('sub.items.inventories.items') }}",
             },
             items: ""
         };
     </script>
-    <script src="{{ asset('assets/js/subitemsInventory.js') }}"></script>
+    <script src="{{ asset('assets/js/subItemsInventory.js') }}"></script>
 @endsection
 

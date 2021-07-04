@@ -16,7 +16,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title">Sub Items Inventories
-                        <a class="btn btn-primary btn-sm pull-right ml-2" style="margin-top: 8px;margin-bottom: 5px" href="{{ route('sub-items.inventories.create') }}">Add New</a>
+                        <a class="btn btn-primary btn-sm pull-right ml-2" style="margin-top: 8px;margin-bottom: 5px" href="{{ route('sub.items.inventories.create') }}">Add New</a>
                     </h5>
                 </div>
                 <div class="card-body">
@@ -71,7 +71,7 @@
                     // lengthChange: false,
 
                     "ajax":{
-                        "url": "{{ route('sub-items.inventories') }}",
+                        "url": "{{ route('sub.items.inventories') }}",
                         "type": "POST",
                         "dataType": "json",
                         "data":{
@@ -126,7 +126,7 @@
 
             if (confirm(msg)) {
                 $.ajax({
-                    "url": "{!! route('sub-items.inventories.change.status') !!}",
+                    "url": "{!! route('sub.items.inventories.change.status') !!}",
                     "dataType": "json",
                     "type": "POST",
                     "data":{

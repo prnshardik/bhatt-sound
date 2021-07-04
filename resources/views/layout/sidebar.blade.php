@@ -46,13 +46,13 @@
                 </a>
             </li>
             <li class="{{ (Request::is('sub-items*') && !Request::is('sub-items-categories*') && !Request::is('sub-items-inventories*')) ? 'active' : '' }}">
-                <a href="{{ route('sub-items') }}">
+                <a href="{{ route('sub.items') }}">
                     <i class="fa fa-cubes"></i>
                     <p>Sub Items</p>
                 </a>
             </li>
             <li class="{{ Request::is('sub-items-inventories*') ? 'active' : '' }}">
-                <a href="{{ route('sub-items.inventories') }}">
+                <a href="{{ route('sub.items.inventories') }}">
                     <i class="fa fa-music"></i>
                     <p>Sub Items Inventories</p>
                 </a>

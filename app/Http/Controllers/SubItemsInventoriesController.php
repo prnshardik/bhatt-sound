@@ -27,10 +27,10 @@
                             ->addIndexColumn()
                             ->addColumn('action', function($data){
                                 return ' <div class="btn-group btn-sm">
-                                                <a href="'.route('sub-items.inventories.view', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
+                                                <a href="'.route('sub.items.inventories.view', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
                                                     <i class="fa fa-eye"></i>
                                                 </a> 
-                                                <a href="'.route('sub-items.inventories.edit', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
+                                                <a href="'.route('sub.items.inventories.edit', ['id' => base64_encode($data->id)]).'" class="btn btn-default btn-xs">
                                                     <i class="fa fa-edit"></i>
                                                 </a>  
                                                 <a href="javascript:;" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -40,7 +40,7 @@
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="active" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Active</a></li>
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="inactive" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Inactive</a></li>
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="deleted" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Delete</a></li>
-                                                    <li><a class="dropdown-item" href="'.route('sub-items.inventories.print', ['id' =>base64_encode($data->id)]).'">Print QR Code</a></li>
+                                                    <li><a class="dropdown-item" href="'.route('sub.items.inventories.print', ['id' =>base64_encode($data->id)]).'">Print QR Code</a></li>
                                                 </ul>
                                             </div>';
                             })
@@ -77,13 +77,13 @@
                             ->rawColumns(['action', 'status', 'image', 'qrcode'])
                             ->make(true);
                 }
-                return view('sub-items.sub-items-inventories.index');
+                return view('sub-items.inventories.index');
             }
         /** index */
 
         /** create */
             public function create(Request $request){
-                return view('sub-items.sub-items-inventories.create');
+                return view('sub-items.inventories.create');
             }
         /** create */
 
@@ -154,7 +154,7 @@
                                     $file->move($file_to_upload, $filenameToStore);
 
                                 DB::commit();
-                                return redirect()->route('sub-items.inventories')->with('success', 'Record added successfully');
+                                return redirect()->route('sub.items.inventories')->with('success', 'Record added successfully');
                             }else{
                                 DB::rollback();
                                 return redirect()->back()->with('error', 'Faild to add record')->withInput();
@@ -204,7 +204,7 @@
                         else
                             $data->items = collect();
 
-                        return view('sub-items.sub-items-inventories.view')->with('data', $data);
+                        return view('sub-items.inventories.view')->with('data', $data);
                     }else{
                         return redirect()->back()->with('error', 'No record found');
                     }
@@ -239,7 +239,7 @@
                     else
                         $data->items = collect();
 
-                    return view('sub-items.sub-items-inventories.edit')->with('data', $data);
+                    return view('sub-items.inventories.edit')->with('data', $data);
                 }else{
                     return redirect()->back()->with('error', 'No record found');
                 }
@@ -304,7 +304,7 @@
                                 $file->move($file_to_upload, $filenameToStore);
 
                             DB::commit();
-                            return redirect()->route('sub-items.sub-items-inventories')->with('success', 'Record updated successfully');
+                            return redirect()->route('sub.items.sub-items-inventories')->with('success', 'Record updated successfully');
                         }else{
                             DB::rollback();
                             return redirect()->back()->with('error', 'Faild to updated record')->withInput();
@@ -376,7 +376,7 @@
                     $data = SubItemInventory::select('qrcode')->where(['id' => $id])->first();
                 
                     if($data)
-                        return view('sub-items.sub-items-inventories.print', ['data' => $data]);
+                        return view('sub-items.inventories.print', ['data' => $data]);
                     else
                         return redirect()->back()->with('error', 'Something went wrong');    
                 }else{
@@ -413,8 +413,8 @@
 
                 $data = $collection->paginate(5);
 
-                $view = view('sub-items.sub-items-inventories.items', compact('data', 'items', 'inventory_items'))->render();
-                $pagination = view('sub-items.sub-items-inventories.items_pagination', compact('data'))->render();
+                $view = view('sub-items.inventories.items', compact('data', 'items', 'inventory_items'))->render();
+                $pagination = view('sub-items.inventories.items_pagination', compact('data'))->render();
                 
                 return response()->json(['success' => true, 'data' => $view, 'pagination' => $pagination]);
             }

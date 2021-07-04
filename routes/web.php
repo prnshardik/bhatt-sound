@@ -77,6 +77,7 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
                 Route::patch('items/update', 'ItemsController@update')->name('items.update');
                 Route::post('items/change-status', 'ItemsController@change_status')->name('items.change.status');
 
+                Route::post('items/remove-image', 'ItemsController@remove_image')->name('items.remove.image');
                 Route::get('items/print/{id?}', 'ItemsController@print')->name('items.print');
             /** items */
 
@@ -91,10 +92,10 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
 
                 Route::get('items-inventories/print/{id?}', 'ItemsInventoriesController@print')->name('items.inventories.print');
 
+                Route::post('items-inventories/remove-image', 'ItemsInventoriesController@remove_image')->name('items.inventories.remove.image');
+
                 Route::get('items-inventories/items', 'ItemsInventoriesController@items')->name('items.inventories.items');
                 Route::get('items-inventories/items/delete', 'ItemsInventoriesController@items_delete')->name('items.inventories.items.delete');
-
-                Route::get('items-inventories/print/{id?}', 'ItemsInventoriesController@print')->name('items.inventories.print');
             /** items-inventory */
         /** items - Module */
 
@@ -111,32 +112,33 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
             /** items-category */
 
             /** Sub-Items */
-                Route::any('sub-items', 'SubItemsController@index')->name('sub-items');
-                Route::get('sub-items/create', 'SubItemsController@create')->name('sub-items.create');
-                Route::post('sub-items/insert', 'SubItemsController@insert')->name('sub-items.insert');
-                Route::get('sub-items/view/{id?}', 'SubItemsController@view')->name('sub-items.view');
-                Route::get('sub-items/edit/{id?}', 'SubItemsController@edit')->name('sub-items.edit');
-                Route::patch('sub-items/update', 'SubItemsController@update')->name('sub-items.update');
-                Route::post('sub-items/change-status', 'SubItemsController@change_status')->name('sub-items.change.status');
+                Route::any('sub-items', 'SubItemsController@index')->name('sub.items');
+                Route::get('sub-items/create', 'SubItemsController@create')->name('sub.items.create');
+                Route::post('sub-items/insert', 'SubItemsController@insert')->name('sub.items.insert');
+                Route::get('sub-items/view/{id?}', 'SubItemsController@view')->name('sub.items.view');
+                Route::get('sub-items/edit/{id?}', 'SubItemsController@edit')->name('sub.items.edit');
+                Route::patch('sub-items/update', 'SubItemsController@update')->name('sub.items.update');
+                Route::post('sub-items/change-status', 'SubItemsController@change_status')->name('sub.items.change.status');
 
-                Route::get('sub-items/print/{id?}', 'SubItemsController@print')->name('sub-items.print');
+                Route::post('sub-items/remove-image', 'SubItemsController@remove_image')->name('sub.items.remove.image');
+                Route::get('sub-items/print/{id?}', 'SubItemsController@print')->name('sub.items.print');
             /** Sub-Items */
 
             /** items-inventory */
-                Route::any('sub-items-inventories', 'SubItemsInventoriesController@index')->name('sub-items.inventories');
-                Route::get('sub-items-inventories/create', 'SubItemsInventoriesController@create')->name('sub-items.inventories.create');
-                Route::post('sub-items-inventories/insert', 'SubItemsInventoriesController@insert')->name('sub-items.inventories.insert');
-                Route::get('sub-items-inventories/view/{id?}', 'SubItemsInventoriesController@view')->name('sub-items.inventories.view');
-                Route::get('sub-items-inventories/edit/{id?}', 'SubItemsInventoriesController@edit')->name('sub-items.inventories.edit');
-                Route::patch('sub-items-inventories/update', 'SubItemsInventoriesController@update')->name('sub-items.inventories.update');
-                Route::post('sub-items-inventories/change-status', 'SubItemsInventoriesController@change_status')->name('sub-items.inventories.change.status');
+                Route::any('sub-items-inventories', 'SubItemsInventoriesController@index')->name('sub.items.inventories');
+                Route::get('sub-items-inventories/create', 'SubItemsInventoriesController@create')->name('sub.items.inventories.create');
+                Route::post('sub-items-inventories/insert', 'SubItemsInventoriesController@insert')->name('sub.items.inventories.insert');
+                Route::get('sub-items-inventories/view/{id?}', 'SubItemsInventoriesController@view')->name('sub.items.inventories.view');
+                Route::get('sub-items-inventories/edit/{id?}', 'SubItemsInventoriesController@edit')->name('sub.items.inventories.edit');
+                Route::patch('sub-items-inventories/update', 'SubItemsInventoriesController@update')->name('sub.items.inventories.update');
+                Route::post('sub-items-inventories/change-status', 'SubItemsInventoriesController@change_status')->name('sub.items.inventories.change.status');
 
-                Route::get('sub-items-inventories/print/{id?}', 'SubItemsInventoriesController@print')->name('sub-items.inventories.print');
+                Route::get('sub-items-inventories/print/{id?}', 'SubItemsInventoriesController@print')->name('sub.items.inventories.print');
 
-                Route::get('sub-items-inventories/sub-items', 'SubItemsInventoriesController@sub-items')->name('sub-items.inventories.sub_items');
-                Route::get('sub-items-inventories/sub-items/delete', 'SubItemsInventoriesController@sub-items_delete')->name('sub-items.inventories.sub-items.delete');
+                Route::post('sub-items-inventories/remove-image', 'SubItemsInventoriesController@remove_image')->name('sub.items.inventories.remove.image');
 
-                Route::get('sub-items-inventories/print/{id?}', 'SubItemsInventoriesController@print')->name('sub-items.inventories.print');
+                Route::get('sub-items-inventories/sub-items', 'SubItemsInventoriesController@sub_items')->name('sub.items.inventories.sub.items');
+                Route::get('sub-items-inventories/sub-items/delete', 'SubItemsInventoriesController@sub_items_delete')->name('sub.items.inventories.sub.items.delete');
             /** items-inventory */
         /** Sub items - Module */
     });
