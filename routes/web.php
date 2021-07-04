@@ -57,8 +57,8 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
             Route::post('users/remove-image', 'UsersController@remove_image')->name('users.remove.image');
         /** users */
 
-        /** items - Module */
-            /** items-category */
+        /** items - module */
+            /** items-categories */
                 Route::any('items-categories', 'ItemsCategoriesController@index')->name('items.categories');
                 Route::get('items-categories/create', 'ItemsCategoriesController@create')->name('items.categories.create');
                 Route::post('items-categories/insert', 'ItemsCategoriesController@insert')->name('items.categories.insert');
@@ -66,7 +66,7 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
                 Route::get('items-categories/edit/{id?}', 'ItemsCategoriesController@edit')->name('items.categories.edit');
                 Route::patch('items-categories/update', 'ItemsCategoriesController@update')->name('items.categories.update');
                 Route::post('items-categories/change-status', 'ItemsCategoriesController@change_status')->name('items.categories.change.status');
-            /** items-category */
+            /** items-categories */
 
             /** items */
                 Route::any('items', 'ItemsController@index')->name('items');
@@ -81,7 +81,7 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
                 Route::get('items/print/{id?}', 'ItemsController@print')->name('items.print');
             /** items */
 
-            /** items-inventory */
+            /** items-inventoies */
                 Route::any('items-inventories', 'ItemsInventoriesController@index')->name('items.inventories');
                 Route::get('items-inventories/create', 'ItemsInventoriesController@create')->name('items.inventories.create');
                 Route::post('items-inventories/insert', 'ItemsInventoriesController@insert')->name('items.inventories.insert');
@@ -96,12 +96,11 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
 
                 Route::get('items-inventories/items', 'ItemsInventoriesController@items')->name('items.inventories.items');
                 Route::get('items-inventories/items/delete', 'ItemsInventoriesController@items_delete')->name('items.inventories.items.delete');
-            /** items-inventory */
-        /** items - Module */
+            /** items-inventoies */
+        /** items - module */
 
-
-        /** Sub items - Module */
-            /** items-category */
+        /** sub-items - module */
+            /** sub-items-categories */
                 Route::any('sub-items-categories', 'SubItemsCategoriesController@index')->name('sub.items.categories');
                 Route::get('sub-items-categories/create', 'SubItemsCategoriesController@create')->name('sub.items.categories.create');
                 Route::post('sub-items-categories/insert', 'SubItemsCategoriesController@insert')->name('sub.items.categories.insert');
@@ -109,9 +108,9 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
                 Route::get('sub-items-categories/edit/{id?}', 'SubItemsCategoriesController@edit')->name('sub.items.categories.edit');
                 Route::patch('sub-items-categories/update', 'SubItemsCategoriesController@update')->name('sub.items.categories.update');
                 Route::post('sub-items-categories/change-status', 'SubItemsCategoriesController@change_status')->name('sub.items.categories.change.status');
-            /** items-category */
+            /** sub-items-categories */
 
-            /** Sub-Items */
+            /** sub-items */
                 Route::any('sub-items', 'SubItemsController@index')->name('sub.items');
                 Route::get('sub-items/create', 'SubItemsController@create')->name('sub.items.create');
                 Route::post('sub-items/insert', 'SubItemsController@insert')->name('sub.items.insert');
@@ -122,9 +121,9 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
 
                 Route::post('sub-items/remove-image', 'SubItemsController@remove_image')->name('sub.items.remove.image');
                 Route::get('sub-items/print/{id?}', 'SubItemsController@print')->name('sub.items.print');
-            /** Sub-Items */
+            /** sub-items */
 
-            /** items-inventory */
+            /** sub-items-inventories */
                 Route::any('sub-items-inventories', 'SubItemsInventoriesController@index')->name('sub.items.inventories');
                 Route::get('sub-items-inventories/create', 'SubItemsInventoriesController@create')->name('sub.items.inventories.create');
                 Route::post('sub-items-inventories/insert', 'SubItemsInventoriesController@insert')->name('sub.items.inventories.insert');
@@ -139,8 +138,8 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
 
                 Route::get('sub-items-inventories/sub-items', 'SubItemsInventoriesController@sub_items')->name('sub.items.inventories.sub.items');
                 Route::get('sub-items-inventories/sub-items/delete', 'SubItemsInventoriesController@sub_items_delete')->name('sub.items.inventories.sub.items.delete');
-            /** items-inventory */
-        /** Sub items - Module */
+            /** sub-items-inventories */
+        /** sub-items - module */
     });
 
     Route::get("{path}", function(){ return redirect()->route('login'); })->where('path', '.+');
