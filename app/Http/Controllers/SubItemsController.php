@@ -195,7 +195,7 @@
                                     ->first();
                     
                     if($data)
-                        return view('sub.items.items.view', ['data' => $data, 'categories' => $categories]);
+                        return view('sub-items.items.view', ['data' => $data, 'categories' => $categories]);
                     else
                         return redirect()->back()->with('error', 'No record found');
                 }else{
@@ -223,7 +223,7 @@
                                 ->first();
 
                 if($data)
-                    return view('sub.items.items.edit', ['data' => $data, 'categories' => $categories]);
+                    return view('sub-items.items.edit', ['data' => $data, 'categories' => $categories]);
                 else
                     return redirect()->back()->with('error', 'No record found');
             }

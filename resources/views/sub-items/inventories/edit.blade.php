@@ -28,8 +28,8 @@
                         @php $items_array = []; @endphp
                         @if(isset($data) && $data->items->isNotEmpty())
                             @foreach($data->items as $item)
-                                @php array_push($items_array, $item->item_id); @endphp
-                                <input type="hidden" class="items_id" name="items_id[]" value="{{ $item->item_id }}" />
+                                @php array_push($items_array, $item->sub_item_id); @endphp
+                                <input type="hidden" class="items_id" name="items_id[]" value="{{ $item->sub_item_id }}" />
                             @endforeach
                         @endif
 

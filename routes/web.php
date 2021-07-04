@@ -136,8 +136,8 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
 
                 Route::post('sub-items-inventories/remove-image', 'SubItemsInventoriesController@remove_image')->name('sub.items.inventories.remove.image');
 
-                Route::get('sub-items-inventories/sub-items', 'SubItemsInventoriesController@sub_items')->name('sub.items.inventories.sub.items');
-                Route::get('sub-items-inventories/sub-items/delete', 'SubItemsInventoriesController@sub_items_delete')->name('sub.items.inventories.sub.items.delete');
+                Route::get('sub-items-inventories/sub-items', 'SubItemsInventoriesController@items')->name('sub.items.inventories.items');
+                Route::get('sub-items-inventories/sub-items/delete', 'SubItemsInventoriesController@items_delete')->name('sub.items.inventories.items.delete');
             /** sub-items-inventories */
         /** sub-items - module */
     });

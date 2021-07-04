@@ -139,7 +139,7 @@
                                 for($i=0; $i<count($items_id); $i++){
                                     $ivti_crud = [
                                         'sub_item_inventory_id' => $last_id,
-                                        'item_id' => $items_id[$i],
+                                        'sub_item_id' => $items_id[$i],
                                         'status' => 'active',
                                         'created_at' => date('Y-m-d H:i:s'),
                                         'created_by' => auth()->user()->id,
@@ -232,7 +232,7 @@
                             ->first();
 
                 if($data){
-                    $inventory_items = SubItemInventoryItem::select('id', 'sub_item_id')->where(['item_inventory_id' => $data->id])->get();
+                    $inventory_items = SubItemInventoryItem::select('id', 'sub_item_id')->where(['sub_item_inventory_id' => $data->id])->get();
 
                     if($inventory_items->isNotEmpty())
                         $data->items = $inventory_items;
@@ -272,7 +272,7 @@
 
                         $crud["image"] = $filenameToStore;
                     }else{
-                        $crud["image"] = 'default.png';
+                        $crud["image"] = $exst_record->image;
                     }
 
                     DB::beginTransaction();
@@ -283,12 +283,12 @@
                             $items_id = $request->items_id;
 
                             for($i=0; $i<count($items_id); $i++){
-                                $exst_items = SubItemInventoryItem::where(['sub_item_inventory_id' => $request->id, 'item_id' => $items_id[$i]])->first();
+                                $exst_items = SubItemInventoryItem::where(['sub_item_inventory_id' => $request->id, 'sub_item_id' => $items_id[$i]])->first();
 
                                 if(empty($exst_items)){
                                     $ivti_crud = [
                                         'sub_item_inventory_id' => $request->id,
-                                        'item_id' => $items_id[$i],
+                                        'sub_item_id' => $items_id[$i],
                                         'status' => 'active',
                                         'created_at' => date('Y-m-d H:i:s'),
                                         'created_by' => auth()->user()->id,
@@ -304,7 +304,7 @@
                                 $file->move($file_to_upload, $filenameToStore);
 
                             DB::commit();
-                            return redirect()->route('sub.items.sub-items-inventories')->with('success', 'Record updated successfully');
+                            return redirect()->route('sub.items.inventories')->with('success', 'Record updated successfully');
                         }else{
                             DB::rollback();
                             return redirect()->back()->with('error', 'Faild to updated record')->withInput();
@@ -395,19 +395,18 @@
                 if($inventory_id != '')
                     $inventory_items = SubItemInventoryItem::select('sub_item_id')->where(['sub_item_inventory_id' => $inventory_id])->get()->toArray();
 
-                $collection = SubItem::select('id', 'name', 'description')
-                                    ->where(['status' => 'active']);
+                $collection = SubItem::select('id', 'name', 'description')->where(['status' => 'active']);
 
                 if($search != '')
                     $collection->where('name', 'like', '%'.$search.'%');
                 
                 if($inventory_id != ''){
                     $collection->whereNotIn('id', function($query) use ($inventory_id) {
-                        $query->select('item_id')->from('sub_items_inventories_items')->where(['status' => 'active'])->where('sub_item_inventory_id', '!=', $inventory_id); 
+                        $query->select('sub_item_id')->from('sub_items_inventories_items')->where(['status' => 'active'])->where('sub_item_inventory_id', '!=', $inventory_id); 
                     });
                 }else{                
                     $collection->whereNotIn('id', function($query) {
-                        $query->select('item_id')->from('sub_items_inventories_items')->where(['status' => 'active']); 
+                        $query->select('sub_item_id')->from('sub_items_inventories_items')->where(['status' => 'active']); 
                     });
                 }
 

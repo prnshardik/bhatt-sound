@@ -1,7 +1,7 @@
 @php $array = []; @endphp
 
 @foreach($inventory_items as $k => $v)
-    @php array_push($array, $v['item_id']); @endphp
+    @php array_push($array, $v['sub_item_id']); @endphp
 @endforeach
 
 @foreach($data as $row)
