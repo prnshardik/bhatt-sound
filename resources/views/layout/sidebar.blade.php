@@ -45,7 +45,7 @@
                     <p>Sub Items Categories</p>
                 </a>
             </li>
-            <li class="{{ Request::is('sub-items*') ? 'active' : '' }}">
+            <li class="{{ (Request::is('sub-items*') && !Request::is('sub-items-categories*') && !Request::is('sub-items-inventories*')) ? 'active' : '' }}">
                 <a href="{{ route('sub-items') }}">
                     <i class="fa fa-cubes"></i>
                     <p>Sub Items</p>

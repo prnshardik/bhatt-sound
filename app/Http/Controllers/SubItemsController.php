@@ -12,9 +12,8 @@
         /** index */
             public function index(Request $request){
                 if($request->ajax()){
-                    $data = SubItem::
-                                select('sub_items.id', 'sub_items_categories.title as category', 'sub_items.name', 'sub_items.image', 'sub_items.qrcode', DB::Raw("SUBSTRING(".'sub_items.description'.", 1, 30) as description"), 'sub_items.status')
-                                ->leftjoin('sub_items_categories', 'sub_items_categories.id', 'sub_items.category_id')
+                    $data = SubItem::select('sub_items.id', 'sub_items_categories.title as category', 'sub_items.name', 'sub_items.image', 'sub_items.qrcode', DB::Raw("SUBSTRING(".'sub_items.description'.", 1, 30) as description"), 'sub_items.status')
+                                    ->leftjoin('sub_items_categories', 'sub_items_categories.id', 'sub_items.category_id')
                                     ->get();
 
                     return Datatables::of($data)
@@ -34,7 +33,7 @@
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="active" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Active</a></li>
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="inactive" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Inactive</a></li>
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="deleted" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Delete</a></li>
-                                                    <li><a class="dropdown-item" href="'.route('items.print', ['id' =>base64_encode($data->id)]).'">Print QR Code</a></li>
+                                                    <li><a class="dropdown-item" href="'.route('sub-items.print', ['id' =>base64_encode($data->id)]).'">Print QR Code</a></li>
                                                 </ul>
                                             </div>';
                             })
@@ -52,16 +51,16 @@
 
                             ->editColumn('image', function($data) {
                                 if($data->image != null || $data->image != '')
-                                    $image = url('uploads/sub-items').'/'.$data->image;
+                                    $image = url('uploads/sub_items').'/'.$data->image;
                                 else
-                                    $image = url('uploads/sub-items').'/default.png';
+                                    $image = url('uploads/sub_items').'/default.png';
                                 
                                 return "<img src='$image' style='height: 30px; width: 30px'>";
                             })
 
                             ->editColumn('qrcode', function($data) {
                                 if($data->qrcode != null || $data->qrcode != '')
-                                    $image = url('uploads/qrcodes/sub-items').'/'.$data->qrcode;
+                                    $image = url('uploads/qrcodes/sub_items').'/'.$data->qrcode;
                                 else
                                     $image = '';
                                 
@@ -71,14 +70,14 @@
                             ->rawColumns(['action', 'status', 'image', 'qrcode'])
                             ->make(true);
                 }
-                return view('sub-items.sub-items.index');
+                return view('sub-items.items.index');
             }
         /** index */
 
         /** create */
             public function create(Request $request){
                 $categories = SubItemCategory::select('id', 'title')->where(['status' => 'active'])->get();
-                return view('sub-items.sub-items.create', ['categories' => $categories]);
+                return view('sub-items.items.create', ['categories' => $categories]);
             }
         /** create */
 
@@ -87,11 +86,11 @@
                 if($request->ajax()){ return true; }
 
                 if(!empty($request->all())){
-                    $file_to_uploads = public_path().'/uploads/sub-items/';
+                    $file_to_uploads = public_path().'/uploads/sub_items/';
                     if (!File::exists($file_to_uploads))
                         File::makeDirectory($file_to_uploads, 0777, true, true);
 
-                    $qr_to_uploads = public_path().'/uploads/qrcodes/sub-items/';
+                    $qr_to_uploads = public_path().'/uploads/qrcodes/sub_items/';
                     if (!File::exists($qr_to_uploads))
                         File::makeDirectory($qr_to_uploads, 0777, true, true);
 
@@ -104,7 +103,7 @@
 
                         while($i < $quantity){
                             $crud = [
-                                'sub_item_category_id' => $request->category_id,
+                                'category_id' => $request->category_id,
                                 'name' => ucfirst($request->name),
                                 'description' => $request->description ?? NULL,
                                 'status' => 'active',
@@ -134,14 +133,14 @@
                                 $qrname = 'qrcode_'.$last_id.'.png';
                                 array_push($qrnames, $qrname);
     
-                                \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($last_id, public_path('uploads/qrcodes/sub-items/'.$qrname));
+                                \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($last_id, public_path('uploads/qrcodes/sub_items/'.$qrname));
     
                                 $update = SubItem::where(['id' => $last_id])->update(['qrcode' => $qrname]);
     
                                 if($update){
                                     $i++;
                                     if(!empty($request->file('image')))
-                                        File::copy($request->file('image'), public_path('/uploads/sub-items'.'/'.$filenameToStore));
+                                        File::copy($request->file('image'), public_path('/uploads/sub_items'.'/'.$filenameToStore));
                                 }                                
                             }
                         }
@@ -152,13 +151,13 @@
                         }else{
                             if(!empty($names)){
                                 foreach($names as $name){
-                                    @unlink(public_path().'/uploads/sub-items/'.$name);
+                                    @unlink(public_path().'/uploads/sub_items/'.$name);
                                 }
                             }
 
                             if(!empty($qrnames)){
                                 foreach($qrnames as $name){
-                                    @unlink(public_path().'/uploads/qrcodes/sub-items/'.$name);
+                                    @unlink(public_path().'/uploads/qrcodes/sub_items/'.$name);
                                 }
                             }
 
@@ -181,12 +180,12 @@
                     return redirect()->back()->with('error', 'Something went wrong');
 
                 $id = base64_decode($id);
-                $generate = _generate_qrcode($id, 'item');
+                $generate = _generate_qrcode($id, 'sub_item');
 
                 if($generate){
-                    $path = URL('/uploads/sub-items').'/';
+                    $path = URL('/uploads/sub_items').'/';
                     $categories = SubItemCategory::select('id', 'title')->where(['status' => 'active'])->get();
-                    $data = SubItem::select('id', 'sub_item_category_id', 'name', 'description', 
+                    $data = SubItem::select('id', 'category_id', 'name', 'description', 
                                         DB::Raw("CASE
                                         WHEN ".'image'." != '' THEN CONCAT("."'".$path."'".", ".'image'.")
                                         ELSE CONCAT("."'".$path."'".", 'default.png')
@@ -196,7 +195,7 @@
                                     ->first();
                     
                     if($data)
-                        return view('sub-items.sub-items.view', ['data' => $data, 'categories' => $categories]);
+                        return view('sub-items.items.view', ['data' => $data, 'categories' => $categories]);
                     else
                         return redirect()->back()->with('error', 'No record found');
                 }else{
@@ -212,9 +211,9 @@
 
                 $id = base64_decode($id);
 
-                $path = URL('/uploads/sub-items').'/';
+                $path = URL('/uploads/sub_items').'/';
                 $categories = SubItemCategory::select('id', 'title')->where(['status' => 'active'])->get();
-                $data = SubItem::select('id', 'sub_item_category_id', 'name', 'description', 
+                $data = SubItem::select('id', 'category_id', 'name', 'description', 
                                     DB::Raw("CASE
                                     WHEN ".'image'." != '' THEN CONCAT("."'".$path."'".", ".'image'.")
                                     ELSE CONCAT("."'".$path."'".", 'default.png')
@@ -224,7 +223,7 @@
                                 ->first();
 
                 if($data)
-                    return view('sub-items.sub-items.edit', ['data' => $data, 'categories' => $categories]);
+                    return view('sub-items.items.edit', ['data' => $data, 'categories' => $categories]);
                 else
                     return redirect()->back()->with('error', 'No record found');
             }
@@ -237,12 +236,12 @@
                 if(!empty($request->all())){
                     $exst_record = SubItem::where(['id' => $request->id])->first(); 
 
-                    $folder_to_upload = public_path().'/uploads/sub-items/';
+                    $folder_to_upload = public_path().'/uploads/sub_items/';
                     if (!File::exists($folder_to_upload))
                         File::makeDirectory($folder_to_upload, 0777, true, true);
 
                     $crud = [
-                        'sub_item_category_id' => $request->category_id,
+                        'category_id' => $request->category_id,
                         'name' => ucfirst($request->name),
                         'description' => $request->description ?? NULL,
                         'updated_at' => date('Y-m-d H:i:s'),
@@ -268,7 +267,7 @@
                             $file->move($folder_to_upload, $filenameToStore);
 
                         if($exst_record->image != null || $exst_record->image != ''){
-                            $file_path = public_path().'/uploads/sub-items/'.$exst_record->image;
+                            $file_path = public_path().'/uploads/sub_items/'.$exst_record->image;
 
                             if(File::exists($file_path) && $file_path != ''){
                                 if($exst_record->image != 'default.png')
@@ -304,14 +303,14 @@
                         
                         if($update){
                             if($status == 'deleted'){
-                                $file_path = public_path().'/uploads/sub-items/'.$data->image;
+                                $file_path = public_path().'/uploads/sub_items/'.$data->image;
 
                                 if(File::exists($file_path) && $file_path != ''){
                                     if($data->image != 'default.png')
                                         @unlink($file_path);
                                 }
 
-                                $qr_path = public_path().'/uploads/qrcodes/sub-items/'.$data->qrcode;
+                                $qr_path = public_path().'/uploads/qrcodes/sub_items/'.$data->qrcode;
 
                                 if(File::exists($qr_path) && $qr_path != ''){
                                     if($data->qrcode != 'default.png')
@@ -337,13 +336,14 @@
                     return redirect()->back()->with('error', 'something went wrong');
 
                 $id = base64_decode($id);
-                $generate = _generate_qrcode($id, 'item');
+
+                $generate = _generate_qrcode($id, 'sub_item');
 
                 if($generate){
                     $data = SubItem::select('qrcode')->where(['id' => $id])->first();
                 
                     if($data)
-                        return view('sub-items.sub-items.print', ['data' => $data]);
+                        return view('sub-items.items.print', ['data' => $data]);
                     else
                         return redirect()->back()->with('error', 'Something went wrong');    
                 }else{

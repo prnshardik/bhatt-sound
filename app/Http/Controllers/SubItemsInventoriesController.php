@@ -40,7 +40,7 @@
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="active" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Active</a></li>
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="inactive" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Inactive</a></li>
                                                     <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="deleted" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Delete</a></li>
-                                                    <li><a class="dropdown-item" href="'.route('items.inventories.print', ['id' =>base64_encode($data->id)]).'">Print QR Code</a></li>
+                                                    <li><a class="dropdown-item" href="'.route('sub-items.inventories.print', ['id' =>base64_encode($data->id)]).'">Print QR Code</a></li>
                                                 </ul>
                                             </div>';
                             })
@@ -179,7 +179,7 @@
                     return redirect()->back()->with('error', 'Something went wrong');
 
                 $id = base64_decode($id);
-                $generate = _generate_qrcode($id, 'item_inventory');
+                $generate = _generate_qrcode($id, 'sub_item_inventory');
 
                 if($generate){
                     $path = URL('/uploads/sub_items_inventory').'/';
@@ -370,7 +370,7 @@
                     return redirect()->back()->with('error', 'something went wrong');
 
                 $id = base64_decode($id);
-                $generate = _generate_qrcode($id, 'item_inventory');
+                $generate = _generate_qrcode($id, 'sub_item_inventory');
 
                 if($generate){
                     $data = SubItemInventory::select('qrcode')->where(['id' => $id])->first();

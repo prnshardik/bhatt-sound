@@ -257,7 +257,7 @@
 
                         $crud["image"] = $filenameToStore;
                     }else{
-                        $crud["image"] = $exst_rec->image;
+                        $crud["image"] = $exst_record->image;
                     }
 
                     $update = Item::where(['id' => $request->id])->update($crud);

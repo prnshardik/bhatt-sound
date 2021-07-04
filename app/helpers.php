@@ -69,6 +69,14 @@
                 $folder_to_uploads = public_path().'/uploads/qrcodes/items_inventory/';
                 $exst_file = public_path().'/uploads/qrcodes/items_inventory/qrcode_'.$id.'.png';
                 $table = 'items_inventories';
+            }elseif($folder == 'sub_item'){
+                $folder_to_uploads = public_path().'/uploads/qrcodes/sub_items/';
+                $exst_file = public_path().'/uploads/qrcodes/sub_items/qrcode_'.$id.'.png';
+                $table = 'sub_items';
+            }elseif($folder == 'sub_item_inventory'){
+                $folder_to_uploads = public_path().'/uploads/qrcodes/sub_items_inventory/';
+                $exst_file = public_path().'/uploads/qrcodes/sub_items_inventory/qrcode_'.$id.'.png';
+                $table = 'sub_items_inventories';
             }
 
             if (!File::exists($folder_to_uploads))

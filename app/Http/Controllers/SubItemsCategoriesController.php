@@ -48,13 +48,13 @@
                             ->rawColumns(['action', 'status'])
                             ->make(true);
                 }
-                return view('sub_items.categories.index');
+                return view('sub-items.categories.index');
             }
         /** index */
 
         /** create */
             public function create(Request $request){
-                return view('sub_items.categories.create');
+                return view('sub-items.categories.create');
             }
         /** create */
 
@@ -95,7 +95,7 @@
                 $data = SubItemCategory::select('id', 'title', 'description')->where(['id' => $id])->first();
                 
                 if($data)
-                    return view('sub_items.categories.view', ['data' => $data]);
+                    return view('sub-items.categories.view', ['data' => $data]);
                 else
                     return redirect()->back()->with('error', 'No record found');
             }
@@ -111,7 +111,7 @@
                 $data = SubItemCategory::select('id', 'title', 'description')->where(['id' => $id])->first();
 
                 if($data)
-                    return view('sub_items.categories.edit', ['data' => $data]);
+                    return view('sub-items.categories.edit', ['data' => $data]);
                 else
                     return redirect()->back()->with('error', 'No record found');
             }

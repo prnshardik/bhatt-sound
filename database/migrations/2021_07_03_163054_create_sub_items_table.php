@@ -29,16 +29,16 @@ class CreateSubItemsTable extends Migration
             $table->foreign('category_id')->references('id')->on('sub_items_categories')->onDelete('cascade')->onUpdate('cascade');
         });
 
-        $file_to_upload = public_path().'/uploads/sub-items/';
+        $file_to_upload = public_path().'/uploads/sub_items/';
         if (!File::exists($file_to_upload))
             File::makeDirectory($file_to_upload, 0777, true, true);
 
-        $qr_to_upload = public_path().'/uploads/qrcodes/sub-items/';
+        $qr_to_upload = public_path().'/uploads/qrcodes/sub_items/';
             if (!File::exists($qr_to_upload))
                 File::makeDirectory($qr_to_upload, 0777, true, true);
 
-        if(file_exists(public_path('/qr_logo.png')) && !file_exists(public_path('/uploads/sub-items/default.png')) ){
-            File::copy(public_path('/qr_logo.png'), public_path('/uploads/sub-items/default.png'));
+        if(file_exists(public_path('/qr_logo.png')) && !file_exists(public_path('/uploads/sub_items/default.png')) ){
+            File::copy(public_path('/qr_logo.png'), public_path('/uploads/sub_items/default.png'));
         }
     }
 
