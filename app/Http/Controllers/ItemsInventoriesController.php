@@ -13,7 +13,7 @@
         /** index */
             public function index(Request $request){
                 if($request->ajax()){
-                    $data = ItemInventory::select('id', 'title', 'qrcode', 'image', 'status')->get();
+                    $data = ItemInventory::select('id', 'title', 'qrcode', 'image', 'status')->orderBy('id','desc')->get();
 
                     if($data->isNotEmpty()){
                         foreach($data as $row){
@@ -128,7 +128,7 @@
                         if($last_id){
                             $qrname = 'qrcode_'.$last_id.'.png';
 
-                            \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($last_id, public_path('uploads/qrcodes/items_inventory/'.$qrname));
+                            \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate('itemsInventories-'.$last_id, public_path('uploads/qrcodes/items_inventory/'.$qrname));
 
                             $update = ItemInventory::where(['id' => $last_id])->update(['qrcode' => $qrname]);
 

@@ -11,7 +11,7 @@
         /** index */
             public function index(Request $request){
                 if($request->ajax()){
-                    $data = SubItemCategory::select('id', 'title', DB::Raw("SUBSTRING(".'description'.", 1, 30) as description"), 'status')->get();
+                    $data = SubItemCategory::select('id', 'title', DB::Raw("SUBSTRING(".'description'.", 1, 30) as description"), 'status')->orderBy('id','desc')->get();
 
                     return Datatables::of($data)
                             ->addIndexColumn()

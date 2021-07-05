@@ -14,6 +14,7 @@
                 if($request->ajax()){
                     $data = SubItem::select('sub_items.id', 'sub_items_categories.title as category', 'sub_items.name', 'sub_items.image', 'sub_items.qrcode', DB::Raw("SUBSTRING(".'sub_items.description'.", 1, 30) as description"), 'sub_items.status')
                                     ->leftjoin('sub_items_categories', 'sub_items_categories.id', 'sub_items.category_id')
+                                    ->orderBy('sub_items.id','desc')
                                     ->get();
 
                     return Datatables::of($data)
@@ -133,7 +134,7 @@
                                 $qrname = 'qrcode_'.$last_id.'.png';
                                 array_push($qrnames, $qrname);
     
-                                \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($last_id, public_path('uploads/qrcodes/sub_items/'.$qrname));
+                                \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate('subItems-'.$last_id, public_path('uploads/qrcodes/sub_items/'.$qrname));
     
                                 $update = SubItem::where(['id' => $last_id])->update(['qrcode' => $qrname]);
     

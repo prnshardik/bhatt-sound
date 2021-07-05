@@ -26,10 +26,10 @@
                             <thead>
                                 <tr role="row">
                                     <th>No</th>
-                                    <th>Category</th>
                                     <th>QR-Code</th>
-                                    <th>Image</th>
                                     <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Image</th>
                                     <th>Description</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -90,20 +90,20 @@
                             name: 'DT_RowIndex'
                         },
                         {
-                            data: 'category',
-                            name: 'category'
-                        },
-                        {
                             data: 'qrcode',
                             name: 'qrcode'
                         },
                         {
-                            data: 'image',
-                            name: 'image'
-                        },
-                        {
                             data: 'name',
                             name: 'name'
+                        },
+                        {
+                            data: 'category',
+                            name: 'category'
+                        },
+                        {
+                            data: 'image',
+                            name: 'image'
                         },
                         {
                             data: 'description',

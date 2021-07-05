@@ -65,18 +65,22 @@
                 $folder_to_uploads = public_path().'/uploads/qrcodes/items/';
                 $exst_file = public_path().'/uploads/qrcodes/items/qrcode_'.$id.'.png';
                 $table = 'items';
+                $qrcode = 'item-'.$id;
             }elseif($folder == 'item_inventory'){
                 $folder_to_uploads = public_path().'/uploads/qrcodes/items_inventory/';
                 $exst_file = public_path().'/uploads/qrcodes/items_inventory/qrcode_'.$id.'.png';
                 $table = 'items_inventories';
+                $qrcode = 'itemsInventories-'.$id;
             }elseif($folder == 'sub_item'){
                 $folder_to_uploads = public_path().'/uploads/qrcodes/sub_items/';
                 $exst_file = public_path().'/uploads/qrcodes/sub_items/qrcode_'.$id.'.png';
                 $table = 'sub_items';
+                $qrcode = 'subItems-'.$id;
             }elseif($folder == 'sub_item_inventory'){
                 $folder_to_uploads = public_path().'/uploads/qrcodes/sub_items_inventory/';
                 $exst_file = public_path().'/uploads/qrcodes/sub_items_inventory/qrcode_'.$id.'.png';
                 $table = 'sub_items_inventories';
+                $qrcode = 'subItemsInventories-'.$id;
             }
 
             if (!File::exists($folder_to_uploads))
@@ -87,7 +91,7 @@
             
             $qrname = 'qrcode_'.$id.'.png';
 
-            QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($id, $folder_to_uploads.$qrname);
+            QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($qrcode, $folder_to_uploads.$qrname);
 
             $update = DB::table($table)->where(['id' => $id])->update(['qrcode' => $qrname, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth()->user()->id]);
             

@@ -20,6 +20,7 @@
                     $data = Cart::select('cart.id', 'u.name as user_name', 'cart.party_name', 'cart.status')
                                     ->leftjoin('users as u', 'u.id', 'cart.user_id')
                                     ->where('cart.status', '!=', 'reach')
+                                    ->orderBy('cart.id','desc')
                                     ->get();
 
                     if($data->isNotEmpty()){
