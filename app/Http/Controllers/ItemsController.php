@@ -14,6 +14,7 @@
                 if($request->ajax()){
                     $data = Item::select('items.id', 'items_categories.title as category', 'items.name', 'items.image', 'items.qrcode', DB::Raw("SUBSTRING(".'items.description'.", 1, 30) as description"), 'items.status')
                                     ->leftjoin('items_categories', 'items_categories.id', 'items.category_id')
+                                    ->orderBy('items.id','desc')
                                     ->get();
 
                     return Datatables::of($data)

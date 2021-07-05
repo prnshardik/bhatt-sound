@@ -11,7 +11,7 @@
         /** index */
             public function index(Request $request){
                 if($request->ajax()){
-                    $data = User::select('id', 'name', 'email', 'phone', 'image', 'status')->where(['is_admin' => 'n'])->get();
+                    $data = User::select('id', 'name', 'email', 'phone', 'image', 'status')->where(['is_admin' => 'n'])->orderBy('id','desc')->get();
 
                     return Datatables::of($data)
                             ->addIndexColumn()

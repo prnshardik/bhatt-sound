@@ -13,7 +13,7 @@
         /** index */
             public function index(Request $request){
                 if($request->ajax()){
-                    $data = ItemInventory::select('id', 'title', 'qrcode', 'image', 'status')->get();
+                    $data = ItemInventory::select('id', 'title', 'qrcode', 'image', 'status')->orderBy('id','desc')->get();
 
                     if($data->isNotEmpty()){
                         foreach($data as $row){
