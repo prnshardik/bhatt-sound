@@ -527,15 +527,18 @@
 
         /** users */
             public function users(Request $request){
-                if($request->id == '')
-                    return json_encode(['code' => 201]);
+                $data = User::where(['status' => 'active', 'is_admin' => 'n'])->get();
 
-                $data = User::where(['status' => 'active'])->get();
+                if($data->isNotEmpty()){
+                    $users = '<option value="">Select user</option>';
+                    foreach($data as $row){
+                        $users .= "<option value='$row->id'>$row->name</option>";
+                    }
 
-                if($data->isNotEmpty())
-                    return json_encode(['code' => 200, 'data' => $data]);
-                else
+                    return json_encode(['code' => 200, 'data' => $users]);
+                }else{
                     return json_encode(['code' => 201]);
+                }
             }
         /** users */
 
@@ -544,12 +547,18 @@
                 if($request->id == '')
                     return json_encode(['code' => 201]);
                 
-                $data = User::where(['status' => 'active'])->where('id', '!=', $request->id)->get();
+                $data = User::where(['status' => 'active', 'is_admin' => 'n'])->where('id', '!=', $request->id)->get();
 
-                if($data->isNotEmpty())
-                    return json_encode(['code' => 200, 'data' => $data]);
-                else
+                if($data->isNotEmpty()){
+                    $users = '';
+                    foreach($data as $row){
+                        $users .= "<option value='$row->id'>$row->name</option>";
+                    }
+
+                    return json_encode(['code' => 200, 'data' => $users]);
+                }else{
                     return json_encode(['code' => 201]);
+                }
             }
         /** sub-users */
 
@@ -557,13 +566,15 @@
             public function inventories(Request $request){
                 $search = $request->search;
 
-                $collection = ItemInventory::select('id', 'title', 'description')
-                                    ->where(['status' => 'active']);
+                $collection = ItemInventory::select('items_inventories.id', 'items_inventories.title', 
+                                                DB::Raw("(select COUNT(items_inventories_items.id) from items_inventories_items where items_inventories_items.item_inventory_id = items_inventories.id) as items")
+                                            )
+                                            ->where(['items_inventories.status' => 'active']);
                 
                 if($search != '')
-                    $collection->where('title', 'like', '%'.$search.'%');
+                    $collection->where('items_inventories.title', 'like', '%'.$search.'%');
 
-                $data = $collection->paginate(5);
+                $data = $collection->paginate(2);
                 
                 $view = view('cart.inventories_table', compact('data'))->render();
                 $pagination = view('cart.inventories_pagination', compact('data'))->render();

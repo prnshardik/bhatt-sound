@@ -56,9 +56,7 @@
                                 <div class="row">
                                     <div class="form-group col-sm-6">
                                         <label for="user">User Name <span class="text-danger">*</span></label>
-                                        <select name="user" id="user" class="form-control">
-                                            <option value="" hidden>Select user</option>
-                                        </select>
+                                        <select name="user" id="user" class="form-control"></select>
                                         <span class="kt-form__help error user"></span>
                                     </div>
                                     <div class="form-group col-sm-6">
@@ -84,7 +82,7 @@
                                         <span class="kt-form__help error inventory_error"></span>
                                     </div>
                                     <div class="col-sm-6 text-right">
-                                        <input type="text" name="inventories_search" id="inventories_search" placeholder="Inventories search">
+                                        <input type="text" name="inventories_search" id="inventories_search" placeholder="inventories search">
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="table-responsive">
@@ -109,7 +107,7 @@
                                         <span class="kt-form__help error sub_inventories"></span>
                                     </div>
                                     <div class="col-sm-6 text-right">
-                                        <input type="text" name="sub_inventories" id="sub_inventories" placeholder="Sub inventories">
+                                        <input type="text" name="sub_inventories" id="sub_inventories" placeholder="Sub inventories search">
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="table-responsive">
@@ -165,7 +163,7 @@
                                     <div class="col-md-12 col-sm-12">
                                         <div class="card ">
                                             <div class="card-header ">
-                                                <h5 class="card-title">Invenotories</h5>
+                                                <h5 class="card-title">Items Invenotories</h5>
                                             </div>
                                             <div class="card-body" id="preview_inventories"></div>
                                         </div>
@@ -173,7 +171,7 @@
                                     <div class="col-md-12 col-sm-12">
                                         <div class="card ">
                                             <div class="card-header ">
-                                                <h5 class="card-title">Sub Items</h5>
+                                                <h5 class="card-title">Sub Items Invenotories</h5>
                                             </div>
                                             <div class="card-body" id="preview_sub_inventories"></div>
                                         </div>
@@ -195,12 +193,12 @@
         var config = {
             routes: {
                 insert: "{{ route('cart.insert') }}",
-                users: "{{ route('cart.get.users') }}",
-                sub_users: "{{ route('cart.get.sub.users') }}",
-                inventories: "{{ route('cart.get.inventories') }}",
+                users: "{{ route('cart.users') }}",
+                sub_users: "{{ route('cart.sub.users') }}",
+                inventories: "{{ route('cart.inventories') }}",
                 delete_inventories: "{{ route('cart.delete.inventories') }}",
-                sub_inventories: "{{ route('cart.get.sub_inventories') }}",
-                delete_sub_inventories: "{{ route('cart.delete.sub_inventories') }}"
+                sub_inventories: "{{ route('cart.sub_inventories') }}",
+                delete_sub_inventories: "{{ route('cart.delete.sub_inventories') }}",
                 cart: "{{ route('cart') }}",
             }
         };
