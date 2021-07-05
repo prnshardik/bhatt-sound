@@ -222,35 +222,26 @@
                     else
                         $data->sub_users = collect();
 
-                    $inventories = CartItem::select('i.title as name')
-                                            ->leftjoin('inventories as i', 'i.id', 'cart_items.inventory_id')
-                                            ->where(['cart_items.cart_id' => $data->id])
-                                            ->get();
+                    $inventories = CartInventory::select('i.title')
+                                                    ->leftjoin('items_inventories as i', 'i.id', 'cart_inventories.inventory_id')
+                                                    ->where(['cart_inventories.cart_id' => $data->id])
+                                                    ->get();
 
                     if($inventories->isNotEmpty())
                         $data->inventories = $inventories;
                     else
                         $data->inventories = collect();
 
-                    $sub_item = CartSubItem::select('id')
-                                            ->where(['cart_id' => $data->id])
-                                            ->first();
+                    $sub_inventories = CartSubInventory::select('i.title')
+                                                            ->leftjoin('sub_items_inventories as i', 'i.id', 'cart_sub_inventories.sub_inventory_id')
+                                                            ->where(['cart_sub_inventories.cart_id' => $data->id])
+                                                            ->get();
 
-                    if(!empty($sub_item)){
-                        $sub_items = CartSubItems::select('cart_sub_items.quantity as quantity', 'sub_items.name')
-                                            ->leftjoin('sub_items', 'sub_items.id', 'cart_sub_items.sub_item_id')
-                                            ->where(['cart_sub_items.cart_sub_item_id' => $sub_item->id])
-                                            ->get();
-
-                        if($sub_items->isNotEmpty())
-                            $data->sub_items = $sub_items;
-                        else
-                            $data->sub_items = collect();
-                    }else{
-                        $data->sub_items = collect();
-                    }
-                                        
-                        
+                    if($sub_inventories->isNotEmpty())
+                        $data->sub_inventories = $sub_inventories;
+                    else
+                        $data->sub_inventories = collect();
+      
                     return view('cart.view', ['data' => $data]);
                 }else{
                     return redirect()->back()->with('error', 'No cart found');
@@ -456,7 +447,7 @@
 
                 if(!empty($request->all())){
                     $id = base64_decode($request->id);
-                    
+
                     $data = Cart::where(['id' => $id])->first();
 
                     if(!empty($data)){

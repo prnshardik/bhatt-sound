@@ -66,12 +66,12 @@
                         <div class="col-md-12 col-sm-12">
                             <div class="card ">
                                 <div class="card-header ">
-                                    <h5 class="card-title">Invenotories</h5>
+                                    <h5 class="card-title">Items Invenotories</h5>
                                 </div>
                                 <div class="card-body" id="preview_inventories">
                                     @if($data->inventories->isNotEmpty())
                                         @foreach($data->inventories as $row)
-                                            <h6>{{ $row->name ?? '' }}</h6>
+                                            <h6>{{ $row->title ?? '' }}</h6>
                                         @endforeach
                                     @endif
                                 </div>
@@ -80,15 +80,12 @@
                         <div class="col-md-12 col-sm-12">
                             <div class="card ">
                                 <div class="card-header ">
-                                    <h5 class="card-title">Sub Items</h5>
+                                    <h5 class="card-title">Sub Items Invenotories</h5>
                                 </div>
-                                <div class="card-body" id="preview_sub_items">
-                                    @if($data->sub_items->isNotEmpty())
-                                        @foreach($data->sub_items as $row)
-                                            <div class="row">
-                                                <div class="col-sm-6"><h6>{{ $row->name ?? '' }}</h6></div>
-                                                <div class="col-sm-6"><h6>{{ $row->quantity ?? '' }}</h6></div>
-                                            </div>
+                                <div class="card-body" id="preview_inventories">
+                                    @if($data->sub_inventories->isNotEmpty())
+                                        @foreach($data->sub_inventories as $row)
+                                            <h6>{{ $row->title ?? '' }}</h6>
                                         @endforeach
                                     @endif
                                 </div>
