@@ -126,9 +126,9 @@
                         $last_id = ItemInventory::insertGetId($crud);
 
                         if($last_id){
-                            $qrname = 'itemInventory_'.$last_id.'.png';
+                            $qrname = 'qrcode_'.$last_id.'.png';
 
-                            \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($last_id, public_path('uploads/qrcodes/items_inventory/'.$qrname));
+                            \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate('itemsInventories-'.$last_id, public_path('uploads/qrcodes/items_inventory/'.$qrname));
 
                             $update = ItemInventory::where(['id' => $last_id])->update(['qrcode' => $qrname]);
 

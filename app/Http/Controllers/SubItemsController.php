@@ -130,10 +130,10 @@
                             $last_id = SubItem::insertGetId($crud);
 
                             if($last_id){
-                                $qrname = 'subItem_'.$last_id.'.png';
+                                $qrname = 'qrcode_'.$last_id.'.png';
                                 array_push($qrnames, $qrname);
     
-                                \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($last_id, public_path('uploads/qrcodes/sub_items/'.$qrname));
+                                \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate('subItems-'.$last_id, public_path('uploads/qrcodes/sub_items/'.$qrname));
     
                                 $update = SubItem::where(['id' => $last_id])->update(['qrcode' => $qrname]);
     
