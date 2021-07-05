@@ -63,19 +63,19 @@
             
             if($folder == 'item'){
                 $folder_to_uploads = public_path().'/uploads/qrcodes/items/';
-                $exst_file = public_path().'/uploads/qrcodes/items/qrcode_'.$id.'.png';
+                $exst_file = public_path().'/uploads/qrcodes/items/item_'.$id.'.png';
                 $table = 'items';
             }elseif($folder == 'item_inventory'){
                 $folder_to_uploads = public_path().'/uploads/qrcodes/items_inventory/';
-                $exst_file = public_path().'/uploads/qrcodes/items_inventory/qrcode_'.$id.'.png';
+                $exst_file = public_path().'/uploads/qrcodes/items_inventory/itemInventory_'.$id.'.png';
                 $table = 'items_inventories';
             }elseif($folder == 'sub_item'){
                 $folder_to_uploads = public_path().'/uploads/qrcodes/sub_items/';
-                $exst_file = public_path().'/uploads/qrcodes/sub_items/qrcode_'.$id.'.png';
+                $exst_file = public_path().'/uploads/qrcodes/sub_items/subItem_'.$id.'.png';
                 $table = 'sub_items';
             }elseif($folder == 'sub_item_inventory'){
                 $folder_to_uploads = public_path().'/uploads/qrcodes/sub_items_inventory/';
-                $exst_file = public_path().'/uploads/qrcodes/sub_items_inventory/qrcode_'.$id.'.png';
+                $exst_file = public_path().'/uploads/qrcodes/sub_items_inventory/subItemInventoy_'.$id.'.png';
                 $table = 'sub_items_inventories';
             }
 
@@ -85,7 +85,17 @@
             if(File::exists($exst_file) && $exst_file != '')
                 @unlink($exst_file);
             
-            $qrname = 'qrcode_'.$id.'.png';
+            if($folder == "item"){
+                $qrname = 'item_'.$id.'.png';
+            }elseif($folder == 'item_inventory'){
+                $qrname = 'itemInventory_'.$id.'.png';
+            }elseif($folder == 'sub_item'){
+                $qrname = 'subItem_'.$id.'.png';
+            }elseif($folder == 'sub_item_inventory'){
+                $qrname = 'subItemInventoy_'.$id.'.png';
+            }else{
+                $qrname = 'qrcode_'.$id.'.png';
+            }
 
             QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate($id, $folder_to_uploads.$qrname);
 
