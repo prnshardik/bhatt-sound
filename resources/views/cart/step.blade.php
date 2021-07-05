@@ -104,10 +104,10 @@
                             <div id="step-3" class="tab-pane" role="tabpanel">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <span class="kt-form__help error sub_inventories"></span>
+                                        <span class="kt-form__help error sub_inventories_search"></span>
                                     </div>
                                     <div class="col-sm-6 text-right">
-                                        <input type="text" name="sub_inventories" id="sub_inventories" placeholder="Sub inventories search">
+                                        <input type="text" name="sub_inventories_search" id="sub_inventories_search" placeholder="Sub inventories search">
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="table-responsive">

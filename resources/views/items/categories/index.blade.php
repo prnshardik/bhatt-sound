@@ -112,7 +112,7 @@
             var id = $(object).data("id");
             var status = $(object).data("status");
             var old_status = $(object).data("old_status");
-            var msg = "Are you Sure?";
+            var msg = "Are you sure?";
 
             if (confirm(msg)) {
                 $.ajax({

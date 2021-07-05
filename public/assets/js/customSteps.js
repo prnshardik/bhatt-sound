@@ -24,8 +24,130 @@ $(document).ready(function(){
         _inventories(page, search);
     });
 
-    var btnFinish = $('<button></button>').text('Finish').addClass('btn btn-info disabled').attr('id', 'finish')
-                                    .on('click', function(){ console.log('finish') });
+    $(document).on('keyup', '#inventories_search', function(event){
+        event.preventDefault(); 
+        var search = $('#inventories_search').val();
+        _inventories(0, search);
+    });
+
+    $(document).on('click', '.inventories', function(event){
+        var value = $(this).val();
+        var name = $(this).data('name');
+        var item = $(this).data('item');
+
+        if($(this).prop("checked") == true){
+            obj.inventories[value] = {'name': name, 'item': item};
+        } else {
+            // if(data.cart_id != ''){
+                // $.ajax({
+                //     "url": config.routes.delete_inventories+"?cart_id="+data.cart_id+"&id="+value,
+                //     "dataType": "json",
+                //     async: false,
+                //     cache: false,
+                //     "type": "Get",
+                //     success: function (response){
+                //         if(response.code == 200){
+                //             delete obj.inventories[value];
+                //         } else {
+                //             toastr.error(['Something went wrong, please try again later', 'Error']);
+                //         }
+                //     },
+                //     error: function(response){
+                //         toastr.error(['Something went wrong, please try again later', 'Error']);
+                //     }
+                // });
+            // }else{
+                delete obj.inventories[value];
+            // }
+        }
+    });
+
+    $(document).on('click', '#sub_inventories_pagination .pagination a', function(event){
+        event.preventDefault(); 
+        var page = $(this).attr('href').split('page=')[1];
+        var search = $('#sub_inventories_search').val();
+        _sub_inventories(page, search);
+    });
+
+    $(document).on('keyup', '#sub_inventories_search', function(event){
+        event.preventDefault(); 
+        var search = $('#sub_inventories_search').val();
+        _sub_inventories(0, search);
+    });
+
+    $(document).on('click', '.sub_inventories', function(event){
+        var value = $(this).val();
+        var name = $(this).data('name');
+        var item = $(this).data('item');
+
+        if($(this).prop("checked") == true){
+            obj.sub_inventories[value] = {'name': name, 'item': item};
+        } else {
+            // if(data.cart_id != ''){
+                // $.ajax({
+                //     "url": config.routes.delete_inventories+"?cart_id="+data.cart_id+"&id="+value,
+                //     "dataType": "json",
+                //     async: false,
+                //     cache: false,
+                //     "type": "Get",
+                //     success: function (response){
+                //         if(response.code == 200){
+                //             delete obj.inventories[value];
+                //         } else {
+                //             toastr.error(['Something went wrong, please try again later', 'Error']);
+                //         }
+                //     },
+                //     error: function(response){
+                //         toastr.error(['Something went wrong, please try again later', 'Error']);
+                //     }
+                // });
+            // }else{
+                delete obj.sub_inventories[value];
+            // }
+        }
+    });
+
+    var btnFinish = $('<button></button>').text('Finish')
+                                        .addClass('btn btn-info disabled')
+                                        .attr('id', 'finish')
+                                        .on('click', function(){ 
+                                            // if(data.cart_id != ''){
+                                            //     obj['cart_id'] = data.cart_id
+                                            // }
+    
+                                            $.ajaxSetup({
+                                                headers: {
+                                                  'X-CSRF-Token': $('meta[name="_token"]').attr('content')
+                                                }
+                                            });
+                                            $.ajax({
+                                                "url": config.routes.insert,
+                                                "dataType": "json",
+                                                "type": "post",
+                                                "data": {
+                                                    obj
+                                                },
+                                                success: function (response){
+                                                    if(response.code == 200){
+                                                        toastr.success(response.message, 'Success');
+                                                        setTimeout(function(){ window.location.replace(config.routes.cart); }, 2000);
+                                                    } else {
+                                                        toastr.error(response.message, 'Error');
+                                                        setTimeout(function(){ location.reload(); }, 2000);
+                                                    }
+                                                },
+                                                error: function(response){
+                                                    if(response.status === 422) {
+                                                        var errors_ = response.responseJSON;
+                                                        $.each(errors_, function (key, value) {
+                                                            toastr.error(value, 'Error');
+                                                        });
+    
+                                                        setTimeout(function(){ location.reload(); }, 2000);
+                                                    }
+                                                }
+                                            });
+                                        });
     
     $("#smartwizard").on("leaveStep", function(e, anchorObject, stepNumber, stepDirection, stepPosition) {
         var time = 500;
@@ -71,16 +193,33 @@ $(document).ready(function(){
                 return false
             }else{
                 $('#smartwizard').smartWizard("loader", "hide");
-                console.log(obj);
                 _inventories(0, '');
                 return true;
             }
 
         } else if(stepPosition === 'forward' && repo == '1'){
-            console.log('second');
+            if(jQuery.isEmptyObject(obj.inventories)){
+                $('.inventory_error').html('please select inventory')
+                $('#smartwizard').smartWizard("loader", "hide");
+                return false;
+            } else {
+                $('.inventory_error').html('')
+                $('#smartwizard').smartWizard("loader", "hide");
+                _sub_inventories(0, '');
+                return true;
+            }
         } else if(stepPosition === 'forward' && repo == '2'){
-            console.log('third');
-            $("#finish").removeClass('disabled');
+            if(jQuery.isEmptyObject(obj.sub_inventories)){
+                $('.sub_inventory_error').html('please select sub inventory')
+                $('#smartwizard').smartWizard("loader", "hide");
+                return false;
+            } else {
+                $('.sub_inventory_error').html('')
+                $('#smartwizard').smartWizard("loader", "hide");
+                $("#finish").removeClass('disabled');
+                _preview();
+                return true;
+            }
         }
 
         $('#smartwizard').smartWizard("loader", "hide");
@@ -174,7 +313,7 @@ function _sub_users(id){
 
 function _inventories(page, search){
     $.ajax({
-        "url": config.routes.inventories+"?page="+page+"&search="+search,
+        "url": config.routes.inventories+"?page="+page+"&search="+search+"&selected="+JSON.stringify(obj.inventories),
         "dataType": "json",
         "type": "Get",
         success: function (response){
@@ -186,4 +325,45 @@ function _inventories(page, search){
             $('#inventories_pagination').html('');
         }
     });
+}
+
+function _sub_inventories(page, search){
+    $.ajax({
+        "url": config.routes.sub_inventories+"?page="+page+"&search="+search+"&selected="+JSON.stringify(obj.sub_inventories),
+        "dataType": "json",
+        "type": "Get",
+        success: function (response){
+            $('#sub_inventories_datatable').html(response.data);
+            $('#sub_inventories_pagination').html(response.pagination);
+        },
+        error: function(response){
+            $('#sub_inventories_datatable').html('<td colspan="3" class="text-center"><h3>No data found</h3></td>');
+            $('#sub_inventories_pagination').html('');
+        }
+    });
+}
+
+function _preview(){
+    $('#preview_user').html('<h6>'+obj.user[Object.keys(obj.user)[0]]+'</h6>');
+    $('#preview_party_name').html('<h6>'+obj.party_name+'</h6>');
+    $('#preview_party_address').html('<h6>'+obj.party_address+'</h6>');
+
+    var sub_users = '';
+    $.each(obj.sub_users, function(index, value) {
+        sub_users += '<h6>'+value+'</h6>';
+    });
+
+    var inventories = '';
+    $.each(obj.inventories, function(index, value) {
+        inventories += '<div class="row"><div class="col-sm-6"><h6>'+value.name+'</h6></div><div class="col-sm-6"><h6>'+value.item+'</h6></div></div>';
+    });
+
+    var sub_inventories = '';
+    $.each(obj.sub_inventories, function(index, value) {
+        sub_inventories += '<div class="row"><div class="col-sm-6"><h6>'+value.name+'</h6></div><div class="col-sm-6"><h6>'+value.item+'</h6></div></div>';
+    });
+
+    $('#preview_sub_users').html(sub_users);
+    $('#preview_inventories').html(inventories);
+    $('#preview_sub_inventories').html(sub_inventories);
 }

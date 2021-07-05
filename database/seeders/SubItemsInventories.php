@@ -13,7 +13,7 @@
 
             for($i=1; $i < 6; $i++){
                 $id = SubItemInventory::insertGetId([
-                    'title' => "Box $i",
+                    'title' => "Sub Box $i",
                     'description' => 'Lorem ipsum de tenor',
                     'status' => 'active',
                     'created_at' => date('Y-m-d H:i:s'),

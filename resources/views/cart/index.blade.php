@@ -122,9 +122,7 @@
 
         function change_status(object){
             var id = $(object).data("id");
-            var status = $(object).data("status");
-            var old_status = $(object).data("old_status");
-            var msg = "Are you Sure?";
+            var msg = "Are you sure to delete record?";
 
             if (confirm(msg)) {
                 $.ajax({
@@ -133,7 +131,6 @@
                     "type": "POST",
                     "data":{
                         id: id,
-                        status: status,
                         _token: "{{ csrf_token() }}"
                     },
                     success: function (response){

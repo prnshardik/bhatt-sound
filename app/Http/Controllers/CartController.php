@@ -25,8 +25,15 @@
 
                     if($data->isNotEmpty()){
                         foreach($data as $row){
-                            $cart_item = CartItem::select(DB::Raw("COUNT(".'id'.") as count"))->where(['cart_id' => $row->id])->first();
-                            $row->count = $cart_item->count;
+                            $cart_item = CartInventory::select(DB::Raw("COUNT(".'id'.") as count"))->where(['cart_id' => $row->id])->first();
+                            $row->items_count = $cart_item->count;
+                        }
+                    }
+
+                    if($data->isNotEmpty()){
+                        foreach($data as $row){
+                            $cart_sub_item = CartSubInventory::select(DB::Raw("COUNT(".'id'.") as count"))->where(['cart_id' => $row->id])->first();
+                            $row->sub_items_count = $cart_sub_item->count;
                         }
                     }
 
@@ -44,12 +51,7 @@
                                                 </a>';
                                 }
 
-                                $return .= '<a href="javascript:;" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                                <i class="fa fa-bars"></i>
-                                            </a> 
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="javascript:;" onclick="change_status(this);" data-status="deleted" data-old_status="'.$data->status.'" data-id="'.base64_encode($data->id).'">Delete</a></li>
-                                            </ul>
+                                $return .= '<a class="btn btn-default btn-xs" href="javascript:;" onclick="change_status(this);" data-id="'.base64_encode($data->id).'"><i class="fa fa-trash"></i></a>
                                         </div>';
                                 return $return;
                             })
@@ -61,8 +63,8 @@
                                     return '<span class="badge badge-pill badge-info">Dispatch</span>';
                                 else if($data->status == 'deliver')
                                     return '<span class="badge badge-pill badge-info">Deliver</span>';
-                                else if($data->status == 'out')
-                                    return '<span class="badge badge-pill badge-info">Out</span>';
+                                else if($data->status == 'return')
+                                    return '<span class="badge badge-pill badge-info">Return</span>';
                                 else if($data->status == 'reach')
                                     return '<span class="badge badge-pill badge-info">Reach</span>';
                                 else
@@ -78,17 +80,7 @@
 
         /** create */
             public function create(Request $request){
-                $users = User::select('id', 'name')
-                            ->where(['is_admin' => 'n', 'status' => 'active'])
-                            ->whereNotIn('id', function($query) {
-                                $query->select('user_id')->from('cart')->where('status', '!=', 'reach'); 
-                            })
-                            ->whereNotIn('id', function($query) {
-                                $query->select('user_id')->from('cart_users')->where(['status' => 'active']); 
-                            })
-                            ->get();
-                
-                return view('cart.step', ['users' => $users, 'sub_users' => json_encode($users)]);
+               return view('cart.step');
             }
         /** create */
 
@@ -100,35 +92,30 @@
                 
                 $validator = Validator::make($input,
                                     [
-                                        'user_id' => 'required|array|min:1', 
+                                        'user' => 'required|array|min:1', 
                                         'sub_users' => 'required|array|min:1',
                                         'party_name' => 'required', 
                                         'party_address' => 'required',
                                         'inventories' => 'required|array|min:1', 
-                                        'sub_items' => 'required|array|min:1',
+                                        'sub_inventories' => 'required|array|min:1',
                                     ]
                                 );
+
                 if($validator->fails()){
                     return response()->json($validator->errors(), 422);
                 }else{
-                    $user_id = array_keys($input['user_id']);
-                    $user_id = $user_id[0];
+                    $user = array_keys($input['user']);
+                    $user = $user[0];
                     $sub_users = array_keys($input['sub_users']);
                     $party_name = $input['party_name'];
                     $party_address = $input['party_address'];
                     $inventories = array_keys($input['inventories']);
-                    $sub_items = [];
+                    $sub_inventories = array_keys($input['sub_inventories']);
     
-                    foreach($input['sub_items'] as $k => $v){
-                        $ar = (array)$v;
-                        $i = array_values($ar);
-                        $sub_items[$k] = $i[0]; 
-                    }
-
                     DB::beginTransaction();
                     try {
                         $crud = [
-                                    'user_id' => $user_id,
+                                    'user_id' => $user,
                                     'party_name' => $party_name,
                                     'party_address' => $party_address,
                                     'status' => 'assigned',
@@ -171,7 +158,7 @@
                                     'updated_by' => auth()->user()->id
                                 ];
 
-                                $cart_inventory_id = CartItem::insertGetId($inventories_crud);
+                                $cart_inventory_id = CartInventory::insertGetId($inventories_crud);
 
                                 if(empty($cart_inventory_id)){
                                     DB::rollback();
@@ -179,56 +166,22 @@
                                 }
                             }
 
-                            $sub_item_crud = [
-                                'cart_id' => $last_id,
-                                'status' => 'active',
-                                'created_at' => date('Y-m-d H:i:s'),
-                                'created_by' => auth()->user()->id,
-                                'updated_at' => date('Y-m-d H:i:s'),
-                                'updated_by' => auth()->user()->id
-                            ];
+                            foreach($sub_inventories as $k => $v){
+                                $sub_inventories_crud = [
+                                    'cart_id' => $last_id,
+                                    'sub_inventory_id' => $v,
+                                    'status' => 'active',
+                                    'created_at' => date('Y-m-d H:i:s'),
+                                    'created_by' => auth()->user()->id,
+                                    'updated_at' => date('Y-m-d H:i:s'),
+                                    'updated_by' => auth()->user()->id
+                                ];
 
-                            $sub_item_id = CartSubItem::insertGetId($sub_item_crud);
+                                $cart_sub_inventory_id = CartSubInventory::insertGetId($sub_inventories_crud);
 
-                            if(empty($sub_item_id)){
-                                DB::rollback();
-                                return response()->json(['code' => 201, 'message' => 'Cart sub item insert error, please try again later']);
-                            }else{
-                                $folder_to_upload = public_path().'/uploads/qrcodes/cart_sub_items';
-
-                                if (!\File::exists($folder_to_upload))
-                                    \File::makeDirectory($folder_to_upload, 0777, true, true);
-                                
-                                $qrname = 'qrcode_'.$sub_item_id.'.png';
-
-                                \QrCode::size(500)->format('png')->generate($sub_item_id, public_path('uploads/qrcodes/cart_sub_items/'.$qrname));
-
-                                CartSubItem::where(['id' => $sub_item_id])->update(['qrcode' => $qrname]);
-
-                                foreach($sub_items as $k => $v){
-                                    if($v != '' || $v != 0){
-                                        $sub_items_crud = [
-                                            'cart_sub_item_id' => $sub_item_id,
-                                            'sub_item_id' => $k,
-                                            'quantity' => $v,
-                                            'status' => 'active',
-                                            'created_at' => date('Y-m-d H:i:s'),
-                                            'created_by' => auth()->user()->id,
-                                            'updated_at' => date('Y-m-d H:i:s'),
-                                            'updated_by' => auth()->user()->id
-                                        ];
-   
-                                        $exst_sub = SubItem::where(['id' => $k])->first();
-                                        
-                                        SubItem::where(['id' => $k])->update(['quantity' => $exst_sub->quantity - $v, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth()->user()->id]);
-    
-                                        $sub_items_id = CartSubItems::insertGetId($sub_items_crud);                                    
-    
-                                        if(empty($sub_items_id)){
-                                            DB::rollback();
-                                            return response()->json(['code' => 201, 'message' => 'Cart sub items insert error, please try again later']);
-                                        }                                    
-                                    }
+                                if(empty($cart_sub_inventory_id)){
+                                    DB::rollback();
+                                    return response()->json(['code' => 201, 'message' => 'Cart sub inventory insert error, please try again later']);
                                 }
                             }
 
@@ -503,16 +456,13 @@
 
                 if(!empty($request->all())){
                     $id = base64_decode($request->id);
-                    $status = $request->status;
-
+                    
                     $data = Cart::where(['id' => $id])->first();
 
                     if(!empty($data)){
                         $delete = Cart::where(['id' => $id])->delete();
                         
                         if($delete){
-                            DB::table('used_items')->where(['cart_id' => $id])->delete();
-
                             return response()->json(['code' => 200]);
                         }else{
                             return response()->json(['code' => 201]);
@@ -528,7 +478,15 @@
 
         /** users */
             public function users(Request $request){
-                $data = User::where(['status' => 'active', 'is_admin' => 'n'])->get();
+                $data = User::select('id', 'name')
+                            ->where(['status' => 'active', 'is_admin' => 'n'])
+                            ->whereNotIn('id', function($query) {
+                                $query->select('user_id')->from('cart')->where('status', '!=', 'reach'); 
+                            })
+                            ->whereNotIn('id', function($query) {
+                                $query->select('user_id')->from('cart_users')->where(['status' => 'active']); 
+                            })
+                            ->get();
 
                 if($data->isNotEmpty()){
                     $users = '<option value="">Select user</option>';
@@ -548,7 +506,16 @@
                 if($request->id == '')
                     return json_encode(['code' => 201]);
                 
-                $data = User::where(['status' => 'active', 'is_admin' => 'n'])->where('id', '!=', $request->id)->get();
+                $data = User::select('id', 'name')
+                            ->where(['status' => 'active', 'is_admin' => 'n'])
+                            ->where('id', '!=', $request->id)
+                            ->whereNotIn('id', function($query) {
+                                $query->select('user_id')->from('cart')->where('status', '!=', 'reach'); 
+                            })
+                            ->whereNotIn('id', function($query) {
+                                $query->select('user_id')->from('cart_users')->where(['status' => 'active']); 
+                            })
+                            ->get();
 
                 if($data->isNotEmpty()){
                     $users = '';
@@ -566,18 +533,38 @@
         /** inventories */
             public function inventories(Request $request){
                 $search = $request->search;
+                $selected = json_decode($request->selected);
+                $cart_id = $request->cart_id;
+
+                $cart_inventories = [];
+                if($cart_id != ''){
+                    $cart_inventories = CartInventory::select('cart_inventories.inventory_id', 'i.title')
+                                                        ->where(['cart_inventories.cart_id' => $cart_id])
+                                                        ->leftjoin('inventories as i', 'cart_inventories.inventory_id', 'i.id')
+                                                        ->get()
+                                                        ->toArray();
+                }
 
                 $collection = ItemInventory::select('items_inventories.id', 'items_inventories.title', 
                                                 DB::Raw("(select COUNT(items_inventories_items.id) from items_inventories_items where items_inventories_items.item_inventory_id = items_inventories.id) as items")
                                             )
                                             ->where(['items_inventories.status' => 'active']);
-                
+                if($cart_id != ''){
+                    $collection->whereNotIn('id', function($query) use ($cart_id) {
+                                    $query->select('inventory_id')->from('cart_inventories')->where('cart_id', '!=', $cart_id)->where('status', '!=', 'inactive'); 
+                                });
+                }else{
+                    $collection->whereNotIn('id', function($query) {
+                                    $query->select('inventory_id')->from('cart_inventories')->where('status', '!=', 'inactive'); 
+                                });
+                }
+
                 if($search != '')
                     $collection->where('items_inventories.title', 'like', '%'.$search.'%');
 
                 $data = $collection->paginate(2);
                 
-                $view = view('cart.inventories_table', compact('data'))->render();
+                $view = view('cart.inventories_table', compact('data', 'selected', 'cart_inventories'))->render();
                 $pagination = view('cart.inventories_pagination', compact('data'))->render();
                 
                 return response()->json(['success' => true, 'data' => $view, 'pagination' => $pagination]);
@@ -592,7 +579,43 @@
 
         /** sub-inventories */
             public function sub_inventories(Request $request){
+                $search = $request->search;
+                $selected = json_decode($request->selected);
+                $cart_id = $request->cart_id;
 
+                $cart_sub_inventories = [];
+                if($cart_id != ''){
+                    $cart_sub_inventories = CartInventory::select('cart_sub_inventories.sub_inventory_id', 'i.title')
+                                                        ->where(['cart_sub_inventories.cart_id' => $cart_id])
+                                                        ->leftjoin('inventories as i', 'cart_sub_inventories.sub_inventory_id', 'i.id')
+                                                        ->get()
+                                                        ->toArray();
+                }
+                
+                $collection = SubItemInventory::select('sub_items_inventories.id', 'sub_items_inventories.title', 
+                                                DB::Raw("(select COUNT(sub_items_inventories_items.id) from sub_items_inventories_items where sub_items_inventories_items.sub_item_inventory_id = sub_items_inventories.id) as items")
+                                            )
+                                            ->where(['sub_items_inventories.status' => 'active']);
+                
+                if($cart_id != ''){
+                    $collection->whereNotIn('id', function($query) use ($cart_id) {
+                                    $query->select('sub_inventory_id')->from('cart_sub_inventories')->where('cart_id', '!=', $cart_id)->where('status', '!=', 'inactive'); 
+                                });
+                }else{
+                    $collection->whereNotIn('id', function($query) {
+                                    $query->select('sub_inventory_id')->from('cart_sub_inventories')->where('status', '!=', 'inactive'); 
+                                });
+                }
+
+                if($search != '')
+                    $collection->where('sub_items_inventories.title', 'like', '%'.$search.'%');
+
+                $data = $collection->paginate(2);
+                
+                $view = view('cart.sub_inventories_table', compact('data', 'selected', 'cart_sub_inventories'))->render();
+                $pagination = view('cart.sub_inventories_pagination', compact('data'))->render();
+                
+                return response()->json(['success' => true, 'data' => $view, 'pagination' => $pagination]);
             }
         /** sub-inventories */
 
