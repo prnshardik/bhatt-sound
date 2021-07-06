@@ -118,7 +118,7 @@
     <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-stats">
             <div class="card-body ">
-                <a href="#" class="anchor_color">   
+                <a href="{{ route('cart') }}" class="anchor_color">   
                     <div class="row">
                         <div class="col-3 col-md-3">
                             <div class="icon-big text-center icon-warning">

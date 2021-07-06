@@ -249,32 +249,84 @@
             }
         /** view */
 
+        /** detail */
+            public function detail(Request $request){
+                $id = $request->id;
+                
+                if(empty($id))
+                    return response()->json(['code' => 201]);
+
+                $data = [];
+                
+                $cart = Cart::select('cart.id', 'cart.party_name', 'cart.party_address', 'cart.user_id', 'users.name as user_name')
+                                ->leftjoin('users', 'users.id', 'cart.user_id')
+                                ->where(['cart.id' => $id])
+                                ->first();
+                    
+                if(!empty($cart)){
+                    $data['party_name'] = $cart->party_name;
+                    $data['party_address'] = $cart->party_address;
+                    $data['user'] = [$cart->user_id => $cart->user_name];
+
+                    $subUsers = CartUser::select('cart_users.user_id', 'users.name as user_name')
+                                            ->leftjoin('users', 'users.id', 'cart_users.user_id')
+                                            ->where(['cart_users.cart_id' => $id])
+                                            ->get();   
+
+                    $sub_users = [];
+                    if($subUsers->isNotEmpty()){
+                        foreach($subUsers as $row){
+                            $sub_users[$row->user_id] = $row->user_name; 
+                        }
+                    }
+
+                    $data['sub_users'] = $sub_users;
+
+                    $cartInventories = CartInventory::select('cart_inventories.inventory_id', 'items_inventories.title', 
+                                                            DB::Raw("(select COUNT(".'id'.") from items_inventories_items where items_inventories_items.item_inventory_id = cart_inventories.inventory_id) as count")
+                                                            )
+                                                        ->leftjoin('items_inventories', 'cart_inventories.inventory_id', 'items_inventories.id')
+                                                        ->where(['cart_inventories.cart_id' => $id])
+                                                        ->get(); 
+                                                        
+                    $inventories = [];
+                    if($cartInventories->isNotEmpty()){
+                        foreach($cartInventories as $row){
+                            $inventories[$row->inventory_id] = [$row->title => $row->count]; 
+                        }
+                    }
+
+                    $data['inventories'] = $inventories;
+
+                    $subCartInventories = CartSubInventory::select('cart_sub_inventories.sub_inventory_id', 'sub_items_inventories.title', 
+                                                            DB::Raw("(select COUNT(".'id'.") from sub_items_inventories_items where sub_items_inventories_items.sub_item_inventory_id = cart_sub_inventories.sub_inventory_id) as count")
+                                                            )
+                                                        ->leftjoin('sub_items_inventories', 'cart_sub_inventories.sub_inventory_id', 'sub_items_inventories.id')
+                                                        ->where(['cart_sub_inventories.cart_id' => $id])
+                                                        ->get(); 
+                                                        
+                    $sub_inventories = [];
+                    if($subCartInventories->isNotEmpty()){
+                        foreach($subCartInventories as $row){
+                            $sub_inventories[$row->sub_inventory_id] = [$row->title => $row->count]; 
+                        }
+                    }
+
+                    $data['sub_inventories'] = $sub_inventories;
+                }
+
+                return response()->json(['code' => 200, 'data' => $data]);
+            }
+        /** detail */
+
         /** edit */ 
             public function edit(Request $request, $id=''){
                 if($id == '')
                     return redirect()->back()->with('error', 'Something went wrong');
 
                 $id = base64_decode($id);
-                
-                $data = Cart::select('id', 'user_id', 'party_name', 'party_address')->where(['id' => $id])->first();
-                $cart_users = CartUser::select('id', 'user_id')->where(['cart_id' => $id])->get()->toArray();
 
-                $cart_users_ids = array_map(function($row){
-                                                return $row['user_id'];
-                                            }, $cart_users);
-
-                $users = User::select('id', 'name')
-                            ->where(['is_admin' => 'n', 'status' => 'active'])
-                            ->whereNotIn('id', function($query) use ($data){
-                                $query->select('user_id')->from('cart')->whereIn('status', ['assigned', 'dispatch', 'deliver', 'out'])
-                                        ->WhereNotIn('user_id', [$data->user_id]);
-                            })
-                            ->whereNotIn('id', function($query) use ($data, $id){
-                                $query->select('user_id')->from('cart_users')->where('cart_id', '!=', $id);
-                            })
-                            ->get();
-
-                return view('cart.step', ['users' => $users, 'sub_users' => json_encode($users), 'data' => $data, 'cart_users_ids' => $cart_users_ids]);
+                return view('cart.step', ['cart_id' => $id]);
             }
         /** edit */ 
 
@@ -469,20 +521,32 @@
 
         /** users */
             public function users(Request $request){
+                $cart_id = $request->cart_id;
+                $user_id = '';
+                
+                if(!empty($cart_id)){
+                    $cart = Cart::select('user_id')->where(['id' => $cart_id])->first();
+
+                    if(!empty($cart))
+                        $user_id = $cart->user_id;
+                }
+
                 $data = User::select('id', 'name')
-                            ->where(['status' => 'active', 'is_admin' => 'n'])
-                            ->whereNotIn('id', function($query) {
-                                $query->select('user_id')->from('cart')->where('status', '!=', 'reach'); 
-                            })
-                            ->whereNotIn('id', function($query) {
-                                $query->select('user_id')->from('cart_users')->where(['status' => 'active']); 
-                            })
-                            ->get();
+                                ->where(['status' => 'active', 'is_admin' => 'n'])
+                                ->whereNotIn('id', function($query) use ($cart_id) {
+                                    $query->select('user_id')->from('cart')->where('status', '!=', 'reach')->where('id', '!=', $cart_id); 
+                                })
+                                ->whereNotIn('id', function($query) use ($cart_id) {
+                                    $query->select('user_id')->from('cart_users')->where(['status' => 'active'])->where('cart_id', '!=', $cart_id); 
+                                })
+                                ->get();
 
                 if($data->isNotEmpty()){
                     $users = '<option value="">Select user</option>';
                     foreach($data as $row){
-                        $users .= "<option value='$row->id'>$row->name</option>";
+                        $selected = '';
+                        if(!empty($user_id) && $row->id == $user_id){ $selected = 'selected'; } 
+                        $users .= "<option value='$row->id' $selected >$row->name</option>";
                     }
 
                     return json_encode(['code' => 200, 'data' => $users]);
@@ -496,22 +560,38 @@
             public function sub_users(Request $request){
                 if($request->id == '')
                     return json_encode(['code' => 201]);
+
+                $cart_id = $request->cart_id;
+                $users_id = [];
+
+                if(!empty($cart_id)){
+                    $cartUsers = CartUser::select('user_id')->where(['cart_id' => $cart_id])->get();
+
+                    if($cartUsers->isNotEmpty()){
+                        foreach($cartUsers as $row){
+                            $users_id[] = $row->user_id;
+                        }
+                    }
+                }
                 
                 $data = User::select('id', 'name')
                             ->where(['status' => 'active', 'is_admin' => 'n'])
                             ->where('id', '!=', $request->id)
-                            ->whereNotIn('id', function($query) {
-                                $query->select('user_id')->from('cart')->where('status', '!=', 'reach'); 
+                            ->whereNotIn('id', function($query) use ($cart_id) {
+                                $query->select('user_id')->from('cart')->where('status', '!=', 'reach')->where('id', '!=', $cart_id); 
                             })
-                            ->whereNotIn('id', function($query) {
-                                $query->select('user_id')->from('cart_users')->where(['status' => 'active']); 
+                            ->whereNotIn('id', function($query) use ($cart_id) {
+                                $query->select('user_id')->from('cart_users')->where(['status' => 'active'])->where('cart_id', '!=', $cart_id); 
                             })
                             ->get();
 
                 if($data->isNotEmpty()){
                     $users = '';
                     foreach($data as $row){
-                        $users .= "<option value='$row->id'>$row->name</option>";
+                        $selected = '';
+                        if(!empty($users_id) && in_array($row->id, $users_id)){ $selected = 'selected'; } 
+
+                        $users .= "<option value='$row->id' $selected >$row->name</option>";
                     }
 
                     return json_encode(['code' => 200, 'data' => $users]);

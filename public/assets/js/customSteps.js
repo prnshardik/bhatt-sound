@@ -10,9 +10,15 @@ let obj = {
 $(document).ready(function(){
     $('.select2').select2();
 
+    if(cart_id != ''){
+        _cart_detail();
+    }
+
     _users();
 
     $('#user').change(function(){
+        obj.user = {};
+
         let id = $(this).val();
         _sub_users(id);
     });
@@ -38,9 +44,9 @@ $(document).ready(function(){
         if($(this).prop("checked") == true){
             obj.inventories[value] = {'name': name, 'item': item};
         } else {
-            // if(data.cart_id != ''){
+            // if(cart_id != ''){
                 // $.ajax({
-                //     "url": config.routes.delete_inventories+"?cart_id="+data.cart_id+"&id="+value,
+                //     "url": config.routes.delete_inventories+"?cart_id="+cart_id+"&id="+value,
                 //     "dataType": "json",
                 //     async: false,
                 //     cache: false,
@@ -83,16 +89,16 @@ $(document).ready(function(){
         if($(this).prop("checked") == true){
             obj.sub_inventories[value] = {'name': name, 'item': item};
         } else {
-            // if(data.cart_id != ''){
+            // if(cart_id != ''){
                 // $.ajax({
-                //     "url": config.routes.delete_inventories+"?cart_id="+data.cart_id+"&id="+value,
+                //     "url": config.routes.delete_inventories+"?cart_id="+cart_id+"&id="+value,
                 //     "dataType": "json",
                 //     async: false,
                 //     cache: false,
                 //     "type": "Get",
                 //     success: function (response){
                 //         if(response.code == 200){
-                //             delete obj.inventories[value];
+                //             delete obj.sub_inventories[value];
                 //         } else {
                 //             toastr.error(['Something went wrong, please try again later', 'Error']);
                 //         }
@@ -111,9 +117,9 @@ $(document).ready(function(){
                                         .addClass('btn btn-info disabled')
                                         .attr('id', 'finish')
                                         .on('click', function(){ 
-                                            // if(data.cart_id != ''){
-                                            //     obj['cart_id'] = data.cart_id
-                                            // }
+                                            if(cart_id != ''){
+                                                obj['cart_id'] = cart_id
+                                            }
     
                                             $.ajaxSetup({
                                                 headers: {
@@ -161,14 +167,14 @@ $(document).ready(function(){
         var repo = anchorObject.data('repo');
 
         if(stepPosition === 'forward' && repo == '0'){
-            obj.sub_users = {}
-            var user = $("#user option:selected").val();
+            var user = $("#user option:selected").val();    
             var name = $("#user option:selected").text();
-
+            
             if(user != ''){
                 obj.user[user] = name;
             }
-
+            
+            obj.sub_users = {}
             var sub_users = $('#sub_users').select2('data')
             sub_users.forEach(function(item) {
                 obj.sub_users[item.id] = item.text
@@ -178,7 +184,7 @@ $(document).ready(function(){
             obj.party_address = $('#party_address').val();
 
             $('.user_id, .sub_users, .party_name, .party_address').html('');
-
+console.log(obj);
             if(jQuery.isEmptyObject(obj.user) || jQuery.isEmptyObject(obj.sub_users) || obj.party_name == '' || obj.party_address == ''){
                 if(jQuery.isEmptyObject(obj.user)){
                     $('.user').html('please select user')
@@ -275,7 +281,7 @@ $(document).ready(function(){
 
 function _users(){
     $.ajax({
-        "url": config.routes.users,
+        "url": config.routes.users+'?cart_id='+cart_id,
         "dataType": "json",
         "type": "Get",
         success: function (response){
@@ -283,6 +289,10 @@ function _users(){
                 $('#user').html(response.data);            
             }else{
                 $('#user').html('<option value="">Select user</option>');            
+            }
+
+            if(cart_id != ''){
+                _sub_users(Object.keys(obj.user)[0]);
             }
         },
         error: function(response){
@@ -293,7 +303,7 @@ function _users(){
 
 function _sub_users(id){
     $.ajax({
-        "url": config.routes.sub_users+'?id='+id,
+        "url": config.routes.sub_users+'?id='+id+'&cart_id='+cart_id,
         "dataType": "json",
         "type": "Get",
         success: function (response){
@@ -303,6 +313,11 @@ function _sub_users(id){
                 $('#sub_users').html(response.data);            
             }else{
                 $('#sub_users').html('');            
+            }
+
+            if(cart_id != ''){
+                $('#party_name').val(obj.party_name);
+                $('#party_address').val(obj.party_address);
             }
         },
         error: function(response){
@@ -366,4 +381,24 @@ function _preview(){
     $('#preview_sub_users').html(sub_users);
     $('#preview_inventories').html(inventories);
     $('#preview_sub_inventories').html(sub_inventories);
+}
+
+function _cart_detail(){
+    $.ajax({
+        "url": config.routes.detail+"?id="+cart_id,
+        "dataType": "json",
+        "type": "Get",
+        "async": false,
+        "cache": false,
+        success: function (response){
+            if(response.code == 200){
+                obj = response.data;
+            }else{
+                toastr.error(['Something went wrong, please try again later', 'Error']);    
+            }
+        },
+        error: function(response){
+            toastr.error(['Something went wrong, please try again later', 'Error']);
+        }
+    });
 }

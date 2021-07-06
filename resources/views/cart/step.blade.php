@@ -5,7 +5,7 @@
 @endsection
 
 @section('title')
-    Cart Add
+    Cart @if(isset($cart_id)) Edit @else Add @endif
 @endsection
 
 @section('styles')
@@ -24,7 +24,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Cart</h5>
+                    <h5 class="card-title">Cart @if(isset($cart_id)) Edit @else Add @endif</h5>
                 </div>
                 <div class="card-body">
                     <div id="smartwizard" style="min-height:400px;">
@@ -202,13 +202,12 @@
                 cart: "{{ route('cart') }}",
             }
         };
-        // var data = {
-        //     cart_id: "{{ $data->id ?? '' }}"
-        // };
+        var cart_id = "{{ $cart_id ?? '' }}";
         
-        // if(data.cart_id != ''){
-        //     config.routes.insert = "{{ route('cart.update') }}"
-        // }
+        if(cart_id != ''){
+            config.routes.insert = "{{ route('cart.update') }}",
+            config.routes.detail = "{{ route('cart.detail') }}"
+        }
     </script>
     <script src="{{ asset('assets/js/customSteps.js') }}"></script>
 @endsection

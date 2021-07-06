@@ -10,6 +10,7 @@
     use App\Models\SubItem;
     use App\Models\SubItemCategory;
     use App\Models\SubItemInventory;
+    use App\Models\Cart;
     use Auth, DB;
 
     class DashboardController extends Controller{
@@ -26,7 +27,7 @@
                 $subItems = SubItem::where(['status' => 'active'])->count();
                 $subItemsInventories = SubItemInventory::where(['status' => 'active'])->count();
 
-                $cart = 0;
+                $cart = Cart::where('status', '!=', 'reach')->count();
 
                 $data = ['users' => $users, 'itemsCategories' => $itemsCategories, 'items' => $items, 'itemsInventories' => $itemsInventories,
                         'cart' => $cart, 'subItemsCategories' => $subItemsCategories, 'subItems' => $subItems, 'subItemsInventories' => $subItemsInventories];

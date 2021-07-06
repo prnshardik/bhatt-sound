@@ -77,42 +77,12 @@
                     </ul>
                 </div>
             </li>
-            <!-- <li class="{{ Request::is('items-categories*') ? 'active' : '' }}">
-                <a href="{{ route('items.categories') }}">
-                    <i class="fa fa-bars"></i>
-                    <p>Items Categories</p>
-                </a>
-            </li> -->
-            <!-- <li class="{{ (Request::is('items*') && !Request::is('items-categories*') && !Request::is('items-inventories*')) ? 'active' : '' }}">
-                <a href="{{ route('items') }}">
-                    <i class="fa fa-cubes"></i>
-                    <p>Items</p>
+            <li class="{{ Request::is('cart*') ? 'active' : '' }}">
+                <a href="{{ route('cart') }}">
+                    <i class="fa fa-shopping-cart"></i>
+                    <p>Cart</p>
                 </a>
             </li>
-            <li class="{{ Request::is('items-inventories*') ? 'active' : '' }}">
-                <a href="{{ route('items.inventories') }}">
-                    <i class="fa fa-music"></i>
-                    <p>Items Inventories</p>
-                </a>
-            </li> -->
-            <!-- <li class="{{ Request::is('sub-items-categories*') ? 'active' : '' }}">
-                <a href="{{ route('sub.items.categories') }}">
-                    <i class="fa fa-bars"></i>
-                    <p>Sub Items Categories</p>
-                </a>
-            </li>
-            <li class="{{ (Request::is('sub-items*') && !Request::is('sub-items-categories*') && !Request::is('sub-items-inventories*')) ? 'active' : '' }}">
-                <a href="{{ route('sub.items') }}">
-                    <i class="fa fa-cubes"></i>
-                    <p>Sub Items</p>
-                </a>
-            </li>
-            <li class="{{ Request::is('sub-items-inventories*') ? 'active' : '' }}">
-                <a href="{{ route('sub.items.inventories') }}">
-                    <i class="fa fa-music"></i>
-                    <p>Sub Items Inventories</p>
-                </a>
-            </li> -->
         </ul>
     </div>
 </div>
