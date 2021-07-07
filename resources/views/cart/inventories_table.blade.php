@@ -11,7 +11,7 @@
                 <label class="form-check-label">
                     <input type="checkbox" class="form-check-input inventories" name="inventories[]" value="{{ $row->id }}" data-name="{{ $row->title }}" 
                     data-item="{{ $row->items }}"
-                    @if(in_array($row->id, $array)) checked @endif>
+                    @if(!empty($array) && in_array($row->id, $array)) checked @endif>
                     <span class="form-check-sign"></span>
                 </label>
             </div>

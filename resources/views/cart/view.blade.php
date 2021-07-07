@@ -71,7 +71,7 @@
                                 <div class="card-body" id="preview_inventories">
                                     @if($data->inventories->isNotEmpty())
                                         @foreach($data->inventories as $row)
-                                            <h6>{{ $row->title ?? '' }}</h6>
+                                            <div class="row"><div class="col-sm"><h6>{{ $row->title ?? '' }}</h6></div><div class="col-sm"><h6>{{ $row->item ?? '' }}</h6></div></div>
                                         @endforeach
                                     @endif
                                 </div>
@@ -85,7 +85,7 @@
                                 <div class="card-body" id="preview_inventories">
                                     @if($data->sub_inventories->isNotEmpty())
                                         @foreach($data->sub_inventories as $row)
-                                            <h6>{{ $row->title ?? '' }}</h6>
+                                            <div class="row"><div class="col-sm"><h6>{{ $row->title ?? '' }}</h6></div><div class="col-sm"><h6>{{ $row->item ?? '' }}</h6></div></div>
                                         @endforeach
                                     @endif
                                 </div>

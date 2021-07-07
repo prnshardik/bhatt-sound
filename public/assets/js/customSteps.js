@@ -36,36 +36,37 @@ $(document).ready(function(){
         _inventories(0, search);
     });
 
-    $(document).on('click', '.inventories', function(event){
+    $(document).on('click', '.inventories', function(){
         var value = $(this).val();
         var name = $(this).data('name');
         var item = $(this).data('item');
-
+        
         if($(this).prop("checked") == true){
             obj.inventories[value] = {'name': name, 'item': item};
         } else {
-            // if(cart_id != ''){
-                // $.ajax({
-                //     "url": config.routes.delete_inventories+"?cart_id="+cart_id+"&id="+value,
-                //     "dataType": "json",
-                //     async: false,
-                //     cache: false,
-                //     "type": "Get",
-                //     success: function (response){
-                //         if(response.code == 200){
-                //             delete obj.inventories[value];
-                //         } else {
-                //             toastr.error(['Something went wrong, please try again later', 'Error']);
-                //         }
-                //     },
-                //     error: function(response){
-                //         toastr.error(['Something went wrong, please try again later', 'Error']);
-                //     }
-                // });
-            // }else{
+            if(cart_id != ''){
+                $.ajax({
+                    "url": config.routes.delete_inventories+"?cart_id="+cart_id+"&id="+value,
+                    "dataType": "json",
+                    async: false,
+                    cache: false,
+                    "type": "Get",
+                    success: function (response){
+                        if(response.code == 200){
+                            delete obj.inventories[value];
+                        } else {
+                            toastr.error(['Something went wrong, please try again later', 'Error']);
+                        }
+                    },
+                    error: function(response){
+                        toastr.error(['Something went wrong, please try again later', 'Error']);
+                    }
+                });
+            }else{
                 delete obj.inventories[value];
-            // }
+            }
         }
+        console.log(obj);
     });
 
     $(document).on('click', '#sub_inventories_pagination .pagination a', function(event){
@@ -89,27 +90,27 @@ $(document).ready(function(){
         if($(this).prop("checked") == true){
             obj.sub_inventories[value] = {'name': name, 'item': item};
         } else {
-            // if(cart_id != ''){
-                // $.ajax({
-                //     "url": config.routes.delete_inventories+"?cart_id="+cart_id+"&id="+value,
-                //     "dataType": "json",
-                //     async: false,
-                //     cache: false,
-                //     "type": "Get",
-                //     success: function (response){
-                //         if(response.code == 200){
-                //             delete obj.sub_inventories[value];
-                //         } else {
-                //             toastr.error(['Something went wrong, please try again later', 'Error']);
-                //         }
-                //     },
-                //     error: function(response){
-                //         toastr.error(['Something went wrong, please try again later', 'Error']);
-                //     }
-                // });
-            // }else{
+            if(cart_id != ''){
+                $.ajax({
+                    "url": config.routes.delete_sub_inventories+"?cart_id="+cart_id+"&id="+value,
+                    "dataType": "json",
+                    async: false,
+                    cache: false,
+                    "type": "Get",
+                    success: function (response){
+                        if(response.code == 200){
+                            delete obj.sub_inventories[value];
+                        } else {
+                            toastr.error(['Something went wrong, please try again later', 'Error']);
+                        }
+                    },
+                    error: function(response){
+                        toastr.error(['Something went wrong, please try again later', 'Error']);
+                    }
+                });
+            }else{
                 delete obj.sub_inventories[value];
-            // }
+            }
         }
     });
 
@@ -184,7 +185,7 @@ $(document).ready(function(){
             obj.party_address = $('#party_address').val();
 
             $('.user_id, .sub_users, .party_name, .party_address').html('');
-console.log(obj);
+
             if(jQuery.isEmptyObject(obj.user) || jQuery.isEmptyObject(obj.sub_users) || obj.party_name == '' || obj.party_address == ''){
                 if(jQuery.isEmptyObject(obj.user)){
                     $('.user').html('please select user')
@@ -202,7 +203,6 @@ console.log(obj);
                 _inventories(0, '');
                 return true;
             }
-
         } else if(stepPosition === 'forward' && repo == '1'){
             if(jQuery.isEmptyObject(obj.inventories)){
                 $('.inventory_error').html('please select inventory')
@@ -328,7 +328,7 @@ function _sub_users(id){
 
 function _inventories(page, search){
     $.ajax({
-        "url": config.routes.inventories+"?page="+page+"&search="+search+"&selected="+JSON.stringify(obj.inventories),
+        "url": config.routes.inventories+"?page="+page+"&search="+search+"&selected="+JSON.stringify(obj.inventories)+"&cart_id="+cart_id,
         "dataType": "json",
         "type": "Get",
         success: function (response){
@@ -344,7 +344,7 @@ function _inventories(page, search){
 
 function _sub_inventories(page, search){
     $.ajax({
-        "url": config.routes.sub_inventories+"?page="+page+"&search="+search+"&selected="+JSON.stringify(obj.sub_inventories),
+        "url": config.routes.sub_inventories+"?page="+page+"&search="+search+"&selected="+JSON.stringify(obj.sub_inventories)+"&cart_id="+cart_id,
         "dataType": "json",
         "type": "Get",
         success: function (response){
