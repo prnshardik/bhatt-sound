@@ -10,18 +10,7 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
         Route::get('logout', 'AuthController@logout');
 
         /** process */
-            Route::post('scan', 'InventoryController@scan');
-            Route::post('dispatch', 'InventoryController@pickup');
-            Route::post('deliver', 'InventoryController@deliver');
-            Route::post('out', 'InventoryController@out');
-            Route::post('reach', 'InventoryController@reach');
-            Route::post('redispatch', 'InventoryController@repickup');
-
-            Route::post('deliver-count-insert', 'InventoryController@deliver_count_insert');
-            Route::post('deliver-count-update', 'InventoryController@deliver_count_update');
-            Route::post('deliver-count-list', 'InventoryController@deliver_count_list');
-            
-            Route::post('maintenance', 'InventoryController@maintenance');
+            // Route::post('scan', 'InventoryController@scan');
         /** process */
 
         /** Admin */
@@ -29,7 +18,7 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                 /** user */
                     Route::get('users', 'UsersController@users');
                     Route::get('user/{id?}', 'UsersController@user');
-                    Route::post('user/create', 'UsersController@create');
+                    Route::post('user/insert', 'UsersController@insert');
                     Route::post('user/update', 'UsersController@update');
                     Route::post('user/status-change', 'UsersController@status_change');
                 /** user */
