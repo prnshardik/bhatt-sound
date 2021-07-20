@@ -66,7 +66,7 @@
                 $folder_to_upload = public_path().'/uploads/users/';
                 
                 $crud = [
-                    'name' => $request->name,
+                    'name' => ucfirt($request->name),
                     'email' => $request->email,
                     'phone' => $request->phone,
                     'password' => bcrypt($request->password),
@@ -124,7 +124,7 @@
                 $folder_to_upload = public_path().'/uploads/users/';
 
                 $crud = [
-                    'name' => $request->name,
+                    'name' => ucfirst($request->name),
                     'email' => $request->email,
                     'phone' => $request->phone,
                     'updated_at' => date('Y-m-d H:i:s'),
@@ -192,9 +192,9 @@
                                     @unlink($file_path);
                             }
 
-                            return response()->json(['code' => 200, 'message' =>'User deleted successfully']);
+                            return response()->json(['code' => 200, 'message' =>'Record deleted successfully']);
                         }else{
-                            return response()->json(['code' => 201, 'message' =>'Faild to delete user']);
+                            return response()->json(['code' => 201, 'message' =>'Faild to delete record']);
                         }
                     }else{
                         $update = User::where(['id' => $request->id])->update(['status' => $request->status, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth()->user()->id]);
@@ -205,7 +205,7 @@
                     else
                         return response()->json(['code' => 201 , 'message' =>'Faild to change status']);
                 }else{
-                    return response()->json(['code' => 201, 'message' =>'No user found']);
+                    return response()->json(['code' => 201, 'message' =>'No record found']);
                 }
             }
         /** change-status */

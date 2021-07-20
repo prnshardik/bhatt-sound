@@ -22,6 +22,16 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                     Route::post('user/update', 'UsersController@update');
                     Route::post('user/status-change', 'UsersController@status_change');
                 /** user */
+
+                /** items - module */
+                    /** items-categories */
+                        Route::get('items/categories', 'ItemsCategoriesController@categories');
+                        Route::get('items/category/{id?}', 'ItemsCategoriesController@category');
+                        Route::post('items/category/insert', 'ItemsCategoriesController@insert');
+                        Route::post('items/category/update', 'ItemsCategoriesController@update');
+                        Route::post('items/category/status-change', 'ItemsCategoriesController@status_change');
+                    /** items-categories */
+                /** items - module */
             });
         /** Admin */
     });
