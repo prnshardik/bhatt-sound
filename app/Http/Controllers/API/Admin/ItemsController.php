@@ -5,43 +5,83 @@
     use App\Http\Controllers\Controller;
     use Illuminate\Http\Request;
     use App\Models\ItemCategory;
+    use App\Models\Item;
     use Auth, DB, Validator, File;
 
-    class ItemsCategoriesController extends Controller{
-        /** categories */
-            public function categories(Request $request){
-                $data = ItemCategory::select('id', 'title', 'description', 'status')->get();
+    class ItemsController extends Controller{
+        /** items */
+            public function items(Request $request){
+                $image = URL('/uploads/items').'/';
+                $qrcode = URL('/uploads/qrcodes/items').'/';
+
+                $data = Item::select('items.id', 'items.name', 'items.description', 'items.status', 
+                                        DB::Raw("CASE
+                                            WHEN ".'items.image'." != '' THEN CONCAT("."'".$image."'".", ".'items.image'.")
+                                            ELSE CONCAT("."'".$image."'".", 'default.png')
+                                        END as image"),
+                                        DB::Raw("CASE
+                                            WHEN ".'items.qrcode'." != '' THEN CONCAT("."'".$qrcode."'".", ".'items.qrcode'.")
+                                            ELSE ''
+                                        END as qrcode"),
+                                        'items_categories.id as category_id', 'items_categories.title as category_title'
+                                    )
+                                ->leftjoin('items_categories', 'items_categories.id', 'items.category_id')
+                                ->get();
 
                 if($data->isNotEmpty())
                     return response()->json(['status' => 200, 'message' => 'Data found', 'data' => $data]);
                 else
                     return response()->json(['status' => 201, 'message' => 'No data found']);
             }
-        /** categories */
+        /** items */
 
-        /** category */
-            public function category(Request $request, $id=''){
+        /** item */
+            public function item(Request $request, $id=''){
                 if($id == '')
                     return response()->json(['status' => 201, 'message' => 'Something went wrong']);
 
-                $data = ItemCategory::select('id', 'title', 'description', 'status')->where(['id' => $id])->first();
+                $image = URL('/uploads/items').'/';
+                $qrcode = URL('/uploads/qrcodes/items').'/';
+
+                $data = Item::select('items.id', 'items.name', 'items.description', 'items.status', 
+                                        DB::Raw("CASE
+                                            WHEN ".'items.image'." != '' THEN CONCAT("."'".$image."'".", ".'items.image'.")
+                                            ELSE CONCAT("."'".$image."'".", 'default.png')
+                                        END as image"),
+                                        DB::Raw("CASE
+                                            WHEN ".'items.qrcode'." != '' THEN CONCAT("."'".$qrcode."'".", ".'items.qrcode'.")
+                                            ELSE ''
+                                        END as qrcode"),
+                                        'items_categories.id as category_id', 'items_categories.title as category_title'
+                                    )
+                                ->leftjoin('items_categories', 'items_categories.id', 'items.category_id')
+                                ->where(['items.id' => $id])
+                                ->first();
 
                 if($data)
                     return response()->json(['status' => 200, 'message' => 'Data found', 'data' => $data]);
                 else
                     return response()->json(['status' => 201, 'message' => 'No data found']);                        
             }
-        /** category */
+        /** item */
 
         /** insert */
             public function insert(Request $request){
-                $rules = ['title' => 'required'];
+                $rules = ['category_id' => 'required', 'name'];
 
                 $validator = Validator::make($request->all(), $rules);
 
                 if($validator->fails())
                     return response()->json(['status' => 422, 'message' => $validator->errors()]);
-  
+
+                $file_to_uploads = public_path().'/uploads/items/';
+                if (!File::exists($file_to_uploads))
+                    File::makeDirectory($file_to_uploads, 0777, true, true);
+
+                $qr_to_uploads = public_path().'/uploads/qrcodes/items/';
+                if (!File::exists($qr_to_uploads))
+                    File::makeDirectory($qr_to_uploads, 0777, true, true);
+                
                 $crud = [
                     'title' => ucfirst($request->title),
                     'description' => $request->description ?? NULL,
