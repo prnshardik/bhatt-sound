@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" id="submit" class="btn btn-primary">Submit</button>
                             <a href="{{ route('items') }}" class="btn btn-default">Back</a>
                         </div>
                     </form>
@@ -185,6 +185,7 @@
                     dataType: 'json',
                     async:false,
                     success : function(json){
+                        $('#submit').attr('disabled', 'true');
                         return true;
                     },
                     error: function(json){
