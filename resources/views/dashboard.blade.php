@@ -170,7 +170,7 @@
                         <div class="col-9 col-md-9">
                             <div class="numbers">
                                 <p class="card-category">Sub Items</p>
-                                <p class="card-title">{{ $data['items'] ?? 0 }}<p>
+                                <p class="card-title">{{ $data['subItems'] ?? 0 }}<p>
                             </div>
                         </div>
                     </div>
