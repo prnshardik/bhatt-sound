@@ -16,8 +16,8 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
         /** Admin */
             Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
                 /** user */
-                    Route::get('users', 'UsersController@users');
-                    Route::get('user/{id?}', 'UsersController@user');
+                    Route::get('users', 'UsersController@index');
+                    Route::get('user/{id?}', 'UsersController@single');
                     Route::post('user/insert', 'UsersController@insert');
                     Route::post('user/update', 'UsersController@update');
                     Route::post('user/status-change', 'UsersController@status_change');
@@ -25,23 +25,28 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
 
                 /** items - module */
                     /** items-categories */
-                        Route::get('items/categories', 'ItemsCategoriesController@categories');
-                        Route::get('items/category/{id?}', 'ItemsCategoriesController@category');
+                        Route::get('items/categories', 'ItemsCategoriesController@index');
+                        Route::get('items/category/{id?}', 'ItemsCategoriesController@single');
                         Route::post('items/category/insert', 'ItemsCategoriesController@insert');
                         Route::post('items/category/update', 'ItemsCategoriesController@update');
                         Route::post('items/category/status-change', 'ItemsCategoriesController@status_change');
                     /** items-categories */
 
                     /** items */
-                        Route::get('items', 'ItemsController@items');
-                        Route::get('item/{id?}', 'ItemsController@item');
+                        Route::get('items', 'ItemsController@index');
+                        Route::get('item/{id?}', 'ItemsController@single');
                         Route::post('item/insert', 'ItemsController@insert');
                         Route::post('item/update', 'ItemsController@update');
                         Route::post('item/status-change', 'ItemsController@status_change');
-
-                        Route::get('item/remove-image', 'ItemsController@remove_image');
-                        Route::get('item/print/{id?}', 'ItemsController@print');
                     /** items */
+
+                    /** items-inventories */
+                        Route::get('items/inventories', 'ItemsInventoriesController@index');
+                        Route::get('items/inventory/{id?}', 'ItemsInventoriesController@single');
+                        Route::post('items/inventory/insert', 'ItemsInventoriesController@insert');
+                        Route::post('items/inventory/update', 'ItemsInventoriesController@update');
+                        Route::post('items/inventory/status-change', 'ItemsInventoriesController@status_change');
+                    /** items-inventories */
                 /** items - module */
             });
         /** Admin */

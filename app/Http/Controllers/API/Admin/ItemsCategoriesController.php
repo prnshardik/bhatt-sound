@@ -8,8 +8,8 @@
     use Auth, DB, Validator, File;
 
     class ItemsCategoriesController extends Controller{
-        /** categories */
-            public function categories(Request $request){
+        /** index */
+            public function index(Request $request){
                 $data = ItemCategory::select('id', 'title', 'description', 'status')->get();
 
                 if($data->isNotEmpty())
@@ -17,10 +17,10 @@
                 else
                     return response()->json(['status' => 201, 'message' => 'No data found']);
             }
-        /** categories */
+        /** index */
 
-        /** category */
-            public function category(Request $request, $id=''){
+        /** single */
+            public function single(Request $request, $id=''){
                 if($id == '')
                     return response()->json(['status' => 201, 'message' => 'Something went wrong']);
 
@@ -31,7 +31,7 @@
                 else
                     return response()->json(['status' => 201, 'message' => 'No data found']);                        
             }
-        /** category */
+        /** single */
 
         /** insert */
             public function insert(Request $request){

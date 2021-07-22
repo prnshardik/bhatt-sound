@@ -8,8 +8,8 @@
     use Auth, DB, Validator, File;
 
     class UsersController extends Controller{
-        /** users */
-            public function users(Request $request){
+        /** index */
+            public function index(Request $request){
                 $path = URL('/uploads/users').'/';
                 $data = User::select('id', 'name', 'phone', 'email', 'is_admin', 'status', 'device_id',
                                     DB::Raw("CASE
@@ -25,10 +25,10 @@
                 else
                     return response()->json(['status' => 201, 'message' => 'No data found']);
             }
-        /** users */
+        /** index */
 
-        /** user */
-            public function user(Request $request, $id=''){
+        /** single */
+            public function single(Request $request, $id=''){
                 if($id == '')
                     return response()->json(['status' => 201, 'message' => 'Something went wrong']);
 
@@ -47,7 +47,7 @@
                 else
                     return response()->json(['status' => 201, 'message' => 'No data found']);                        
             }
-        /** user */
+        /** single */
 
         /** insert */
             public function insert(Request $request){

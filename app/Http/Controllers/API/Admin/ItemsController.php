@@ -9,8 +9,8 @@
     use Auth, DB, Validator, File;
 
     class ItemsController extends Controller{
-        /** items */
-            public function items(Request $request){
+        /** index */
+            public function index(Request $request){
                 $image = URL('/uploads/items').'/';
                 $qrcode = URL('/uploads/qrcodes/items').'/';
 
@@ -33,10 +33,10 @@
                 else
                     return response()->json(['status' => 201, 'message' => 'No data found']);
             }
-        /** items */
+        /** index */
 
-        /** item */
-            public function item(Request $request, $id=''){
+        /** single */
+            public function single(Request $request, $id=''){
                 if($id == '')
                     return response()->json(['status' => 201, 'message' => 'Something went wrong']);
 
@@ -63,7 +63,7 @@
                 else
                     return response()->json(['status' => 201, 'message' => 'No data found']);                        
             }
-        /** item */
+        /** single */
 
         /** insert */
             public function insert(Request $request){
