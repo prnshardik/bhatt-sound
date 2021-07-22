@@ -107,11 +107,11 @@
                         $update = ItemCategory::where(['id' => $request->id])->update(['status' => $request->status, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
                     
                     if($update)
-                        return response()->json(['code' => 200 , 'message' =>'Status change successfully']);
+                        return response()->json(['code' => 200 , 'message' => 'Status change successfully']);
                     else
-                        return response()->json(['code' => 201 , 'message' =>'Faild to change status']);
+                        return response()->json(['code' => 201 , 'message' => 'Faild to change status']);
                 }else{
-                    return response()->json(['code' => 201, 'message' =>'No record found']);
+                    return response()->json(['code' => 201, 'message' => 'No record found']);
                 }
             }
         /** change-status */

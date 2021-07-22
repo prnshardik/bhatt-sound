@@ -67,7 +67,7 @@
 
         /** insert */
             public function insert(Request $request){
-                $rules = ['category_id' => 'required', 'name'];
+                $rules = ['category_id' => 'required', 'name' => 'required'];
 
                 $validator = Validator::make($request->all(), $rules);
 
@@ -82,76 +82,180 @@
                 if (!File::exists($qr_to_uploads))
                     File::makeDirectory($qr_to_uploads, 0777, true, true);
                 
-                $crud = [
-                    'title' => ucfirst($request->title),
-                    'description' => $request->description ?? NULL,
-                    'status' => 'active',
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
-                    'created_by' => auth('sanctum')->user()->id,
-                    'updated_by' => auth('sanctum')->user()->id
-                ];
+                DB::beginTransaction();
+                try {
+                    $names = [];
+                    $qrnames = [];
+                    $quantity = $request->quantity ?? 1;
+                    $i = 0;
 
-                $last_id = ItemCategory::insertGetId($crud);
+                    while($i < $quantity){
+                        $crud = [
+                            'category_id' => $request->category_id,
+                            'name' => ucfirst($request->name),
+                            'description' => $request->description ?? NULL,
+                            'status' => 'active',
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'created_by' => auth('sanctum')->user()->id,
+                            'updated_at' => date('Y-m-d H:i:s'),
+                            'updated_by' => auth('sanctum')->user()->id
+                        ];
 
-                if($last_id)
-                    return response()->json(['status' => 200, 'message' => 'Record added successfully']);
-                else
+                        if(!empty($request->file('image'))){
+                            $file = $request->file('image');
+                            $filenameWithExtension = $request->file('image')->getClientOriginalName();
+                            $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
+                            $extension = $request->file('image')->getClientOriginalExtension();
+                            $filenameToStore = time()."_".$filename.'.'.$extension;
+
+                            $crud["image"] = $filenameToStore;
+
+                            array_push($names, $filenameToStore);
+                        }else{
+                            $crud["image"] = 'default.png';
+                        }
+
+                        $last_id = Item::insertGetId($crud);
+
+                        if($last_id){
+                            $qrname = 'qrcode_'.$last_id.'.png';
+                            array_push($qrnames, $qrname);
+
+                            \QrCode::size(500)->format('png')->merge('/public/qr_logo.png', .3)->generate('item-'.$last_id, public_path('uploads/qrcodes/items/'.$qrname));
+
+                            $update = Item::where(['id' => $last_id])->update(['qrcode' => $qrname]);
+
+                            if($update){
+                                $i++;
+                                if(!empty($request->file('image')))
+                                    File::copy($request->file('image'), public_path('/uploads/items'.'/'.$filenameToStore));
+                            }                                
+                        }
+                    }
+
+                    if($i == $quantity){
+                        DB::commit();
+                        return response()->json(['status' => 200, 'message' => 'Record added successfully']);
+                    }else{
+                        if(!empty($names)){
+                            foreach($names as $name){
+                                @unlink(public_path().'/uploads/items/'.$name);
+                            }
+                        }
+
+                        if(!empty($qrnames)){
+                            foreach($qrnames as $name){
+                                @unlink(public_path().'/uploads/qrcodes/items/'.$name);
+                            }
+                        }
+
+                        DB::rollback();
+                        return response()->json(['status' => 201, 'message' => 'Faild to add record\'s qrcode']);
+                    }
+                } catch (\Exception $e) {
+                    DB::rollback();
                     return response()->json(['status' => 201, 'message' => 'Faild to add record']);
+                }
             }
         /** insert */
 
         /** update */
             public function update(Request $request){
-                $rules = ['id' => 'required', 'title' => 'required'];
+                $rules = ['id' => 'required', 'category_id' => 'required', 'name' => 'required'];
 
                 $validator = Validator::make($request->all(), $rules);
 
                 if($validator->fails())
                     return response()->json(['status' => 422, 'message' => $validator->errors()]);
 
+                $file_to_uploads = public_path().'/uploads/items/';
+                if (!File::exists($file_to_uploads))
+                    File::makeDirectory($file_to_uploads, 0777, true, true);
+
+                $exst_record = Item::where(['id' => $request->id])->first(); 
+
                 $crud = [
-                    'title' => ucfirst($request->title),
+                    'category_id' => $request->category_id,
+                    'name' => ucfirst($request->name),
                     'description' => $request->description ?? NULL,
                     'updated_at' => date('Y-m-d H:i:s'),
                     'updated_by' => auth('sanctum')->user()->id
                 ];
 
-                $update = ItemCategory::where(['id' => $request->id])->update($crud);
+                if(!empty($request->file('image'))){
+                    $file = $request->file('image');
+                    $filenameWithExtension = $request->file('image')->getClientOriginalName();
+                    $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
+                    $extension = $request->file('image')->getClientOriginalExtension();
+                    $filenameToStore = time()."_".$filename.'.'.$extension;
 
-                if($update)
+                    $crud["image"] = $filenameToStore;
+                }else{
+                    $crud["image"] = $exst_record->image;
+                }
+
+                $update = Item::where(['id' => $request->id])->update($crud);
+
+                if($update){
+                    if(!empty($request->file('image')))
+                        $file->move($file_to_uploads, $filenameToStore);
+
+                    if($exst_record->image != null || $exst_record->image != ''){
+                        $file_path = public_path().'/uploads/items/'.$exst_record->image;
+
+                        if(File::exists($file_path) && $file_path != ''){
+                            if($exst_record->image != 'default.png')
+                                @unlink($file_path);
+                        }
+                    }
+
                     return response()->json(['status' => 200, 'message' => 'Record updated successfully']);
-                else
-                    return response()->json(['status' => 201, 'message' => 'Faild to update record']);
+                }else{
+                    return response()->json(['status' => 201, 'message' => 'Faild to add record']);
+                }
             }
         /** update */
 
         /** change-status */
             public function status_change(Request $request){
-                $rules = [
-                    'id' => 'required',
-                    'status' => 'required'
-                ];
+                $rules = ['id' => 'required', 'status' => 'required'];
 
                 $validator = Validator::make($request->all(), $rules);
 
                 if($validator->fails())
                     return response()->json(['status' => 422, 'message' => $validator->errors()]);
 
-                $data = ItemCategory::where(['id' => $request->id])->first();
+                $data = Item::where(['id' => $request->id])->first();
 
                 if(!empty($data)){
                     if($request->status == 'deleted')
-                        $update = ItemCategory::where(['id' => $request->id])->delete();
+                        $update = Item::where(['id' => $request->id])->delete();
                     else
-                        $update = ItemCategory::where(['id' => $request->id])->update(['status' => $request->status, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
+                        $update = Item::where(['id' => $request->id])->update(['status' => $request->status, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
                     
-                    if($update)
-                        return response()->json(['code' => 200 , 'message' =>'Status change successfully']);
-                    else
-                        return response()->json(['code' => 201 , 'message' =>'Faild to change status']);
+                    if($update){
+                        if($request->status == 'deleted'){
+                            $file_path = public_path().'/uploads/items/'.$data->image;
+
+                            if(File::exists($file_path) && $file_path != ''){
+                                if($data->image != 'default.png')
+                                    @unlink($file_path);
+                            }
+
+                            $qr_path = public_path().'/uploads/qrcodes/items/'.$data->qrcode;
+
+                            if(File::exists($qr_path) && $qr_path != ''){
+                                if($data->qrcode != 'default.png')
+                                    @unlink($qr_path);
+                            }
+                        }
+
+                        return response()->json(['code' => 201, 'message' => 'Record updated successfully']);
+                    }else{
+                        return response()->json(['code' => 201, 'message' => 'Something went wrong']);
+                    }
                 }else{
-                    return response()->json(['code' => 201, 'message' =>'No record found']);
+                    return response()->json(['code' => 201, 'message' => 'No record found']);
                 }
             }
         /** change-status */
