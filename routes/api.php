@@ -46,6 +46,9 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                         Route::post('items/inventory/insert', 'ItemsInventoriesController@insert');
                         Route::post('items/inventory/update', 'ItemsInventoriesController@update');
                         Route::post('items/inventory/status-change', 'ItemsInventoriesController@status_change');
+
+                        Route::post('items/inventory/items', 'ItemsInventoriesController@items');
+                        Route::post('items/inventory/items/delete', 'ItemsInventoriesController@items_delete');
                     /** items-inventories */
                 /** items - module */
             });

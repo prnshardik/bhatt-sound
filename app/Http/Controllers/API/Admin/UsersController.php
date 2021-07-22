@@ -32,15 +32,15 @@
                 if($id == '')
                     return response()->json(['status' => 201, 'message' => 'Something went wrong']);
 
-                    $path = URL('/uploads/users').'/';
-                    $data = User::select('id', 'name', 'phone', 'email', 'is_admin', 'status', 'device_id',
-                                        DB::Raw("CASE
-                                            WHEN ".'image'." != '' THEN CONCAT("."'".$path."'".", ".'image'.")
-                                            ELSE CONCAT("."'".$path."'".", 'default.png')
-                                        END as image")
-                                    )
-                                ->where(['id' => $id])
-                                ->first();
+                $path = URL('/uploads/users').'/';
+                $data = User::select('id', 'name', 'phone', 'email', 'is_admin', 'status', 'device_id',
+                                    DB::Raw("CASE
+                                        WHEN ".'image'." != '' THEN CONCAT("."'".$path."'".", ".'image'.")
+                                        ELSE CONCAT("."'".$path."'".", 'default.png')
+                                    END as image")
+                                )
+                            ->where(['id' => $id])
+                            ->first();
 
                 if($data)
                     return response()->json(['status' => 200, 'message' => 'Data found', 'data' => $data]);
@@ -201,9 +201,9 @@
                     }
                     
                     if($update)
-                        return response()->json(['code' => 200 , 'message' =>'Status change successfully']);
+                        return response()->json(['code' => 200, 'message' =>'Status change successfully']);
                     else
-                        return response()->json(['code' => 201 , 'message' =>'Faild to change status']);
+                        return response()->json(['code' => 201, 'message' =>'Faild to change status']);
                 }else{
                     return response()->json(['code' => 201, 'message' =>'No record found']);
                 }
