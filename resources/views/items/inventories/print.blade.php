@@ -30,6 +30,10 @@
                                 @if(isset($data) && !empty($data->qrcode))
                                     <div class="text-center" id="printableArea">
                                         <img src="{{ url('uploads/qrcodes/items_inventory').'/'.$data->qrcode }}" alt="{{ $data->qrcode }}" class="ml-2" style="width: 250px; height: 250px" >
+                                        <div class="text-center">
+                                            <br>
+                                            <h1>{{ $data->name }}</h1>
+                                        </div>
                                     </div>
                                 @endif
                             </div>

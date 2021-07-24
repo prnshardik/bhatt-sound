@@ -341,7 +341,7 @@
                 $generate = _generate_qrcode($id, 'sub_item');
 
                 if($generate){
-                    $data = SubItem::select('qrcode')->where(['id' => $id])->first();
+                    $data = SubItem::select('qrcode' , 'name')->where(['id' => $id])->first();
                 
                     if($data)
                         return view('sub-items.items.print', ['data' => $data]);

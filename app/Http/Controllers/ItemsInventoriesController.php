@@ -370,7 +370,7 @@
                 $generate = _generate_qrcode($id, 'item_inventory');
 
                 if($generate){
-                    $data = ItemInventory::select('qrcode')->where(['id' => $id])->first();
+                    $data = ItemInventory::select('qrcode' ,'title AS name')->where(['id' => $id])->first();
                 
                     if($data)
                         return view('items.inventories.print', ['data' => $data]);

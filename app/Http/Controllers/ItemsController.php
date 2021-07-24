@@ -340,7 +340,7 @@
                 $generate = _generate_qrcode($id, 'item');
 
                 if($generate){
-                    $data = Item::select('qrcode')->where(['id' => $id])->first();
+                    $data = Item::select('qrcode' , 'name')->where(['id' => $id])->first();
                 
                     if($data)
                         return view('items.items.print', ['data' => $data]);

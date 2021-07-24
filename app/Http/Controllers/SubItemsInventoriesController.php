@@ -373,7 +373,7 @@
                 $generate = _generate_qrcode($id, 'sub_item_inventory');
 
                 if($generate){
-                    $data = SubItemInventory::select('qrcode')->where(['id' => $id])->first();
+                    $data = SubItemInventory::select('qrcode' , 'title AS name')->where(['id' => $id])->first();
                 
                     if($data)
                         return view('sub-items.inventories.print', ['data' => $data]);
