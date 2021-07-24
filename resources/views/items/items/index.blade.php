@@ -19,6 +19,7 @@
                         <a class="btn btn-primary btn-sm pull-right ml-2" style="margin-top: 8px;margin-bottom: 5px" href="{{ route('items.create') }}">Add New</a>
                     </h5>
                 </div>
+
                 <div class="card-body">
                     <div class="toolbar"></div>
                     <div id="datatable_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
@@ -39,6 +40,26 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="modal fade" id="image_model" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
 @endsection
@@ -122,6 +143,15 @@
                 });
             }
         });
+
+        function open_image(data){
+            var image = $(data).data("id");
+            if(image != null || image !=''){
+                $(".modal-body").empty();
+                $("#image_model").modal('show');
+                $(".modal-body").append("<img src='"+image+"'>")
+            }
+        }
 
         function change_status(object){
             var id = $(object).data("id");

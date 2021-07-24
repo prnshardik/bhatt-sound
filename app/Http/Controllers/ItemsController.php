@@ -56,7 +56,7 @@
                                 else
                                     $image = url('uploads/items').'/default.png';
                                 
-                                return "<img src='$image' style='height: 30px; width: 30px'>";
+                                return "<img onclick='open_image(this)' data-id=".$image." src='$image' style='height: 30px; width: 30px'>";
                             })
 
                             ->editColumn('qrcode', function($data) {
