@@ -599,7 +599,7 @@
                 if($search != '')
                     $collection->where('items_inventories.title', 'like', '%'.$search.'%');
 
-                $data = $collection->paginate(2);
+                $data = $collection->paginate(5);
                 
                 $view = view('cart.inventories_table', compact('data', 'selected'))->render();
                 $pagination = view('cart.inventories_pagination', compact('data'))->render();
@@ -655,7 +655,7 @@
                 if($search != '')
                     $collection->where('sub_items_inventories.title', 'like', '%'.$search.'%');
 
-                $data = $collection->paginate(2);
+                $data = $collection->paginate(5);
                 
                 $view = view('cart.sub_inventories_table', compact('data', 'selected'))->render();
                 $pagination = view('cart.sub_inventories_pagination', compact('data'))->render();

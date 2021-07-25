@@ -81,8 +81,17 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                     /** inventories */
                 /** Sub items - module */
 
-                /** cart */
-                    
+                /** cart */ 
+                    Route::get('carts', 'CartController@index');
+                    Route::get('cart/{id?}', 'CartController@single');
+                    Route::post('cart/insert', 'CartController@insert');
+                    Route::post('cart/update', 'CartController@update');
+                    Route::post('cart/status-change', 'CartController@status_change');
+
+                    Route::post('cart/users', 'CartController@users');
+                    Route::post('cart/sub_users', 'CartController@sub_users');
+                    Route::post('cart/inventories', 'CartController@inventories');
+                    Route::post('cart/sub_inventories', 'CartController@sub_inventories');
                 /** cart */
             });
         /** Admin */
