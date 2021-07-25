@@ -51,6 +51,36 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                         Route::post('items/inventory/items/delete', 'ItemsInventoriesController@items_delete');
                     /** items-inventories */
                 /** items - module */
+
+
+                /** Sub items - module */
+                    /** subitems-categories */
+                        Route::get('sub-items/categories', 'SubItemCategoriesController@index');
+                        Route::get('sub-items/category/{id?}', 'SubItemCategoriesController@single');
+                        Route::post('sub-items/category/insert', 'SubItemCategoriesController@insert');
+                        Route::post('sub-items/category/update', 'SubItemCategoriesController@update');
+                        Route::post('sub-items/category/status-change', 'SubItemCategoriesController@status_change');
+                    /** subitems-categories */
+
+                    /** items */
+                        Route::get('sub-items', 'SubItemController@index');
+                        Route::get('sub-item/{id?}', 'SubItemController@single');
+                        Route::post('sub-item/insert', 'SubItemController@insert');
+                        Route::post('sub-item/update', 'SubItemController@update');
+                        Route::post('sub-item/status-change', 'SubItemController@status_change');
+                    /** items */
+
+                    /** items-inventories */
+                        Route::get('sub-items/inventories', 'SubItemInventoriesController@index');
+                        Route::get('sub-items/inventory/{id?}', 'SubItemInventoriesController@single');
+                        Route::post('sub-items/inventory/insert', 'SubItemInventoriesController@insert');
+                        Route::post('sub-items/inventory/update', 'SubItemInventoriesController@update');
+                        Route::post('sub-items/inventory/status-change', 'SubItemInventoriesController@status_change');
+
+                        Route::post('sub-items/inventory/sub-items', 'SubItemInventoriesController@sub_items');
+                        Route::post('sub-items/inventory/sub-items/delete', 'SubItemInventoriesController@sub_items_delete');
+                    /** items-inventories */
+                /** Sub items - module */
             });
         /** Admin */
     });
