@@ -51,12 +51,14 @@
                             })
 
                             ->editColumn('image', function($data) {
+                                $image_name = strval( $data->name ); 
+
                                 if($data->image != null || $data->image != '')
                                     $image = url('uploads/items').'/'.$data->image;
                                 else
                                     $image = url('uploads/items').'/default.png';
                                 
-                                return "<img onclick='open_image(this)' data-id=".$image." src='$image' style='height: 30px; width: 30px'>";
+                                return "<img onclick='open_image(this)' data-name='".$image_name."' data-id=".$image." src='$image' style='height: 30px; width: 30px'>";
                             })
 
                             ->editColumn('qrcode', function($data) {
@@ -105,7 +107,7 @@
                         while($i < $quantity){
                             $crud = [
                                 'category_id' => $request->category_id,
-                                'name' => ucfirst($request->name),
+                                'name' => ucfirst($request->name).' '.($i+1),
                                 'description' => $request->description ?? NULL,
                                 'status' => 'active',
                                 'created_at' => date('Y-m-d H:i:s'),

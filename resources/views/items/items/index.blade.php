@@ -46,7 +46,7 @@
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Item Image</h5>
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -145,10 +145,13 @@
 
         function open_image(data){
             var image = $(data).data("id");
+            var name = $(data).data("name");
             if(image != null || image !=''){
                 $(".modal-body").empty();
+                $(".modal-title").empty();
                 $("#image_model").modal('show');
-                $(".modal-body").append("<img src='"+image+"'>")
+                $(".modal-body").append("<img src='"+image+"'>");
+                $(".modal-title").append(name)
             }
         }
 
