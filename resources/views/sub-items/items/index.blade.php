@@ -73,7 +73,7 @@
                     processing: true,
                     serverSide: true,
 
-                    // "pageLength": 10,
+                    "pageLength": 100,
                     // "iDisplayLength": 10,
                     "responsive": true,
                     "aaSorting": [],

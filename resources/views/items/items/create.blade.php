@@ -49,7 +49,7 @@
                             <div class="form-group col-sm-6">
                                 <label for="quantity">Quantity <span class="text-danger"></span></label>
                                 <input type="text" name="quantity" id="quantity" class="form-control" placeholder="Plese enter quantity" value="{{ @old('quantity') }}" />
-                                <span class="help-text">** Please leave empty if want to add hundred.</span>
+                                <span class="help-text">** Please leave empty if want to add only one.</span>
                                 <span class="kt-form__help error quantity"></span>
                             </div>
                             <div class="form-group col-sm-12">

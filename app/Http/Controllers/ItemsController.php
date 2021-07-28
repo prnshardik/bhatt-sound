@@ -101,7 +101,7 @@
                     try {
                         $names = [];
                         $qrnames = [];
-                        $quantity = $request->quantity ?? 100;
+                        $quantity = $request->quantity ?? 1;
                         $i = 0;
 
                         while($i < $quantity){
