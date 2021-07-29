@@ -35,6 +35,16 @@
                                             <h1>{{ $data->name }}</h1>
                                         </div>
                                     </div>
+
+                                        <div class="form-group col-md-3">
+                                            <label for="height">Height:</label>
+                                            <input type="text" name="height" class="form-control height">
+                                        </div>
+
+                                        <div class="form-group col-md-3">
+                                            <label for="Width">Width:</label>
+                                            <input type="text" name="width" class="form-control width">
+                                        </div>
                                         
                                 @endif
                             </div>
@@ -46,9 +56,7 @@
         <div class="row">
             <div class="col-md-12 text-center">
                 @if(isset($data) && !empty($data->qrcode))
-                    <input type="button" class="btn btn-primary" style="cursor:pointer" onclick="printDiv('printableArea' , 10)" value="Print Small" />
-                    <input type="button" class="btn btn-primary" style="cursor:pointer" onclick="printDiv('printableArea' ,20)" value="Print Medium" />
-                    <input type="button" class="btn btn-primary" style="cursor:pointer" onclick="printDiv('printableArea' ,30)" value="Print Large" />
+                    <input type="button" class="btn btn-primary" style="cursor:pointer" onclick="printDiv('printableArea')" value="Print" />
                 @endif
             </div>
         </div>
@@ -57,17 +65,8 @@
 
 @section('scripts')
     <script>
-        function printDiv(divName , val) {
-             if(val == 10){
-                $('#image').attr("style", "height: 100px;");
-                $('#image').attr("style", "width: 100px;");
-            }else if(val == 20){
-                $('#image').attr("style", "height: 250px;");
-                $('#image').attr("style", "width: 250px;");
-            }else if(val == 30){
-                $('#image').attr("style", "height: 500px;");
-                $('#image').attr("style", "width: 500px;");
-            }
+        function printDiv(divName) {
+            
             var printContents = document.getElementById(divName).innerHTML;
             var originalContents = document.body.innerHTML;
            
@@ -76,9 +75,6 @@
             window.print();
 
             document.body.innerHTML = originalContents;
-
-            $('#image').attr("style", "height: 250px;");
-            $('#image').attr("style", "width: 250px;");
         }
     </script>
 @endsection

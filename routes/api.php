@@ -100,6 +100,14 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
         /** admin */
 
         /** user */
+            /** Dashboard */
+                Route::post('dashboard', 'DashboardController@index');
+            /** Dashboard */
+
+            /** Maintenance */
+                Route::post('Maintenance', 'MaintenanceController@index');
+            /** Maintenance */
+
             /** location */
                 Route::post('location-insert', 'LocationsController@insert');
             /** location */
