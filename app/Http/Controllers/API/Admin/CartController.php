@@ -104,9 +104,247 @@
         /** single */
 
         /** insert */
+            public function insert(Request $request){
+                $rules = [
+                    'user_id' => 'required', 
+                    'party_name' => 'required', 
+                    'party_address' => 'required',
+                    'sub_users' => 'required|array|min:1',
+                    'inventories' => 'required|array|min:1', 
+                    'sub_inventories' => 'required|array|min:1',
+                ];
+
+                $validator = Validator::make($request->all(), $rules);
+
+                if($validator->fails())
+                    return response()->json(['status' => 422, 'message' => $validator->errors()]);
+                    
+                $user_id = $request->user_id;
+                $party_name = $request->party_name;
+                $party_address = $request->party_address;
+                $sub_users = $request->sub_users;
+                $inventories = $request->inventories;
+                $sub_inventories = $request->sub_inventories;
+
+                if($sub_users[0] == null)
+                    return response()->json(['status' => 422, 'message' => ['sub_users' => 'Please select atleast one sub user']]);
+
+                if($inventories[0] == null)
+                    return response()->json(['status' => 422, 'message' => ['inventories' => 'Please select atleast one inventory']]);
+
+                if($sub_inventories[0] == null)
+                    return response()->json(['status' => 422, 'message' => ['sub_inventories' => 'Please select atleast one sub inventory']]);
+
+                DB::beginTransaction();
+                try {
+                    $crud = [
+                        'user_id' => $user_id,
+                        'party_name' => $party_name,
+                        'party_address' => $party_address,
+                        'status' => 'assigned',
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'created_by' => auth('sanctum')->user()->id,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                        'updated_by' => auth('sanctum')->user()->id
+                    ];
+                    
+                    $last_id = Cart::insertGetId($crud);
+
+                    if($last_id){
+                        foreach($sub_users as $k => $v){
+                            $sub_users_crud = [
+                                'cart_id' => $last_id,
+                                'user_id' => $v,
+                                'status' => 'active',
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'created_by' => auth('sanctum')->user()->id,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => auth('sanctum')->user()->id
+                            ];
+
+                            $cart_user_id = CartUser::insertGetId($sub_users_crud);
+
+                            if(empty($cart_user_id)){
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Cart sub users insert error, please try again later']);
+                            }
+                        }
+
+                        foreach($inventories as $k => $v){
+                            $inventories_crud = [
+                                'cart_id' => $last_id,
+                                'inventory_id' => $v,
+                                'status' => 'active',
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'created_by' => auth('sanctum')->user()->id,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => auth('sanctum')->user()->id
+                            ];
+
+                            $cart_inventory_id = CartInventory::insertGetId($inventories_crud);
+
+                            if(empty($cart_inventory_id)){
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Cart inventory insert error, please try again later']);
+                            }
+                        }
+
+                        foreach($sub_inventories as $k => $v){
+                            $sub_inventories_crud = [
+                                'cart_id' => $last_id,
+                                'sub_inventory_id' => $v,
+                                'status' => 'active',
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'created_by' => auth('sanctum')->user()->id,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => auth('sanctum')->user()->id
+                            ];
+
+                            $cart_sub_inventory_id = CartSubInventory::insertGetId($sub_inventories_crud);
+
+                            if(empty($cart_sub_inventory_id)){
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Cart sub inventory insert error, please try again later']);
+                            }
+                        }
+
+                        DB::commit();
+                        return response()->json(['status' => 200, 'message' => 'Cart added successfully']);
+                    }else{
+                        DB::rollback();
+                        return response()->json(['status' => 201, 'message' => 'Cart insert error, please try again later']);
+                    }
+                } catch (\Exception $e) {
+                    DB::rollback();
+                    return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again later']);
+                }
+            }
         /** insert */
 
         /** update */
+            public function update(Request $request){
+                $rules = [
+                    'id' => 'required',
+                    'user_id' => 'required', 
+                    'party_name' => 'required', 
+                    'party_address' => 'required',
+                    'sub_users' => 'required|array|min:1',
+                    'inventories' => 'required|array|min:1', 
+                    'sub_inventories' => 'required|array|min:1',
+                ];
+
+                $validator = Validator::make($request->all(), $rules);
+
+                if($validator->fails())
+                    return response()->json(['status' => 422, 'message' => $validator->errors()]);
+                    
+                $user_id = $request->user_id;
+                $party_name = $request->party_name;
+                $party_address = $request->party_address;
+                $sub_users = $request->sub_users;
+                $inventories = $request->inventories;
+                $sub_inventories = $request->sub_inventories;
+
+                if($sub_users[0] == null)
+                    return response()->json(['status' => 422, 'message' => ['sub_users' => 'Please select atleast one sub user']]);
+
+                if($inventories[0] == null)
+                    return response()->json(['status' => 422, 'message' => ['inventories' => 'Please select atleast one inventory']]);
+
+                if($sub_inventories[0] == null)
+                    return response()->json(['status' => 422, 'message' => ['sub_inventories' => 'Please select atleast one sub inventory']]);
+
+                DB::beginTransaction();
+                try {
+                    $crud = [
+                        'user_id' => $user_id,
+                        'party_name' => $party_name,
+                        'party_address' => $party_address,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                        'updated_by' => auth('sanctum')->user()->id
+                    ];
+                    
+                    $update = Cart::where(['id' => $request->id])->update($crud);
+
+                    if($update){
+                        CartUser::where(['cart_id' => $request->id])->delete();
+
+                        foreach($sub_users as $k => $v){
+                            $sub_users_crud = [
+                                'cart_id' => $request->id,
+                                'user_id' => $v,
+                                'status' => 'active',
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'created_by' => auth('sanctum')->user()->id,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => auth('sanctum')->user()->id
+                            ];
+
+                            $cart_user_id = CartUser::insertGetId($sub_users_crud);
+
+                            if(empty($cart_user_id)){
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Cart sub users insert error, please try again later']);
+                            }
+                        }
+
+                        foreach($inventories as $k => $v){
+                            $exst_inventory = CartInventory::select('id')->where(['cart_id' => $request->id, 'inventory_id' => $v])->first();
+                            
+                            if(empty($exst_inventory)){
+                                $inventories_crud = [
+                                    'cart_id' => $request->id,
+                                    'inventory_id' => $v,
+                                    'status' => 'active',
+                                    'created_at' => date('Y-m-d H:i:s'),
+                                    'created_by' => auth('sanctum')->user()->id,
+                                    'updated_at' => date('Y-m-d H:i:s'),
+                                    'updated_by' => auth('sanctum')->user()->id
+                                ];
+
+                                $cart_inventory_id = CartInventory::insertGetId($inventories_crud);
+
+                                if(empty($cart_inventory_id)){
+                                    DB::rollback();
+                                    return response()->json(['status' => 201, 'message' => 'Cart inventory insert error, please try again later']);
+                                }
+                            }
+                        }
+
+                        foreach($sub_inventories as $k => $v){
+                            $exst_sub_inventory = CartSubInventory::select('id')->where(['cart_id' => $request->id, 'sub_inventory_id' => $v])->first();
+
+                            if(empty($exst_sub_inventory)){
+                                $sub_inventories_crud = [
+                                    'cart_id' => $request->id,
+                                    'sub_inventory_id' => $v,
+                                    'status' => 'active',
+                                    'created_at' => date('Y-m-d H:i:s'),
+                                    'created_by' => auth('sanctum')->user()->id,
+                                    'updated_at' => date('Y-m-d H:i:s'),
+                                    'updated_by' => auth('sanctum')->user()->id
+                                ];
+
+                                $cart_sub_inventory_id = CartSubInventory::insertGetId($sub_inventories_crud);
+
+                                if(empty($cart_sub_inventory_id)){
+                                    DB::rollback();
+                                    return response()->json(['status' => 201, 'message' => 'Cart sub inventory insert error, please try again later']);
+                                }
+                            }
+                        }
+
+                        DB::commit();
+                        return response()->json(['status' => 200, 'message' => 'Cart updated successfully']);
+                    }else{
+                        DB::rollback();
+                        return response()->json(['status' => 201, 'message' => 'Cart update error, please try again later']);
+                    }
+                } catch (\Exception $e) {
+                    DB::rollback();
+                    return response()->json(['status' => 201, 'message' => 'Cart update error, please try again later']);
+                }
+            }
         /** update */
 
         /** change-status */
@@ -139,7 +377,7 @@
 
         /** users */
             public function users(Request $request){
-                $cart_id = $request->cart_id ?? null;
+                $request->id = $request->cart_id ?? null;
                 $user_id = '';
                 
                 if($cart_id != null){
@@ -177,16 +415,15 @@
         /** sub-users */
             public function sub_users(Request $request){
                 $cart_id = $request->cart_id ?? NULL;
-                $users_id = [];
+                $cart_users = [];
 
-                if(!empty($cart_id)){
-                    $cartUsers = CartUser::select('user_id')->where(['cart_id' => $cart_id])->get();
-
-                    if($cartUsers->isNotEmpty()){
-                        foreach($cartUsers as $row){
-                            $users_id[] = $row->user_id;
-                        }
-                    }
+                if(!empty($cart_id))
+                    $cart_users = CartUser::select('user_id')->where(['cart_id' => $cart_id])->get()->toArray();
+                
+                if(!empty($cart_users)){
+                    $cart_users = array_map(function($row){
+                        return $row['user_id'];
+                    }, $cart_users);
                 }
                 
                 $data = User::select('id', 'name')
@@ -203,7 +440,8 @@
                 if($data->isNotEmpty()){
                     foreach($data as $row){
                         $row->selected = false;
-                        if(!empty($users_id) && in_array($row->id, $users_id)) 
+
+                        if(!empty($cart_users) && in_array($row->id, $cart_users)) 
                             $row->selected = true;
                     }
 
@@ -217,6 +455,16 @@
         /** inventories */
             public function inventories(Request $request){
                 $cart_id = $request->cart_id ?? NULL;
+                $cart_inventories = [];
+
+                if(!empty($cart_id))
+                    $cart_inventories = CartInventory::select('inventory_id')->where(['cart_id' => $cart_id])->get()->toArray();
+                
+                if(!empty($cart_inventories)){
+                    $cart_inventories = array_map(function($row){
+                        return $row['inventory_id'];
+                    }, $cart_inventories);
+                }
 
                 $collection = ItemInventory::select('items_inventories.id', 'items_inventories.title', 
                                                 DB::Raw("(select COUNT(items_inventories_items.id) from items_inventories_items where items_inventories_items.item_inventory_id = items_inventories.id) as items")
@@ -234,10 +482,111 @@
 
                 $data = $collection->get();
                 
-                if($data->isNotEmpty())
+                if($data->isNotEmpty()){
+                    foreach($data as $row){
+                        $row->selected = false;
+
+                        if(!empty($cart_inventories) && in_array($row->id, $cart_inventories))
+                            $row->selected = true;
+                    }
+
                     return response()->json(['status' => 200, 'message' => 'Data found', 'data' => $data]);
-                else
+                }else{
                     return response()->json(['status' => 201, 'message' => 'No data found']);
+                }
             }
         /** inventories */
+
+        /** sub-inventories */
+            public function sub_inventories(Request $request){
+                $cart_id = $request->cart_id ?? NULL;
+                $cart_inventories = [];
+
+                if(!empty($cart_id))
+                    $cart_inventories = CartSubInventory::select('sub_inventory_id')->where(['cart_id' => $cart_id])->get()->toArray();
+                
+                if(!empty($cart_inventories)){
+                    $cart_inventories = array_map(function($row){
+                        return $row['sub_inventory_id'];
+                    }, $cart_inventories);
+                }
+
+                $collection = SubItemInventory::select('sub_items_inventories.id', 'sub_items_inventories.title', 
+                                                DB::Raw("(select COUNT(sub_items_inventories_items.id) from sub_items_inventories_items where sub_items_inventories_items.sub_item_inventory_id = sub_items_inventories.id) as items")
+                                            )
+                                            ->where(['sub_items_inventories.status' => 'active']);
+                if($cart_id != null){
+                    $collection->whereNotIn('sub_items_inventories.id', function($query) use ($cart_id) {
+                                    $query->select('sub_inventory_id')->from('cart_sub_inventories')->where('cart_id', '!=', $cart_id)->where('status', '!=', 'inactive'); 
+                                });
+                }else{
+                    $collection->whereNotIn('sub_items_inventories.id', function($query) {
+                                    $query->select('sub_inventory_id')->from('cart_sub_inventories')->where('status', '!=', 'inactive'); 
+                                });
+                }
+
+                $data = $collection->get();
+                
+                if($data->isNotEmpty()){
+                    foreach($data as $row){
+                        $row->selected = false;
+
+                        if(!empty($cart_inventories) && in_array($row->id, $cart_inventories))
+                            $row->selected = true;
+                    }
+
+                    return response()->json(['status' => 200, 'message' => 'Data found', 'data' => $data]);
+                }else{
+                    return response()->json(['status' => 201, 'message' => 'No data found']);
+                }
+            }
+        /** sub-inventories */
+
+        /** delete-inventories */
+            public function delete_inventories(Request $request){
+                $rules = ['cart_id' => 'required', 'id' => 'required'];
+
+                $validator = Validator::make($request->all(), $rules);
+
+                if($validator->fails())
+                    return response()->json(['status' => 422, 'message' => $validator->errors()]);
+
+                $exst = CartInventory::where(['cart_id' => $request->cart_id, 'inventory_id' => $request->id])->first();
+
+                if($exst){
+                    $delete = CartInventory::where(['cart_id' => $request->cart_id, 'inventory_id' => $request->id])->delete();
+
+                    if($delete)
+                        return response()->json(['status' => 200, 'message' => 'Record unchecked successfully']);
+                    else
+                        return response()->json(['status' => 201, 'message' => 'Failed to uncheck record, please try again later']);
+                }else{
+                    return response()->json(['status' => 200, 'message' => 'Record unchecked successfully']);
+                }
+            }
+        /** delete-inventories */
+
+        /** delete-sub-inventories */
+            public function delete_sub_inventories(Request $request){
+                $rules = ['cart_id' => 'required', 'id' => 'required'];
+
+                $validator = Validator::make($request->all(), $rules);
+
+                if($validator->fails())
+                    return response()->json(['status' => 422, 'message' => $validator->errors()]);
+
+                $exst = CartSubInventory::where(['cart_id' => $request->cart_id, 'sub_inventory_id' => $request->id])->first();
+
+                if($exst){
+                    $delete = CartSubInventory::where(['cart_id' => $request->cart_id, 'sub_inventory_id' => $request->id])->delete();
+
+                    if($delete)
+                        return response()->json(['status' => 200, 'message' => 'Record unchecked successfully']);
+                    else
+                        return response()->json(['status' => 201, 'message' => 'Failed to uncheck record, please try again later']);
+                }else{
+                    return response()->json(['status' => 200, 'message' => 'Record unchecked successfully']);
+                }
+            }
+        /** delete-sub-inventories */
     }

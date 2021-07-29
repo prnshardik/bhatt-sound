@@ -374,12 +374,12 @@
                     DB::beginTransaction();
                     try {
                         $crud = [
-                                    'user_id' => $user,
-                                    'party_name' => $party_name,
-                                    'party_address' => $party_address,
-                                    'updated_at' => date('Y-m-d H:i:s'),
-                                    'updated_by' => auth()->user()->id
-                                ];
+                            'user_id' => $user,
+                            'party_name' => $party_name,
+                            'party_address' => $party_address,
+                            'updated_at' => date('Y-m-d H:i:s'),
+                            'updated_by' => auth()->user()->id
+                        ];
                         
                         $update = Cart::where(['id' => $cart_id])->update($crud);
 
@@ -455,12 +455,10 @@
                             return response()->json(['code' => 200, 'message' => 'Cart updated successfully']);
                         }else{
                             DB::rollback();
-                            dd('asdasd');
                             return response()->json(['code' => 201, 'message' => 'Cart update error, please try again later']);
                         }
                     } catch (\Exception $e) {
                         DB::rollback();
-                        dd('asdasd15231');
                         return response()->json(['code' => 201, 'message' => 'Something went wrong, please try again later']);
                     }
                 }
