@@ -72,7 +72,7 @@
                     processing: true,
                     serverSide: true,
 
-                    // "pageLength": 10,
+                    "pageLength": 100,
                     // "iDisplayLength": 10,
                     "responsive": true,
                     "aaSorting": [],
@@ -139,10 +139,13 @@
 
         function open_image(data){
             var image = $(data).data("id");
+            var name = $(data).data("name");
             if(image != null || image !=''){
                 $(".modal-body").empty();
+                $(".modal-title").empty();
                 $("#image_model").modal('show');
                 $(".modal-body").append("<img src='"+image+"'>")
+                $(".modal-title").append(name)
             }
         }
 

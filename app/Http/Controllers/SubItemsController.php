@@ -56,7 +56,7 @@
                                 else
                                     $image = url('uploads/sub_items').'/default.png';
                                 
-                                return "<img  onclick='open_image(this)' data-id=".$image." src='$image' style='height: 30px; width: 30px'>";
+                                return "<img  onclick='open_image(this)' data-name='".$data->name."' data-id=".$image." src='$image' style='height: 30px; width: 30px'>";
                             })
 
                             ->editColumn('qrcode', function($data) {
@@ -105,7 +105,7 @@
                         while($i < $quantity){
                             $crud = [
                                 'category_id' => $request->category_id,
-                                'name' => ucfirst($request->name),
+                                'name' => ucfirst($request->name).' '.($i+1),
                                 'description' => $request->description ?? NULL,
                                 'status' => 'active',
                                 'created_at' => date('Y-m-d H:i:s'),
