@@ -13,7 +13,7 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
             // Route::post('scan', 'InventoryController@scan');
         /** process */
 
-        /** Admin */
+        /** admin */
             Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
                 /** user */
                     Route::get('users', 'UsersController@index');
@@ -97,7 +97,15 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                     Route::post('cart/delete_sub_inventories', 'CartController@delete_sub_inventories');
                 /** cart */
             });
-        /** Admin */
+        /** admin */
+
+        /** user */
+            /** location */
+                Route::post('location-insert', 'LocationsController@insert');
+            /** location */
+
+            
+        /** user */
     });
 });
 
