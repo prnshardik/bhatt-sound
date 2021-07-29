@@ -52,7 +52,7 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                     /** inventories */
                 /** items - module */
 
-                /** Sub items - module */
+                /** sub-items - module */
                     /** categories */
                         Route::get('sub-items/categories', 'SubItemCategoriesController@index');
                         Route::get('sub-items/category/{id?}', 'SubItemCategoriesController@single');
@@ -79,7 +79,7 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                         Route::post('sub-items/inventory/sub-items', 'SubItemInventoriesController@sub_items');
                         Route::post('sub-items/inventory/sub-items/delete', 'SubItemInventoriesController@sub_items_delete');
                     /** inventories */
-                /** Sub items - module */
+                /** sub-items - module */
 
                 /** cart */ 
                     Route::get('carts', 'CartController@index');

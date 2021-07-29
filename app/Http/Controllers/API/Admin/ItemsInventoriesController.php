@@ -314,6 +314,12 @@
                 if($inventory_id != '')
                     $inventory_items = ItemInventoryItem::select('item_id')->where(['item_inventory_id' => $inventory_id])->get()->toArray();
 
+                if(!empty($inventory_items)){
+                    $inventory_items = array_map(function($row){
+                        return $row['item_id'];
+                    }, $inventory_items);
+                }
+
                 $collection = Item::select('id', 'name', 'description')
                                     ->where(['status' => 'active']);
 
@@ -329,10 +335,20 @@
 
                 $data = $collection->get();
 
-                if($data->isNotEmpty())
+                if($data->isNotEmpty()){
+                    foreach($data as $row){
+                        $row->selected = false;
+
+                        if(!empty($inventory_items)){
+                            if(in_array($row->id, $inventory_items)){
+                                $row->selected = true;
+                            }
+                        }
+                    }
                     return response()->json(['status' => 200, 'message' => 'Data found', 'data' => $data]);
-                else
+                }else{
                     return response()->json(['status' => 201, 'message' => 'No data found']);                
+                }
             }
         /** items */
 

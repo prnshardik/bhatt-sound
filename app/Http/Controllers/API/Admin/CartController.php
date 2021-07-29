@@ -240,6 +240,4 @@
                     return response()->json(['status' => 201, 'message' => 'No data found']);
             }
         /** inventories */
-
-
     }
