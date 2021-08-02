@@ -14,41 +14,41 @@
     class ProcessController extends Controller{
        /** Scan */
             public function scan(Request $request){
-                $rules = [
-                    'id' => 'required'
-                ];
+                $rules = ['id' => 'required'];
 
                 $validator = Validator::make($request->all(), $rules);
+
                 if($validator->fails())
                     return response()->json(['status' => 422, 'message' => $validator->errors()]);
+                
                 $where = [
-                            ['cart.id' ,'=', $request->id]
+                            ['cart.id', '=', $request->id]
                 ];
+
                 $cart = Cart::select('id', 'party_name')->where($where)->first();
 
-                    if(empty($cart)){
-                        return response()->json(['status' => 201, 'message' => 'May item not available or not exist in system, Please scan proper QR code']);
-                    }else{
-
-                        $data = Cart::select('cart.id', 'cart.party_name', 'users.name AS user_name' ,'cart.party_address', 'cart.status')
+                if(empty($cart)){
+                    return response()->json(['status' => 201, 'message' => 'May item not available or not exist in system, Please scan proper QR code']);
+                }else{
+                    $data = Cart::select('cart.id', 'cart.party_name', 'users.name AS user_name' ,'cart.party_address', 'cart.status')
                                         ->leftJoin('users' ,'cart.user_id' ,'users.id')
                                         ->where($where)
                                         ->first();
 
-                        if(!empty($data) && $data->status == 'assigned'){
-                            $message = 'Item assigned to '.$data->user_name;
-                        }elseif(!empty($data) && $data->status == 'dispatch'){
-                            $message = 'Item dispatch to '.$data->party_name;
-                        }elseif(!empty($data) && $data->status == 'deliver'){
-                            $message = 'Item deliver to '.$data->party_name;
-                        }elseif(!empty($data) && $data->status == 'return'){
-                            $message = 'Item renturn from' .$data->party_name;
-                        }else{
-                            $message = 'Item available at offie';
-                        }
-
-                        return response()->json(['status' => 200, 'message' => $message, 'data' => $data]);
+                    if(!empty($data) && $data->status == 'assigned'){
+                        $message = 'Item assigned to '.$data->user_name;
+                    }elseif(!empty($data) && $data->status == 'dispatch'){
+                        $message = 'Item dispatch to '.$data->party_name;
+                    }elseif(!empty($data) && $data->status == 'deliver'){
+                        $message = 'Item deliver to '.$data->party_name;
+                    }elseif(!empty($data) && $data->status == 'return'){
+                        $message = 'Item renturn from' .$data->party_name;
+                    }else{
+                        $message = 'Item available at offie';
                     }
+
+                    return response()->json(['status' => 200, 'message' => $message, 'data' => $data]);
+                }
             } 
        /** Scan */ 
 
@@ -63,16 +63,18 @@
 
                 if($validator->fails())
                     return response()->json(['status' => 422, 'message' => $validator->errors()]);
+
                 $where = [
                     ['cart.id' ,'=' ,$request->cart_id],
                     ['cart.user_id' ,'=' ,$request->user_id],
                     ['cart.status' ,'!=' ,'reach']
                 ];
+
                 $cart = Cart::select('id')->where($where)->first();
+                
                 if(empty($cart)){
                     return response()->json(['status' => 201, 'message' => 'May item not available or not exist in system, Please scan proper QR code']);
-                }else{
-                   
+                }else{   
                     $crud = [
                         'status' => 'dispatch',
                         'updated_at' => date('Y-m-d H:i:s'),
@@ -94,20 +96,21 @@
                                 'updated_at' => date('Y-m-d H:i:s'),
                                 'updated_by' => auth('sanctum')->user()->id
                             ];
-                                $log_id = Log::insertGetId($log_crud);
-                                if($log_id){
-                                    DB::commit();
-                                    return response()->json(['status' => 200, 'message' => 'Cart dispatch successfully']);
-                                }else{
-                                    DB::rollback();
-                                    return response()->json(['status' => 201, 'message' => 'Faild to dispatch cart, please try again']);
-                                }
+
+                            $log_id = Log::insertGetId($log_crud);
+                            
+                            if($log_id){
+                                DB::commit();
+                                return response()->json(['status' => 200, 'message' => 'Cart dispatch successfully']);
+                            }else{
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Faild to dispatch cart, please try again']);
+                            }
                         }else{
                             DB::rollback();
                             return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again 1']);
                         }
                     }catch (\Exception $e) {
-                                dd('by');
                         DB::rollback();
                         return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again 2']);
                     }
@@ -126,16 +129,18 @@
 
                 if($validator->fails())
                     return response()->json(['status' => 422, 'message' => $validator->errors()]);
+
                 $where = [
                     ['cart.id' ,'=' ,$request->cart_id],
                     ['cart.user_id' ,'=' ,$request->user_id],
                     ['cart.status' ,'!=' ,'reach']
                 ];
+
                 $cart = Cart::select('id')->where($where)->first();
+                
                 if(empty($cart)){
                     return response()->json(['status' => 201, 'message' => 'May item not available or not exist in system, Please scan proper QR code']);
-                }else{
-                   
+                }else{   
                     $crud = [
                         'status' => 'deliver',
                         'updated_at' => date('Y-m-d H:i:s'),
@@ -147,7 +152,6 @@
                         $last_id = Cart::where(['id' => $request->cart_id])->update($crud);
 
                         if($last_id){
-                            // dd('hi');
                             $log_crud = [
                                 'item_id' => $request->cart_id,
                                 'type' => 'order',
@@ -158,20 +162,21 @@
                                 'updated_at' => date('Y-m-d H:i:s'),
                                 'updated_by' => auth('sanctum')->user()->id
                             ];
-                                $log_id = Log::insertGetId($log_crud);
-                                if($log_id){
-                                    DB::commit();
-                                    return response()->json(['status' => 200, 'message' => 'Cart deliver successfully']);
-                                }else{
-                                    DB::rollback();
-                                    return response()->json(['status' => 201, 'message' => 'Faild to deliver cart, please try again']);
-                                }
+                            
+                            $log_id = Log::insertGetId($log_crud);
+                            
+                            if($log_id){
+                                DB::commit();
+                                return response()->json(['status' => 200, 'message' => 'Cart deliver successfully']);
+                            }else{
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Faild to deliver cart, please try again']);
+                            }
                         }else{
                             DB::rollback();
                             return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again 1']);
                         }
                     }catch (\Exception $e) {
-                                dd('by');
                         DB::rollback();
                         return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again 2']);
                     }
@@ -190,16 +195,18 @@
 
                 if($validator->fails())
                     return response()->json(['status' => 422, 'message' => $validator->errors()]);
+
                 $where = [
                     ['cart.id' ,'=' ,$request->cart_id],
                     ['cart.user_id' ,'=' ,$request->user_id],
                     ['cart.status' ,'!=' ,'reach']
                 ];
+
                 $cart = Cart::select('id')->where($where)->first();
+                
                 if(empty($cart)){
                     return response()->json(['status' => 201, 'message' => 'May item not available or not exist in system, Please scan proper QR code']);
-                }else{
-                   
+                }else{   
                     $crud = [
                         'status' => 'return',
                         'updated_at' => date('Y-m-d H:i:s'),
@@ -222,20 +229,21 @@
                                 'updated_at' => date('Y-m-d H:i:s'),
                                 'updated_by' => auth('sanctum')->user()->id
                             ];
-                                $log_id = Log::insertGetId($log_crud);
-                                if($log_id){
-                                    DB::commit();
-                                    return response()->json(['status' => 200, 'message' => 'Cart return successfully']);
-                                }else{
-                                    DB::rollback();
-                                    return response()->json(['status' => 201, 'message' => 'Faild to return cart, please try again']);
-                                }
+                                
+                            $log_id = Log::insertGetId($log_crud);
+
+                            if($log_id){
+                                DB::commit();
+                                return response()->json(['status' => 200, 'message' => 'Cart return successfully']);
+                            }else{
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Faild to return cart, please try again']);
+                            }
                         }else{
                             DB::rollback();
                             return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again 1']);
                         }
                     }catch (\Exception $e) {
-                                dd('by');
                         DB::rollback();
                         return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again 2']);
                     }
@@ -254,16 +262,18 @@
 
                 if($validator->fails())
                     return response()->json(['status' => 422, 'message' => $validator->errors()]);
+                
                 $where = [
                     ['cart.id' ,'=' ,$request->cart_id],
                     ['cart.user_id' ,'=' ,$request->user_id],
                     ['cart.status' ,'!=' ,'reach']
                 ];
+
                 $cart = Cart::select('id')->where($where)->first();
+                
                 if(empty($cart)){
                     return response()->json(['status' => 201, 'message' => 'May item not available or not exist in system, Please scan proper QR code']);
-                }else{
-                   
+                }else{   
                     $crud = [
                         'status' => 'reach',
                         'updated_at' => date('Y-m-d H:i:s'),
@@ -275,7 +285,7 @@
                         $last_id = Cart::where(['id' => $request->cart_id])->update($crud);
 
                         if($last_id){
-                            // dd('hi');
+
                             $log_crud = [
                                 'item_id' => $request->cart_id,
                                 'item_type' => 'cart',
@@ -286,7 +296,9 @@
                                 'updated_at' => date('Y-m-d H:i:s'),
                                 'updated_by' => auth('sanctum')->user()->id
                             ];
+
                             $log_id = Log::insertGetId($log_crud);
+                            
                             if($log_id){
                                 DB::commit();
                                 return response()->json(['status' => 200, 'message' => 'Cart reach successfully']);
@@ -299,7 +311,6 @@
                             return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again 1']);
                         }
                     }catch (\Exception $e) {
-                                dd('by');
                         DB::rollback();
                         return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again 2']);
                     }
@@ -320,16 +331,16 @@
                 if($validator->fails())
                     return response()->json(['status' => 422, 'message' => $validator->errors()]);
 
+                if($request->type == 'item'){                     
+                    $item = Item::select('status')->where('id', $request->item_id)->first();
 
-                if($request->type == 'item'){
-                     
-                    $item = Item::select('status')->where('id' ,$request->item_id)->first();
                     if($item->status == 'repairing'){
                         $crud = [
                             'status' => 'active',
                             'updated_at' => date('Y-m-d H:i:s'),
                             'updated_by' => auth('sanctum')->user()->id
                         ];
+
                         DB::beginTransaction();
                         try {
                             $data = Item::where(['id' => $request->item_id])->update($crud);
@@ -341,7 +352,9 @@
                                     'type' => 'repair',
                                     'status' => 'reach'
                                 ];
+
                                 $log = Log::insertGetId($log_crud);
+                                
                                 if($log){
                                     DB::commit();
                                     return response()->json(['status' => 200, 'message' => 'Record status change successfully']);
@@ -353,7 +366,6 @@
                                 DB::rollback();
                                 return response()->json(['status' => 201, 'message' => 'Faild to change record status']);
                             }
-
                         }catch (\Exception $e) {
                             DB::rollback();
                             return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again']);
@@ -376,7 +388,9 @@
                                     'type' => 'repair',
                                     'status' => 'deliver'
                                 ];
+
                                 $log = Log::insertGetId($log_crud);
+                                
                                 if($log){
                                     DB::commit();
                                     return response()->json(['status' => 200, 'message' => 'Record status change successfully']);
@@ -388,15 +402,14 @@
                                 DB::rollback();
                                 return response()->json(['status' => 201, 'message' => 'Faild to change record status']);
                             }
-
                         }catch (\Exception $e) {
                             DB::rollback();
                             return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again']);
                         }
                     }
                 }else{
-
                     $sub_item = SubItem::select('status')->where('id' ,$request->item_id)->first();
+                    
                     if($sub_item->status == 'repairing'){
                         $crud = [
                             'status' => 'active',
@@ -415,7 +428,9 @@
                                     'type' => 'repair',
                                     'status' => 'reach'
                                 ];
+
                                 $log = Log::insertGetId($log_crud);
+                                
                                 if($log){
                                     DB::commit();
                                     return response()->json(['status' => 200, 'message' => 'Record status change successfully']);
@@ -427,7 +442,6 @@
                                 DB::rollback();
                                 return response()->json(['status' => 201, 'message' => 'Faild to change record status']);
                             }
-
                         }catch (\Exception $e) {
                             DB::rollback();
                             return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again']);
@@ -439,7 +453,7 @@
                             'updated_by' => auth('sanctum')->user()->id
                         ];
                         
-                       DB::beginTransaction();
+                        DB::beginTransaction();
                         try {
                             $data = SubItem::where(['id' => $request->item_id])->update($crud);
                         
@@ -450,7 +464,9 @@
                                     'type' => 'repair',
                                     'status' => 'deliver'
                                 ];
+
                                 $log = Log::insertGetId($log_crud);
+                                
                                 if($log){
                                     DB::commit();
                                     return response()->json(['status' => 200, 'message' => 'Record status change successfully']);
@@ -462,16 +478,12 @@
                                 DB::rollback();
                                 return response()->json(['status' => 201, 'message' => 'Faild to change record status']);
                             }
-
                         }catch (\Exception $e) {
                             DB::rollback();
                             return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again']);
                         }
                     }
                 }
-
-                
-
             }
         /** Maintenance */   
     }

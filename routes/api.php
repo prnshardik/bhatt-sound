@@ -111,14 +111,12 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                 Route::post('return', 'ProcessController@return');
                 Route::post('reach', 'ProcessController@reach');
                 Route::post('redispatch', 'ProcessController@repickup');
-                Route::post('maintenance', 'ProcessController@Maintenance');
+                Route::post('maintenance', 'ProcessController@maintenance');
             /** Process */
 
             /** location */
                 Route::post('location-insert', 'LocationsController@insert');
             /** location */
-
-            
         /** user */
     });
 });
