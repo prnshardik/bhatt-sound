@@ -9,6 +9,8 @@
     use App\Models\CartInventory;
     use App\Models\CartSubInventory;
     use App\Models\User;
+    use App\Models\ItemInventoryItem;
+    use App\Models\SubItemInventoryItem;
     use Auth, DB, Validator, File ;
 
     class DashboardController extends Controller{
@@ -38,20 +40,36 @@
                                                     ->where(['cart_inventories.cart_id' => $data->id])
                                                     ->get();
 
-                    if($cart_inventories->isNotEmpty())
+                    if($cart_inventories->isNotEmpty()){
+                        foreach($cart_inventories as $row){
+                            $row->items = ItemInventoryItem::select('items_inventories_items.item_id', 'items.status')
+                                                                ->leftjoin('items', 'items.id', 'items_inventories_items.item_id')
+                                                                ->where(['items_inventories_items.item_inventory_id' => $row->inventory_id])
+                                                                ->get();
+                        }
+
                         $data->inventories = $cart_inventories;
-                    else
+                    }else{
                         $data->inventories = collect();
+                    }
 
                     $cart_sub_inventories = CartSubInventory::select('cart_sub_inventories.sub_inventory_id', 'sub_items_inventories.title')
                                                                 ->leftjoin('sub_items_inventories', 'sub_items_inventories.id', 'cart_sub_inventories.sub_inventory_id')
                                                                 ->where(['cart_sub_inventories.cart_id' => $data->id])
                                                                 ->get();
 
-                    if($cart_sub_inventories->isNotEmpty())
+                    if($cart_sub_inventories->isNotEmpty()){
+                        foreach($cart_sub_inventories as $row){
+                            $row->items = subItemInventoryItem::select('sub_items_inventories_items.sub_item_id', 'sub_items.status')
+                                                                ->leftjoin('sub_items', 'sub_items.id', 'sub_items_inventories_items.sub_item_id')
+                                                                ->where(['sub_items_inventories_items.sub_item_inventory_id' => $row->sub_inventory_id])
+                                                                ->get();
+                        }
+
                         $data->sub_inventories = $cart_sub_inventories;
-                    else
+                    }else{
                         $data->sub_inventories = collect();
+                    }
 
                     return response()->json(['status' => 200, 'message' => 'Record found', 'data' => $data]);
                 }else{

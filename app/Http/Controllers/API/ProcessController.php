@@ -105,4 +105,54 @@
                 }
             }
         /** process */
+
+        /** maintenance */
+            public function maintenance(Request $request){
+                $rules = ['id' => 'required'];
+
+                $validator = Validator::make($request->all(), $rules);
+
+                if($validator->fails())
+                    return response()->json(['status' => 422, 'message' => $validator->errors()]);
+
+                $input = explode('-', $request->id);
+
+                if(empty($input[0]))
+                    return response()->json(['status' => 201, 'message' => 'Something went wrong']);
+                else
+                    $folder = $input[0];
+    
+                if(empty($input[1]))
+                    return response()->json(['status' => 201, 'message' => 'Something went wrong']);
+                else
+                    $id = $input[1];
+    
+                if($folder == 'item')
+                    $table = 'items';
+                elseif($folder == 'subItem')
+                    $table = 'sub_items';
+                else
+                    return response()->json(['status' => 201, 'message' => 'Something went wrong']);
+    
+                $data = DB::table($table)->where(['id' => $id])->first();
+                
+                if(!empty($data) && $data->status == 'active'){
+                    $update = DB::table($table)->where(['id' => $id])->update(['status' => 'repairing', 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
+    
+                    if($update)
+                        return response()->json(['status' => 200, 'message' => 'Status changes successfully']);
+                    else
+                        return response()->json(['status' => 201, 'message' => 'Somthing went wrong']);
+                }elseif(!empty($data) && $data->status == 'repairing'){
+                    $update = DB::table($table)->where(['id' => $id])->update(['status' => 'active', 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
+    
+                    if($update)
+                        return response()->json(['status' => 200, 'message' => 'Status changes successfully']);
+                    else
+                        return response()->json(['status' => 201, 'message' => 'Somthing went wrong']);
+                }else{
+                    return response()->json(['status' => 201, 'message' => 'Somthing went wrong']);
+                }
+            }
+        /** maintenance */
     }

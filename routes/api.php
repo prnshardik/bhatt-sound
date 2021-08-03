@@ -109,6 +109,10 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                 Route::post('process', 'ProcessController@process');
             /** process */
 
+            /** maintenance */
+                Route::post('maintenance', 'ProcessController@maintenance');
+            /** maintenance */
+
             /** location */
                 Route::post('location-insert', 'LocationsController@insert');
             /** location */
