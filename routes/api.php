@@ -100,19 +100,14 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
         /** admin */
 
         /** user */
-            /** Dashboard */
-                Route::post('dashboard', 'DashboardController@index');
-            /** Dashboard */
+            /** dashboard */
+                Route::get('dashboard', 'DashboardController@index');
+            /** dashboard */
 
-            /** Process */
+            /** process */
                 Route::post('scan', 'ProcessController@scan');
-                Route::post('dispatch', 'ProcessController@pickup');
-                Route::post('deliver', 'ProcessController@deliver');
-                Route::post('return', 'ProcessController@return');
-                Route::post('reach', 'ProcessController@reach');
-                Route::post('redispatch', 'ProcessController@repickup');
-                Route::post('maintenance', 'ProcessController@maintenance');
-            /** Process */
+                Route::post('process', 'ProcessController@process');
+            /** process */
 
             /** location */
                 Route::post('location-insert', 'LocationsController@insert');

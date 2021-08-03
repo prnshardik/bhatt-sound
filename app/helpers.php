@@ -70,17 +70,17 @@
                 $folder_to_uploads = public_path().'/uploads/qrcodes/items_inventory/';
                 $exst_file = public_path().'/uploads/qrcodes/items_inventory/qrcode_'.$id.'.png';
                 $table = 'items_inventories';
-                $qrcode = 'itemsInventories-'.$id;
+                $qrcode = 'itemInventories-'.$id;
             }elseif($folder == 'sub_item'){
                 $folder_to_uploads = public_path().'/uploads/qrcodes/sub_items/';
                 $exst_file = public_path().'/uploads/qrcodes/sub_items/qrcode_'.$id.'.png';
                 $table = 'sub_items';
-                $qrcode = 'subItems-'.$id;
+                $qrcode = 'subItem-'.$id;
             }elseif($folder == 'sub_item_inventory'){
                 $folder_to_uploads = public_path().'/uploads/qrcodes/sub_items_inventory/';
                 $exst_file = public_path().'/uploads/qrcodes/sub_items_inventory/qrcode_'.$id.'.png';
                 $table = 'sub_items_inventories';
-                $qrcode = 'subItemsInventories-'.$id;
+                $qrcode = 'subItemInventories-'.$id;
             }
 
             if (!File::exists($folder_to_uploads))
@@ -96,6 +96,43 @@
             $update = DB::table($table)->where(['id' => $id])->update(['qrcode' => $qrname, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth()->user()->id]);
             
             if($update)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    if(!function_exists('_qrcode')){
+        function _qrcode($input){
+            if(empty($input))
+                return false;
+
+            $input = explode('-', $input);
+ 
+            if(empty($input[0]))
+                return false;
+            else
+                $folder = $input[0];
+
+            if(empty($input[1]))
+                return false;
+            else
+                $id = $input[1];
+
+            if($folder == 'item')
+                $table = 'items';
+            elseif($folder == 'itemInventories')
+                $table = 'items_inventories';
+            elseif($folder == 'subItem')
+                $table = 'sub_items';
+            elseif($folder == 'subItemInventories')
+                $table = 'sub_items_inventories';
+            else
+                return false;
+
+            $data = DB::table($table)->where(['id' => $id])->first();
+            
+            if($data)
                 return true;
             else
                 return false;
