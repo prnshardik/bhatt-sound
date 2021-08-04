@@ -70,20 +70,18 @@
             $mailData = array('from_email' => _mail_from(), 'email' => $request->email, 'link' => $link);
             
             // try{
-                // dd('mail');
-               $mail = Mail::to($request->email)->send(new ForgetPassword($mailData));
-                dd($mail);
-               if($mail){
-                return redirect()->route('login')->with('success', 'please check your email and follow steps for reset password');
-               }else{
-                dd('mail in out');
-                DB::table('password_resets')->where(['email' => $request->email])->delete();
-                return redirect()->route('login')->with('success', 'something went wrong, please try again later');
-               }
+
+                $mail = Mail::to($request->email)->send(new ForgetPassword($mailData));
+                if($mail){
+                    return redirect()->route('login')->with('success', 'please check your email and follow steps for reset password');
+                }else{
+                    return redirect()->route('forget.password')->with('error', 'something went wrong, please try again later 1');
+                }
+
+               
             // }catch(\Exception $e){
-                dd('mail out');
                 DB::table('password_resets')->where(['email' => $request->email])->delete();
-                return redirect()->route('login')->with('success', 'something went wrong, please try again later');
+                return redirect()->route('forget.password')->with('error', 'something went wrong, please try again later');
             // }
         }
 

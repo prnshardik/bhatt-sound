@@ -173,7 +173,6 @@
     });
 </script>
 
-@yield('scripts')
 
 <script>
     @php
@@ -197,3 +196,4 @@
         toastr.error(error, 'error');
     }
 </script>
+@yield('scripts')
