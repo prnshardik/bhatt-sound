@@ -26,6 +26,11 @@
         .card-stats .card-body .numbers .card-category {
             font-size: 13px;
         }
+
+        .h2, .h3, h2, h3 {
+            margin-bottom: 10px !important;
+            margin-top: 10px !important;
+        }
     </style>
 @endsection
 
@@ -198,6 +203,65 @@
                 </a>
             </div>
         </div>
+    </div>
+
+    <div class="col-lg-12 col-md-12 col-sm-12"><h3>Carts</h3></div>
+    
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        @if($data['carts']->isNotEmpty())
+            <div class="card card-stats">
+                @foreach($data['carts'] as $row)
+                    <div class="card-body " style="padding: 15px;">
+                        <a href="{{ route('cart') }}" class="anchor_color">
+                            <div class="row">
+                                <div class="col-sm-4">{{ $row->party_name }}</div>
+                                <div class="col-sm-4">{{ $row->user_name }}</div>
+                                <div class="col-sm-4">{{ $row->status }}</div>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="card card-stats">
+                <div class="card-body " style="padding: 15px;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <span class="span_class">No current cart found</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <div class="col-lg-12 col-md-12 col-sm-12"><h3>Repairings</h3></div>
+
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        @if($data['repairings']->isNotEmpty())
+            <div class="card card-stats">
+                @foreach($data['repairings'] as $row)
+                    <div class="card-body" style="padding: 15px;">
+                        <a href="{{ route('logs') }}" class="anchor_color">
+                            <div class="row">
+                                <div class="col-sm-4">{{ $row->name }}</div>
+                                <div class="col-sm-4">{{ $row->type }}</div>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="card card-stats">
+                <div class="card-body" style="padding: 15px;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <span class="span_class">No any items or sub items in repairing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 @endsection

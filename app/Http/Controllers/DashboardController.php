@@ -11,6 +11,8 @@
     use App\Models\SubItemCategory;
     use App\Models\SubItemInventory;
     use App\Models\Cart;
+    use App\Models\CartInventory;
+    use App\Models\CartSubInventory;
     use Auth, DB;
 
     class DashboardController extends Controller{
@@ -29,8 +31,43 @@
 
                 $cart = Cart::where('status', '!=', 'reach')->count();
 
-                $data = ['users' => $users, 'itemsCategories' => $itemsCategories, 'items' => $items, 'itemsInventories' => $itemsInventories,
-                        'cart' => $cart, 'subItemsCategories' => $subItemsCategories, 'subItems' => $subItems, 'subItemsInventories' => $subItemsInventories];
+                $itemsRepairings = Item::select('id', 'name', DB::Raw("'items' as type"))->where(['status' => 'repairing'])->limit(5)->get();
+                $subItemsRepairings = subItem::select('id', 'name', DB::Raw("'sub items' as type"))->where(['status' => 'repairing'])->limit(5)->get();
+
+                $repairings = $itemsRepairings->merge($subItemsRepairings);
+
+                $carts = Cart::select('cart.id', 'u.name as user_name', 'cart.party_name', 'cart.party_address', 'cart.status')
+                                    ->leftjoin('users as u', 'u.id', 'cart.user_id')
+                                    ->whereNotIn('cart.status', ['reach', 'assigned'])
+                                    ->limit(5)
+                                    ->get();
+
+                if($carts->isNotEmpty()){
+                    foreach($carts as $row){
+                        $cart_item = CartInventory::select(DB::Raw("COUNT(".'id'.") as count"))->where(['cart_id' => $row->id])->first();
+                        $row->items = $cart_item->count;
+                    }
+                }
+
+                if($carts->isNotEmpty()){
+                    foreach($carts as $row){
+                        $cart_sub_item = CartSubInventory::select(DB::Raw("COUNT(".'id'.") as count"))->where(['cart_id' => $row->id])->first();
+                        $row->sub_items = $cart_sub_item->count;
+                    }
+                }
+
+                $data = [
+                        'users' => $users, 
+                        'itemsCategories' => $itemsCategories, 
+                        'items' => $items, 
+                        'itemsInventories' => $itemsInventories,
+                        'subItemsCategories' => $subItemsCategories, 
+                        'subItems' => $subItems, 
+                        'subItemsInventories' => $subItemsInventories,
+                        'cart' => $cart, 
+                        'repairings' => $repairings,
+                        'carts' => $carts
+                    ];
 
                 return view('dashboard', ['data' => $data]);
             }

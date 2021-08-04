@@ -43,26 +43,110 @@
                     return response()->json(['status' => 422, 'message' => $validator->errors()]);
 
                 if($request->stage == 'dispatch'){
-                    $update = Cart::where(['id' => $request->id])->update(['status' => $request->stage, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
+                    DB::beginTransaction();
+                    try {
+                        $update = Cart::where(['id' => $request->id])->update(['status' => $request->stage, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
 
-                    if($update)
-                        return response()->json(['status' => 200, 'message' => 'Record status changed successfully']);
-                    else
-                        return response()->json(['status' => 201, 'message' => 'Something went wrong']);
+                        if($update){
+                            $crud = [
+                                'user_id' => auth('sanctum')->user()->id,
+                                'item_id' => $request->id,
+                                'item_type' => 'cart',
+                                'type' => 'order',
+                                'status' => 'dispatch',
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'created_by' => auth('sanctum')->user()->id,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => auth('sanctum')->user()->id
+                            ];
+
+                            $log = Log::insertGetId($crud);
+
+                            if($log){
+                                DB::commit();
+                                return response()->json(['status' => 200, 'message' => 'Status changes successfully']);
+                            }else{
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Failed to log']);
+                            }
+                        }else{
+                            DB::rollback();
+                            return response()->json(['status' => 201, 'message' => 'Failed to status change']);
+                        }
+                    } catch (\Exception $e) {
+                        DB::rollback();
+                        return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again later']);
+                    }
                 }elseif($request->stage == 'deliver'){
-                    $update = Cart::where(['id' => $request->id])->update(['status' => $request->stage, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
+                    DB::beginTransaction();
+                    try {
+                        $update = Cart::where(['id' => $request->id])->update(['status' => $request->stage, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
 
-                    if($update)
-                        return response()->json(['status' => 200, 'message' => 'Record status changed successfully']);
-                    else
-                        return response()->json(['status' => 201, 'message' => 'Something went wrong']);
+                        if($update){
+                            $crud = [
+                                'user_id' => auth('sanctum')->user()->id,
+                                'item_id' => $request->id,
+                                'item_type' => 'cart',
+                                'type' => 'order',
+                                'status' => 'deliver',
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'created_by' => auth('sanctum')->user()->id,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => auth('sanctum')->user()->id
+                            ];
+
+                            $log = Log::insertGetId($crud);
+
+                            if($log){
+                                DB::commit();
+                                return response()->json(['status' => 200, 'message' => 'Status changes successfully']);
+                            }else{
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Failed to log']);
+                            }
+                        }else{
+                            DB::rollback();
+                            return response()->json(['status' => 201, 'message' => 'Failed to status change']);
+                        }
+                    } catch (\Exception $e) {
+                        DB::rollback();
+                        return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again later']);
+                    }
                 }elseif($request->stage == 'return'){
-                    $update = Cart::where(['id' => $request->id])->update(['status' => $request->stage, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
+                    DB::beginTransaction();
+                    try {
+                        $update = Cart::where(['id' => $request->id])->update(['status' => $request->stage, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => auth('sanctum')->user()->id]);
 
-                    if($update)
-                        return response()->json(['status' => 200, 'message' => 'Record status changed successfully']);
-                    else
-                        return response()->json(['status' => 201, 'message' => 'Something went wrong']);
+                        if($update){
+                            $crud = [
+                                'user_id' => auth('sanctum')->user()->id,
+                                'item_id' => $request->id,
+                                'item_type' => 'cart',
+                                'type' => 'order',
+                                'status' => 'return',
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'created_by' => auth('sanctum')->user()->id,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => auth('sanctum')->user()->id
+                            ];
+
+                            $log = Log::insertGetId($crud);
+
+                            if($log){
+                                DB::commit();
+                                return response()->json(['status' => 200, 'message' => 'Status changes successfully']);
+                            }else{
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Failed to log']);
+                            }
+                        }else{
+                            DB::rollback();
+                            return response()->json(['status' => 201, 'message' => 'Failed to status change']);
+                        }
+                    } catch (\Exception $e) {
+                        DB::rollback();
+                        return response()->json(['status' => 201, 'message' => 'Something went wrong, please try again later']);
+                    }
                 }elseif($request->stage == 'reach'){
                     DB::beginTransaction();
                     try {
@@ -88,6 +172,25 @@
                             if(!$update_sub_inventories){
                                 DB::rollback();
                                 return response()->json(['status' => 201, 'message' => 'Something went wrong']);
+                            }
+
+                            $crud = [
+                                'user_id' => auth('sanctum')->user()->id,
+                                'item_id' => $request->id,
+                                'item_type' => 'cart',
+                                'type' => 'order',
+                                'status' => 'reach',
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'created_by' => auth('sanctum')->user()->id,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => auth('sanctum')->user()->id
+                            ];
+
+                            $log = Log::insertGetId($crud);
+
+                            if(!$log){
+                                DB::rollback();
+                                return response()->json(['status' => 201, 'message' => 'Failed to log']);
                             }
 
                             DB::commit();

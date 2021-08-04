@@ -14,8 +14,7 @@
         /** index */
             public function index(Request $request){
                 if($request->ajax()){
-                    $data = Log::select('log.id', 'log.user_id', 'log.item_id', 'log.item_type', 'log.type', 'log.status',
-                                            DB::Raw("(CASE WHEN 'log.type' = 'order' THEN 'cart' ELSE 'repairing' END) as type"),
+                    $data = Log::select('log.id', 'log.user_id', 'log.item_id', 'log.item_type', 'log.type', 'log.status', 'log.type',
                                             'users.name as user_name'
                                         )
                                     ->leftjoin('users', 'users.id', 'log.user_id')
@@ -24,7 +23,7 @@
 
                     if($data->isNotEmpty()){
                         foreach($data as $row){
-                            $item = '';
+                            $item = 'Cart';
                             if($row->item_type == 'items'){
                                 $itemData = Item::select('name')->where(['id' => $row->item_id])->first();
 

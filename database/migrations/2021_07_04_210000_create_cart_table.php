@@ -18,7 +18,7 @@ class CreateCartTable extends Migration
             $table->bigInteger('user_id')->nullable()->unsigned();
             $table->string('party_name')->nullable();
             $table->string('party_address')->nullable();
-            $table->enum('status', ['assigned', 'dispatch', 'deliver', 'return', 'reach'])->default('assigned');
+            $table->enum('status', ['assigned', 'dispatch', 'deliver', 'return', 'reach', 'redispatch'])->default('assigned');
             $table->timestamps();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

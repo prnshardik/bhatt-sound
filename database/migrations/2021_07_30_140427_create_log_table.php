@@ -19,7 +19,7 @@ class CreateLogTable extends Migration
             $table->bigInteger('item_id')->nullable()->unsigned();
             $table->enum('item_type', ['cart','items','sub_items'])->nullable();
             $table->enum('type', ['order','repair'])->nullable();
-            $table->enum('status', ['dispatch','deliver','return','reach'])->nullable();
+            $table->enum('status', ['dispatch','deliver','return','reach', 'redispatch'])->nullable();
             $table->timestamps();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
