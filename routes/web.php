@@ -159,6 +159,10 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
             Route::get('cart/sub_inventories', 'CartController@sub_inventories')->name('cart.sub_inventories');
             Route::get('cart/delete_sub_inventories', 'CartController@delete_sub_inventories')->name('cart.delete.sub_inventories');
         /** cart */
+
+        /** log */
+            Route::any('logs', 'LogController@index')->name('logs');
+        /** log */
     });
 
     Route::get("{path}", function(){ return redirect()->route('login'); })->where('path', '.+');

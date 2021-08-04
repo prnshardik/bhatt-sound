@@ -96,6 +96,12 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                     Route::post('cart/delete_inventories', 'CartController@delete_inventories');
                     Route::post('cart/delete_sub_inventories', 'CartController@delete_sub_inventories');
                 /** cart */
+
+                /** location */
+                    Route::post('locations', 'LocationsController@locations');
+                    Route::post('location', 'LocationsController@location');
+                    Route::post('last-location', 'LocationsController@last_location');
+                /** location */
             });
         /** admin */
 
