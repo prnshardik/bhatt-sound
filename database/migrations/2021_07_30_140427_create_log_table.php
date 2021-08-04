@@ -15,13 +15,14 @@ class CreateLogTable extends Migration
     {
         Schema::create('log', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('user_id')->nullable()->unsigned();
             $table->bigInteger('item_id')->nullable()->unsigned();
-            $table->enum('item_type', ['cart','item','sub_item'])->nullable();
+            $table->enum('item_type', ['cart','items','sub_items'])->nullable();
             $table->enum('type', ['order','repair'])->nullable();
             $table->enum('status', ['dispatch','deliver','return','reach'])->nullable();
+            $table->timestamps();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
-            $table->timestamps();
         });
     }
 

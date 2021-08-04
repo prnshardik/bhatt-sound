@@ -96,29 +96,32 @@ Route::group(['middleware' => 'api', 'namespace' => 'API'], function () {
                     Route::post('cart/delete_inventories', 'CartController@delete_inventories');
                     Route::post('cart/delete_sub_inventories', 'CartController@delete_sub_inventories');
                 /** cart */
+
+                /** location */
+                    Route::post('locations', 'LocationsController@locations');
+                    Route::post('location', 'LocationsController@location');
+                    Route::post('last-location', 'LocationsController@last_location');
+                /** location */
             });
         /** admin */
 
         /** user */
-            /** Dashboard */
-                Route::post('dashboard', 'DashboardController@index');
-            /** Dashboard */
+            /** dashboard */
+                Route::get('dashboard', 'DashboardController@index');
+            /** dashboard */
 
-            /** Process */
+            /** process */
                 Route::post('scan', 'ProcessController@scan');
-                Route::post('dispatch', 'ProcessController@pickup');
-                Route::post('deliver', 'ProcessController@deliver');
-                Route::post('return', 'ProcessController@return');
-                Route::post('reach', 'ProcessController@reach');
-                Route::post('redispatch', 'ProcessController@repickup');
-                Route::post('maintenance', 'ProcessController@Maintenance');
-            /** Process */
+                Route::post('process', 'ProcessController@process');
+            /** process */
+
+            /** maintenance */
+                Route::post('maintenance', 'ProcessController@maintenance');
+            /** maintenance */
 
             /** location */
                 Route::post('location-insert', 'LocationsController@insert');
             /** location */
-
-            
         /** user */
     });
 });
