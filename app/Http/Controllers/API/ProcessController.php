@@ -173,8 +173,8 @@
                     $crud = [
                         'user_id' => auth('sanctum')->user()->id,
                         'item_id' => $id,
-                        'item_type' => 'repair',
-                        'type' => $table,
+                        'item_type' => $table,
+                        'type' => 'repair',
                         'status' => 'deliver',
                         'created_at' => date('Y-m-d H:i:s'),
                         'created_by' => auth('sanctum')->user()->id,
@@ -193,8 +193,8 @@
                     $crud = [
                         'user_id' => auth('sanctum')->user()->id,
                         'item_id' => $id,
-                        'item_type' => 'return',
-                        'type' => $table,
+                        'item_type' => $table,
+                        'type' => 'repair',
                         'status' => 'deliver',
                         'created_at' => date('Y-m-d H:i:s'),
                         'created_by' => auth('sanctum')->user()->id,

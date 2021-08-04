@@ -83,6 +83,12 @@
                     <p>Cart</p>
                 </a>
             </li>
+            <li class="{{ Request::is('logs*') ? 'active' : '' }}">
+                <a href="{{ route('logs') }}">
+                    <i class="fa fa-tasks"></i>
+                    <p>Logs</p>
+                </a>
+            </li>
         </ul>
     </div>
 </div>
