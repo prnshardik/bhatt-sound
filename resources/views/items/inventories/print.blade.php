@@ -16,6 +16,14 @@
                 align-items: center;
                 height: 90vh;
             }
+
+            #heightDiv{
+                display: none;
+            }
+
+            #widthDiv{
+                display: none;
+            }
         }
     </style>
 @endsection
@@ -29,14 +37,24 @@
                             <div class="form-group col-sm-12" id="printDivStyle">
                                 @if(isset($data) && !empty($data->qrcode))
                                     <div class="text-center" id="printableArea">
-                                        <img src="{{ url('uploads/qrcodes/items_inventory').'/'.$data->qrcode }}" alt="{{ $data->qrcode }}" class="ml-2" style="width: 250px; height: 250px" >
-                                        <div class="text-center">
+                                        <img id="image" src="{{ url('uploads/qrcodes/items_inventory').'/'.$data->qrcode }}" alt="{{ $data->qrcode }}" class="ml-2" style="width: 250px; height: 250px" >
+                                        <div id="name" class="text-center">
                                             <br>
-                                            <h1>{{ $data->name }}</h1>
+                                            <h1 style="font-size: 2em">{{ $data->name }}</h1>
                                         </div>
                                     </div>
                                 @endif
                             </div>
+                            <div class="form-group col-md-3 col-sm-3"></div>
+                            <div class="form-group col-md-3 col-sm-3" id="heightDiv">
+                                <label for="height">Height:</label>
+                                <input type="text" name="height" id="height" class="form-control height">
+                            </div>
+                            <div class="form-group col-md-3 col-sm-3" id="widthDiv">
+                                <label for="width">Width:</label>
+                                <input type="text" name="width" id="width" class="form-control width">
+                            </div>
+                            <div class="form-group col-md-3 col-sm-3"></div>
                         </div>
                     </div>
                 </div>
@@ -55,14 +73,29 @@
 @section('scripts')
     <script>
         function printDiv(divName) {
+            let height = $('#height').val();
+            let width = $('#width').val();
+
+            if(height == ''){ height = 5; }
+            if(width == ''){ width = 5; }
+
+            height = height * 96;
+            width = width * 96;
+
+            $('#image').css("height", height+"px");
+            $('#image').css("width", width+"px");
+
             var printContents = document.getElementById(divName).innerHTML;
             var originalContents = document.body.innerHTML;
-
+           
             document.body.innerHTML = printContents;
 
             window.print();
 
             document.body.innerHTML = originalContents;
+
+            $('#image').css("height", "250px");
+            $('#image').css("width", "250px");
         }
     </script>
 @endsection
