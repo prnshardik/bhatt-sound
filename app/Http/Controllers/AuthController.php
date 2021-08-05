@@ -69,20 +69,16 @@
 
             $mailData = array('from_email' => _mail_from(), 'email' => $request->email, 'link' => $link);
             
-            // try{
-
-                $mail = Mail::to($request->email)->send(new ForgetPassword($mailData));
-                if($mail){
-                    return redirect()->route('login')->with('success', 'please check your email and follow steps for reset password');
-                }else{
-                    return redirect()->route('forget.password')->with('error', 'something went wrong, please try again later 1');
-                }
-
+            try{
+                Mail::to($request->email)->send(new ForgetPassword($mailData));
+          
+                return redirect()->route('login')->with('success', 'please check your email and follow steps for reset password');
+          
                
-            // }catch(\Exception $e){
+            }catch(\Exception $e){
                 DB::table('password_resets')->where(['email' => $request->email])->delete();
                 return redirect()->route('forget.password')->with('error', 'something went wrong, please try again later');
-            // }
+            }
         }
 
         public function reset_password(Request $request, $string){
