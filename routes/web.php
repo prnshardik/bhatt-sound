@@ -163,6 +163,10 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
         /** log */
             Route::any('logs', 'LogController@index')->name('logs');
         /** log */
+
+        /** print qrcodes */
+            Route::any('prints', 'PrintsController@index')->name('prints');
+        /** print qrcodes */
     });
 
     Route::get("{path}", function(){ return redirect()->route('login'); })->where('path', '.+');

@@ -36,7 +36,7 @@
                             </div>
                             <div class="form-group col-sm-12">
                                 <label for="image">Image</label>
-                                <input type="file" class=" dropify" id="image" name="image"  data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M" data-show-remove="false">
+                                <input type="file" class=" dropify" id="image" name="image" data-allowed-file-extensions="jpg png jpeg" data-max-file-size-preview="5M" data-show-remove="false">
                                 <span class="kt-form__help error image"></span>
                             </div>
                             <div class="col-sm-6">

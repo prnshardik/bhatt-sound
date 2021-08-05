@@ -66,7 +66,6 @@ $(document).ready(function(){
                 delete obj.inventories[value];
             }
         }
-        console.log(obj);
     });
 
     $(document).on('click', '#sub_inventories_pagination .pagination a', function(event){
