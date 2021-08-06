@@ -166,6 +166,7 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
 
         /** print qrcodes */
             Route::any('prints', 'PrintsController@index')->name('prints');
+            Route::any('prints/print', 'PrintsController@print')->name('prints.print');
         /** print qrcodes */
     });
 

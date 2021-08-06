@@ -89,6 +89,12 @@
                     <p>Logs</p>
                 </a>
             </li>
+            <li class="{{ Request::is('prints*') ? 'active' : '' }}">
+                <a href="{{ route('prints') }}">
+                    <i class="fa fa-print "></i>
+                    <p>Print QR Codes</p>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

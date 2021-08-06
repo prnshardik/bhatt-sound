@@ -59,6 +59,18 @@
                         </table>
                         <div id="pagination"></div>
                     </div>
+                    <div class="row">
+                        <div class="col-sm-12 pr-5 pb-2">
+                            <button id="submit" class="btn btn-primary float-right">Submit</button>
+                        </div>
+                    </div>
+
+                    <form action="{{ route('prints.print') }}" method="post" id="myForm">
+                        @csrf
+                        @method('post')
+
+                        <input type="hidden" name="formOption" id="formOption">
+                    </form>
                 </div>
             </div>
         </div>
@@ -68,7 +80,7 @@
 @section('scripts')
     <script type="text/javascript">
         let option = '';
-        let data = [];
+        let data = {};
 
         $(document).on('click', '#pagination .pagination a', function(event){
             event.preventDefault(); 
@@ -113,15 +125,44 @@
 
         $(document).on('click', '.option', function(){
             var value = $(this).val();
-            
-            if($(this).prop("checked") == true){
-                data.push(value);
-            } else {
-                const index = data.indexOf(value);
-                if (index > -1) {
-                    data.splice(index, 1);
-                }
+            var id = $(this).data('id');
+
+            let height = $('#height'+id).val();
+            let width = $('#width'+id).val();
+            let quantity = $('#quantity'+id).val();
+
+            if(height == '' || width == '' || quantity == ''){
+                return false;
             }
+
+            if($(this).prop("checked") == true){
+                data[value] = {'id': value, 'height': height, 'width': width, 'quantity': quantity};
+            } else {
+                delete data[value];
+            }
+        });
+
+        $('#submit').on('click', function(){
+            if(option == ''){
+                alert('please select option');
+                return false;
+            }
+
+            if(jQuery.isEmptyObject(data)){
+                alert('please select data');
+                return false;
+            }
+
+            $('#formOption').val(option);
+            
+            $.each(data, function(index, value){
+                $('#myForm').append("<input type='hidden' name='formId[]' value="+value.id+">");
+                $('#myForm').append("<input type='hidden' name='formHeight[]' value="+value.height+">");
+                $('#myForm').append("<input type='hidden' name='formWidth[]' value="+value.width+">");
+                $('#myForm').append("<input type='hidden' name='formQuantity[]' value="+value.quantity+">");
+            });
+
+            $("#myForm").submit();
         });
     </script>
 @endsection

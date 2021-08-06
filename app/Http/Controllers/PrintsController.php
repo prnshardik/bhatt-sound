@@ -52,5 +52,86 @@
 
                 return view('prints.index');
             }
-        /** index */        
+        /** index */     
+        
+        /** print */
+            public function print(Request $request){
+                $formOption = $request->formOption;
+                $formId = $request->formId;
+                $formHeight = $request->formHeight;
+                $formWidth = $request->formWidth;
+                $formQuantity = $request->formQuantity;
+
+                $ids = [];
+                $collection = [];
+                $count = count($formHeight);
+
+                foreach($formId as $k => $v){
+                    array_push($ids, $formId[$k]);
+                    $collection[$k] = ['height' => $formHeight[$k], 'width' => $formWidth[$k], 'quantity' => $formQuantity[$k]];
+                }
+
+                $data = collect();
+
+                if($formOption == 'items'){
+                    foreach($formId as $k => $v){
+                        _generate_qrcode($v, 'item');
+                    }
+
+                    $data = Item::select('qrcode', 'name')->whereIn('id', $ids)->get();
+                    
+                    if($data->isNotEmpty()){
+                        foreach($data as $k => $v){
+                            $v->height = $collection[$k]['height'];
+                            $v->width = $collection[$k]['width'];
+                            $v->quantity = $collection[$k]['quantity'];
+                        }
+                    }
+                }elseif($formOption == 'subItems'){
+                    foreach($formId as $k => $v){
+                        _generate_qrcode($v, 'sub_item');
+                    }
+
+                    $data = SubItem::select('qrcode', 'name')->whereIn('id', $ids)->get();
+                    
+                    if($data->isNotEmpty()){
+                        foreach($data as $k => $v){
+                            $v->height = $collection[$k]['height'];
+                            $v->width = $collection[$k]['width'];
+                            $v->quantity = $collection[$k]['quantity'];
+                        }
+                    }
+                }elseif($formOption == 'itemsInventories'){
+                    foreach($formId as $k => $v){
+                        _generate_qrcode($v, 'item_inventory');
+                    }
+
+                    $data = ItemInventory::select('qrcode', 'title as name')->whereIn('id', $ids)->get();
+                    
+                    if($data->isNotEmpty()){
+                        foreach($data as $k => $v){
+                            $v->height = $collection[$k]['height'];
+                            $v->width = $collection[$k]['width'];
+                            $v->quantity = $collection[$k]['quantity'];
+                        }
+                    }
+                }elseif($formOption == 'subItemsInventories'){
+                    foreach($formId as $k => $v){
+                        _generate_qrcode($v, 'sub_item_inventory');
+                    }
+
+                    $data = SubItemInventory::select('qrcode', 'title as name')->whereIn('id', $ids)->get();
+                    
+                    if($data->isNotEmpty()){
+                        foreach($data as $k => $v){
+                            $v->height = $collection[$k]['height'];
+                            $v->width = $collection[$k]['width'];
+                            $v->quantity = $collection[$k]['quantity'];
+                        }
+                    }
+                }
+
+                return view('prints.print', ['data' => $data, 'option' => $formOption]);
+            }
+        /** print */
     }
