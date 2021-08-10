@@ -121,7 +121,7 @@
                                 $filenameWithExtension = $request->file('image')->getClientOriginalName();
                                 $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
                                 $extension = $request->file('image')->getClientOriginalExtension();
-                                $filenameToStore = time()."_".$filename.'.'.$extension;
+                                $filenameToStore = time()."_".$i."_".$filename.'.'.$extension;
     
                                 $crud["image"] = $filenameToStore;
 
