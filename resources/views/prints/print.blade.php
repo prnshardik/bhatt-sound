@@ -48,7 +48,7 @@
                                                 <div class="print-break">
                                                     <div style="margin-left: 10px; margin-right: 10px;">
                                                         <img id="image" src="{{ $path.'/'.$row->qrcode }}" alt="{{ $row->qrcode }}" style="width: {{ $width }}px; height: {{ $height }}px; padding: 5px;">
-                                                        <div id="name" class="text-center my-2" style="width: {{ $width }}px;">
+                                                        <div id="name" class="text-center" style="width: {{ $width }}px;">
                                                             <span style="font-size: {{$font}}">{{ $row->name }}</span>
                                                         </div>
                                                     </div>
