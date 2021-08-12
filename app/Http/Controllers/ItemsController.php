@@ -107,7 +107,7 @@
                         while($i < $quantity){
                             $crud = [
                                 'category_id' => $request->category_id,
-                                'name' => ($i+1).' '.ucfirst($request->name),
+                                'name' => ($i+1).' - '.ucfirst($request->name),
                                 'description' => $request->description ?? NULL,
                                 'status' => 'active',
                                 'created_at' => date('Y-m-d H:i:s'),

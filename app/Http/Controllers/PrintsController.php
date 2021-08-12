@@ -41,7 +41,7 @@
                             $collection->where('title', 'like', '%'.$search.'%');
                     }
 
-                    $data = $collection->paginate(5);
+                    $data = $collection->paginate(100);
                     
                     $view = view('prints.table', compact('data', 'selected'))->render();
                     $pagination = view('prints.pagination', compact('data'))->render();

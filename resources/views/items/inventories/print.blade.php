@@ -39,7 +39,7 @@
                                     <div class="text-center" id="printableArea">
                                         <img id="image" src="{{ url('uploads/qrcodes/items_inventory').'/'.$data->qrcode }}" alt="{{ $data->qrcode }}" class="ml-2" style="width: 250px; height: 250px" >
                                         <div id="name"class="text-center">
-                                            <h1 id="font" style="font-size:30px">{{ $data->name }}</h1>
+                                            <span id="font" style="font-size:20px"><b>{{ $data->name }}</b></span>
                                         </div>
                                     </div>
                                 @endif
@@ -99,7 +99,7 @@
             $('#image').css("height", "250px");
             $('#image').css("width", "250px");
             $('#name').removeAttr("style");
-            $('#font').css("font-size", "30px");
+            $('#font').css("font-size", "20px");
         }
     </script>
 @endsection
