@@ -38,9 +38,7 @@
                                 @if(isset($data) && !empty($data->qrcode))
                                     <div class="text-center" id="printableArea">
                                         <img id="image" src="{{ url('uploads/qrcodes/sub_items').'/'.$data->qrcode }}" alt="{{ $data->qrcode }}" class="ml-2" style="width: 250px; height: 250px" >
-                                        
                                         <div id="name"class="text-center">
-                                            <br>
                                             <h1 id="font" style="font-size:30px">{{ $data->name }}</h1>
                                         </div>
                                     </div>
