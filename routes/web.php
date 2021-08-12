@@ -46,6 +46,7 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
 
         Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
+        Route::get('demo', 'DemoController@index')->name('demo');
         /** users */
             Route::any('users', 'UsersController@index')->name('users');
             Route::get('users/create', 'UsersController@create')->name('users.create');
