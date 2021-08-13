@@ -45,7 +45,10 @@ Route::group(['middleware' => ['prevent-back-history']], function(){
         Route::get('logout', 'AuthController@logout')->name('logout');
 
         Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
-
+        Route::get('fix_item_qr', 'TestController@fix_item_qr')->name('fix_item_qr');
+        Route::get('fix_subitem_qr', 'TestController@fix_subitem_qr')->name('fix_subitem_qr');
+        Route::get('fix_item_inventory_qr', 'TestController@fix_item_inventory_qr')->name('fix_item_inventory_qr');
+        Route::get('fix_subitem_inventory_qr', 'TestController@fix_subitem_inventory_qr')->name('fix_subitem_inventory_qr');
         
         /** users */
             Route::any('users', 'UsersController@index')->name('users');
