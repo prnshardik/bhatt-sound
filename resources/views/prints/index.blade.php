@@ -30,7 +30,7 @@
                         <div class="col-sm-6 form-group">
                             <select name="options" class="form-control" id="options">
                                 <option value="">Select option</option>
-                                <option value="items">Items</option>
+                                <option value="items" selected>Items</option>
                                 <option value="subItems">Sub Items</option>
                                 <option value="itemsInventories">Items Inventories</option>
                                 <option value="subItemsInventories">Sub Items Inventories</option>
@@ -163,6 +163,11 @@
             });
 
             $("#myForm").submit();
+        });
+
+        $(document).ready(function () {
+            option = 'items';
+            _data(0, '');
         });
     </script>
 @endsection
