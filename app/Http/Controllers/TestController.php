@@ -22,6 +22,7 @@
             }
 
             public function fix_subitem_qr(Request $request){
+                ini_set('max_execution_time', 9999);
                 $item = SubItem::select('id')->get();
                 if($item->isNotEmpty()){
                     foreach($item AS $row){
@@ -31,7 +32,7 @@
             }
 
             public function fix_item_inventory_qr(Request $request){
-                // dd('hi');
+                ini_set('max_execution_time', 9999);
                 $item = ItemInventory::select('id')->get();
                 if($item->isNotEmpty()){
                     foreach($item AS $row){
@@ -41,6 +42,7 @@
             }
 
             public function fix_subitem_inventory_qr(Request $request){
+                ini_set('max_execution_time', 9999);
                 $item = SubItemInventory::select('id')->get();
                 if($item->isNotEmpty()){
                     foreach($item AS $row){
