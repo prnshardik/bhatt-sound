@@ -12,6 +12,7 @@
         @media print{
             #printDivStyle{
                 height: 90vh;
+                margin-bottom: 50px;
             }
         }        
     </style>
@@ -46,7 +47,7 @@
                                                     }
                                                 @endphp
                                                 <div class="print-break">
-                                                    <div style="margin-left: 10px; margin-right: 10px;">
+                                                    <div style="margin-left: 10px; margin-right: 10px; margin-bottom: 30px;">
                                                         <img id="image" src="{{ $path.'/'.$row->qrcode }}" alt="{{ $row->qrcode }}" style="width: {{ $width }}px; height: {{ $height }}px; padding: 5px;">
                                                         <div id="name" class="text-center" style="width: {{ $width }}px;">
                                                             <span style="font-size: {{$font}}"><b>{{ $row->name }}</b></span>
